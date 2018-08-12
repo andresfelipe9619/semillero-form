@@ -11,7 +11,7 @@
 
         function uploadFiles(form) {
             var lock = LockService.getPublicLock();
-            lock.waitLock(30000); //espera 30 segundos  para evitar colisiones en accesos concurrentes
+            lock.waitLock(20000); //espera 30 segundos  para evitar colisiones en accesos concurrentes
             try {
                 //carpeta donde se almacenaran los archivos
                 var dropbox = "semillero 2018";
@@ -77,10 +77,8 @@
                       Logger.log("titulos"+ i);
                         if (modulos.localeCompare(arraytitulos[i]) == 0) {
                             data.push("x");
-                          Logger.log("TITULO SI");
                             modulosMatriculados.push(arraytitulos[i]);
                         } else {
-                                                    Logger.log("TITULO NO");
                             data.push("");
                         }
                     }
@@ -161,9 +159,9 @@
 
                 //incio validaciones en el servidor
 
-                var Spreedsheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1u6kKPHPb_0-j6Oa8IqJlfD-Vm-QlKsPE48kyb_e4RN0/edit#gid=0");
+                var Spreedsheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1TsbNe2yNzhhmJ4vwyS3X0qztIP8kdKeSgoFY95C5-5U/edit#gid=0");
 
-                var administracion = Spreedsheet.getSheetByName("ADMINISTRACIÓN");
+                var administracion = Spreedsheet.getSheetByName("PERIODOS");
                 var inscritossheet = Spreedsheet.getSheetByName("INSCRITOS");
                 //
                 var periodo = administracion.getSheetValues(2, 2, 1, 1)[0][0];
@@ -187,7 +185,7 @@
                 }
 
                 data.push(periodo);
-              Logger.log("MY DATAAAAAA:",data);
+              Logger.log("MY DATAAAAAA:", data);
                 //fin validaciones en el servidor
 
                 //adicionar a lista de modulos los modulos
@@ -400,11 +398,6 @@
                         }
                     }
                 }
-                // swal({
-                //     title: 'Advertencia ...',
-                //     text: 'La cedula ingresada no corresponde a ningún estudiante',
-                //     type: 'warning',
-                // });
             }
             esta = false;
             return esta;
@@ -652,22 +645,4 @@
                 }
             }
             return false;
-        }
-
-        function prueba(data) {
-            //var hmtlOutput = HtmlService.createHtmlOutputFromFile('form.html');
-            //var contenthtml = hmtlOutput.getContent();
-            //contenthtml += '<script>document.getElementById("name").value = "My value pruba";</script>';
-            // var filetoSend = Utilities.newBlob(data, "text/html", "text.html");
-            //
-            //
-            // MailApp.sendEmail('jhonkrave@gmail.com', 'pruba fomurlario 9', 'Two files are attached.', {
-            //    name: 'Automatic Emailer Script',
-            //    attachments: [getPDFFile(data)[0]]
-            //});
-            //
-            //
-            //
-            //
-            return data.reciboFile.name;
         }
