@@ -17,20 +17,19 @@ function getModules() {
 
 }
 
-
 function getPeriods() {
     var rawPeriods = getRawDataFromSheet(GENERAL_DB, "PERIODOS");
     return rawPeriods;
 
 }
 
-function getActualPeriodStudents() {
-    var rawStudents = getSheetFromSpreadSheet(getActualPeriod()[2], "INSCRITOS");
+function getStudents() {
+    var rawStudents = getRawDataFromSheet(GENERAL_DB, "INSCRITOS")
     return rawStudents;
 }
 
-function getStudents() {
-    var rawStudents = getRawDataFromSheet(GENERAL_DB, "INSCRITOS")
+function getActualPeriodStudents() {
+    var rawStudents = getSheetFromSpreadSheet(getActualPeriod()[2], "INSCRITOS");
     return rawStudents;
 }
 
@@ -63,45 +62,74 @@ function registerStudentActualPeriod(data, form) {
     return res;
 }
 
-function registerStudentGeneral(data, form) {
+function registerStudentGeneral(data, form, nuevo) {
     //se crea adifiona la informacion a la tabla
+    var students = getStudents()
+    var modules = getModules()
     var inscritossheet = getSheetFromSpreadSheet(GENERAL_DB, "INSCRITOS")
     var lastRow = inscritossheet.getLastRow();
-    data.push(focus.seleccion)
+    var url = data.pop()
+    var actualPeriod = data.pop();
+
     var newData = []
     Logger.log('data')
     Logger.log(data)
+    //quitamos los elemntos en blaco y dejamos eldel telefono si lo esta
     for (var x in data) {
         if (data[x] == 'x' || data[x] == '') {
+            if (x == 6 && form.telfijo == '') {
+                newData.push(data[x])
+            }
+
         } else { newData.push(data[x]) }
     }
 
-    // data.push()
-    // moduleSheet.appendRow([
-    //     data.name.toUpperCase(),
-    //     data.lastname.toUpperCase(),
-    //     data.tipo,
-    //     data.numdoc,
-    //     data.telfijo,
-    //     data.email.toLowerCase(),
-    //     data.grado,
-    //     data.colegio,
-    //     data.convenio,
+    var size = students[0].length;
+    var space = 0;
+    // if (nuevo.estado == "antiguo") {
+    //     // if (nuevo.data[nuevo.data.length -2] == "") {
 
-    // ]);
+    //     // }else{
+    //     //     inscritossheet.insertColumn()
+    //     // }
+    //     newData.push(actualPeriod)
+
+    // } else if (nuevo.estado == "no esta") {
+    //     space = (size - newDaTa.length) - 3
+    //     newData.push(actualPeriod)
+    // }
+    newData.push(actualPeriod)
+
+    for (var x in modules) {
+        if (modules[x][1] == form.seleccion) {
+            newData.push(modules[x][0])
+            if (space > 0) {
+                while (space > 0) {
+                    newData.push('');
+                    space--;
+                }
+            }
+        }
+    }
+
+    newData.push(url)
+
     inscritossheet.appendRow(newData);
     var lastRowRes = inscritossheet.getLastRow();
-    var res = "Error!";
+    var res = {
+        status: "Error!",
+        data: newData
+    };
     if (lastRowRes > lastRow) {
-        res = "exito";
+        res.status = "exito";
     }
     return res;
 }
 
 
-function registerEstudent(data, form) {
+function registerStudent(data, form, nuevo) {
     registerStudentActualPeriod(data, form)
-    return registerStudentGeneral(data, form)
+    return registerStudentGeneral(data, form, nuevo)
 }
 
 function editEstudent(studentId, newEstudent) {
@@ -116,6 +144,32 @@ function createModule(module) {
 
 }
 
+function validatePerson(cedula) {
+    var inscritos = getStudents();
+    var res = {
+        estado: "",
+        index: "",
+        data: []
+    };
+    var actulPeriod = getActualPeriod()[0];
+
+    for (var person in inscritos) {
+
+        if (String(inscritos[person][3]) === String(cedula)) {
+            if (inscritos[person][inscritos.length - 3] == actulPeriod) {
+                res.estado = "actual"
+            } else {
+                res.estado = "antiguo"
+            }
+            res.index = person
+            res.data = inscritos[person]
+            return res
+        }
+    }
+    res.estado = "no esta"
+    return res
+}
+
 function buscarPersona(cedula) {
     var mainFolder = getMainFolder()
     var folder;
@@ -123,26 +177,34 @@ function buscarPersona(cedula) {
     var inscritos = getStudents();
 
     for (var person in inscritos) {
-        // Logger.log('buscando: ' + inscritos[person][3]);
-        // Logger.log('cedula: ' + cedula);
+        Logger.log('buscando: ' + inscritos[person][3]);
+        Logger.log('cedula: ' + cedula);
         if (String(inscritos[person][3]) === String(cedula)) {
             folder = getCurrentFolder(cedula, mainFolder);
             var files = folder.getFiles();
             Logger.log('files: ' + files);
-            for (var j in inscritos[0]) {
-                if (inscritos[person][j] == "x") {
-                    inscritos[person].push(inscritos[0][j]);
-                    while (files.hasNext()) {
-                        var file = files.next();
-                        inscritos[person].push(file.getName());
-                        inscritos[person].push(file.getUrl());
-                    }
-
-                    return inscritos[person];
-                } else {
-                    continue;
-                }
+            while (files.hasNext()) {
+                var file = files.next();
+                inscritos[person].push(file.getName());
+                inscritos[person].push(file.getUrl());
             }
+            return inscritos[person]
+            //     for (var j in inscritos[0]) {
+            // Logger.log('cedulonnn ' + cedula);
+
+            //         if (inscritos[person][j] == "x") {
+            //             inscritos[person].push(inscritos[0][j]);
+            //             while (files.hasNext()) {
+            //                 var file = files.next();
+            //                 inscritos[person].push(file.getName());
+            //                 inscritos[person].push(file.getUrl());
+            //             }
+
+            //             return inscritos[person];
+            //         } else {
+            //             continue;
+            //         }
+            //     }
         }
     }
     esta = false;
@@ -192,7 +254,7 @@ function validateModule(modulos, data) {
 }
 
 function getMainFolder() {
-    var dropbox = "semillero 2018";
+    var dropbox = "SCRIPTS SEMILLEROS";
     var mainFolder,
         folders = DriveApp.getFoldersByName(dropbox);
 
@@ -282,34 +344,70 @@ function uploadFiles(form) {
 
         var modulosMatriculados = validateModule(form.seleccion, data)
 
-        for (x in modulosMatriculados) {
-            if (!addToModule(modulosMatriculados[x], form))
-                throw "No se reconoce el modulo seleccionado";
+        var res, arrayFiles, lastFiles;
+        var personStatus = validatePerson(form.numdoc)
+        if (personStatus = "no esta") {
+
+            for (x in modulosMatriculados) {
+                if (!addToModule(modulosMatriculados[x], form))
+                    throw "No se reconoce el modulo seleccionado";
+            }
+            //VALIDATE FILES
+            arrayFiles = validateFormFiles(form, data)
+
+            //se crea la carpeta que va contener los arhivos actuales
+            lastFiles = createStudentFolder(form.numdoc, data, arrayFiles)
+
+            //se crea adifiona la informacion a la tabla
+            res = registerStudent(data, form);
+
+            sendConfirmationEmail(form, lastFiles)
+
+        } else if (personStatus == "esta") {
+            for (x in modulosMatriculados) {
+                if (!addToModule(modulosMatriculados[x], form))
+                    throw "No se reconoce el modulo seleccionado";
+            }
+            arrayFiles = validateFormFiles(form, data)
+
+            //se crea la carpeta que va contener los arhivos actuales
+            lastFiles = createStudentFolder(form.numdoc, data, arrayFiles)
+
+            //se crea adifiona la informacion a la tabla
+            res = registerStudentActualPeriod(data, form);
+
+            sendConfirmationEmail(form, lastFiles)
+
+        } else if (personStatus == "activo") {
+            throw "Ya esta inscrito en este periodo"
         }
 
-        buscarPersona(form.numdoc)
-
-        //VALIDATE FILES
-
-        var arrayFiles = validateFormFiles(form, data)
-
-        //se crea la carpeta que va contener los arhivos actuales
-        var lastFiles = createStudentFolder(form.numdoc, data, arrayFiles)
-
-        //se crea adifiona la informacion a la tabla
-        var res = registerEstudent(data, form);
-
-        //SEND EMAIL
-        // sendConfirmationEmail(form, lastFiles)
 
         return res;
     } catch (error) {
         return error.toString();
     }
 }
+
+function addPeriodToStudent(form, cedula) {
+    var modules = getModules();
+    var students = getStudents();
+
+    for (var person in students) {
+        if(students){
+
+        }
+        for (var x in modules) {
+            if (modules[x][1] == form.seleccion) {
+                data.push(modules[x][0])
+            }
+        }
+    }
+}
 function getCurrentFolder(name, mainFolder) {
     //se crea la carpeta que va conener todos los docmuentos
     var nameFolder = "Bodega de archivos";
+    var actualPeriod = getActualPeriod()[0];
     var FolderFiles,
         folders = mainFolder.getFoldersByName(nameFolder);
     if (folders.hasNext()) {
@@ -317,6 +415,7 @@ function getCurrentFolder(name, mainFolder) {
     } else {
         FolderFiles = mainFolder.createFolder(nameFolder);
     }
+
 
     // se crea la carpeta que va contener los documentos de cada inscrito
     var currentFolder,
@@ -327,7 +426,15 @@ function getCurrentFolder(name, mainFolder) {
         currentFolder = FolderFiles.createFolder(name);
     }
 
-    return currentFolder;
+    var periodFolder,
+        pfolders = currentFolder.getFoldersByName(actualPeriod)
+    if (pfolders.hasNext()) {
+        periodFolder = pfolders.next();
+    } else {
+        periodFolder = currentFolder.createFolder(actualPeriod);
+    }
+
+    return periodFolder;
 }
 
 function sendConfirmationEmail(form, lastFiles) {
