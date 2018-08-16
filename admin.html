@@ -34,7 +34,10 @@
     <div class="container">
 
         <h1 align="center" style="text-align:center;">
-            <img src="http://www.univalle.edu.co/images/logo.jpg" style="padding:20px; display:block; margin:auto;"> Formulario de Inscripción Semilleros de Ciencias
+            <img src="http://semillero.univalle.edu.co/images/Logo-PNG-Grande-UV.png" style="width: 250px; height: auto; padding:20px; display:block; margin:auto;">
+            <img src="http://www.univalle.edu.co/images/logo.jpg" style="padding:20px; display:block; margin:auto;"> 
+             Formulario de Inscripción Semilleros de Ciencias
+
         </h1>
         <div class="row">
             <br>
@@ -393,6 +396,17 @@
                             </div>
                         </div>
                     </div>
+                    <div id="modBiologia" class="col-xs-4 input-div">
+                        <div class="row">
+                            <h4>Biologia</h4>
+                        </div>
+                        <div class="row input-div">
+                            <div class="checkbox">
+                                <input type="radio" class="biologia" name="seleccion" id="blg" value="blg">
+                                <label>Biologia</label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="row">
@@ -460,6 +474,7 @@
             $('#myForm #modMatematicas #checkboxMate').children().hide();
             $('#myForm #modFisica').hide();
             $('#myForm #modQuimica').hide();
+            $('#myForm #modBiologia').hide();
             $('#myForm #modHumanidades').hide();
             $('#myForm #modArtes').hide();
             $('#modBusqueda').hide();
@@ -482,8 +497,6 @@
 
             });
 
-            console.log('dependen on what jmmmm');
-            console.log('CCCChecked', $('input.matematicas').is(':checked'));
 
             $('.numeric').on('keypress', function (e) {
                 return e.metaKey || // cmd/ctrl
@@ -527,22 +540,23 @@
             $('#confirmEmail').on('copy cut paste', function (e) {
                 e.preventDefault()
             })
+            $('#email').on('copy cut paste', function (e) {
+                e.preventDefault()
+            })
 
             $('#otrocurso').on('change', function () {
                 var grado = $('#myForm #grado').val();
                 var val = this.value;
                 if ((val.indexOf('racional') || val.indexOf('Conjuntos')) &&
                     (grado == 6 || grado == 7)) {
-                    console.log("WTF");
                     $('#myForm #modMatematicas').fadeIn();
                     $('#myForm #modMatematicas #checkboxMate').children().fadeIn();
                     $('#myForm #modFisica').fadeOut();
                     $('#myForm #modQuimica').fadeOut();
-                    $('#myForm #modArtes').fadeIn();
+                    $('#myForm #modArtes').fadeOut();
                     $('#myForm #modArtes #temamuper').fadeOut();
                     $('#myForm #modHumanidades').fadeOut();
                 } else if ((grado == 6 || grado == 7) && (val == "" || val == " ")) {
-                    console.log("WTF*2");
                     $('#myForm #modMatematicas').fadeIn();
                     $('#myForm #modMatematicas #checkboxMate').children().fadeOut();
                     $('#myForm #modMatematicas #checkboxMate').children('#temaentrac').fadeIn();
@@ -570,6 +584,7 @@
                     $('#myForm #modHumanidades').fadeIn();
                     $('#myForm #modHumanidades #temalecr').fadeOut();
                     $('#myForm #modArtes').fadeIn();
+                    $('#myForm #modBiologia').fadeIn();
                     $('#myForm #modArtes #temamuper').fadeIn();
                 } else if ((val == 10 || val == 11) || val == "EGRESADO") {
                     $('#myForm #modMatematicas').fadeIn();
@@ -578,7 +593,8 @@
                     $('#myForm #modQuimica').fadeIn();
                     $('#myForm #modHumanidades').fadeIn();
                     $('#myForm #modHumanidades  #temalecr').fadeIn();
-                    $('#myForm #modArtes').fadeIn();
+                    $('#myForm #modArtes').fadeOut();
+                    $('#myForm #modBiologia').fadeIn();
                     $('#myForm #modArtes #temamuper').fadeOut();
                 } else if ((val == 6 || val == 7) && (anterior.indexOf('Conjuntos') >= 0 || anterior.indexOf(
                     'racional') >= 0)) {
@@ -587,9 +603,11 @@
                     $('#myForm #modMatematicas #checkboxMate').children().fadeIn();
                     $('#myForm #modFisica').fadeOut();
                     $('#myForm #modQuimica').fadeOut();
-                    $('#myForm #modArtes').fadeIn();
+                    $('#myForm #modArtes').fadeOut();
                     $('#myForm #modArtes #temamuper').fadeOut();
                     $('#myForm #modHumanidades').fadeOut();
+                    $('#myForm #modBiologia').fadeOut();
+
                 } else if ((val == 6 || val == 7)) {
                     $('#myForm #modMatematicas').fadeIn();
                     $('#myForm #modMatematicas #checkboxMate').children().fadeOut();
@@ -599,6 +617,7 @@
                     $('#myForm #modArtes').fadeIn();
                     $('#myForm #modArtes #temamuper').fadeOut();
                     $('#myForm #modHumanidades').fadeOut();
+                    $('#myForm #modBiologia').fadeOut();
 
                 } else {
                     $('#myForm #modMatematicas').fadeOut();
@@ -608,6 +627,8 @@
                     $('#myForm #modQuimica').fadeOut();
                     $('#myForm #modHumanidades').fadeOut();
                     $('#myForm #modArtes').fadeOut();
+                    $('#myForm #modBiologia').fadeOut();
+
                 }
             });
 
@@ -678,7 +699,7 @@
                 div.innerHTML = "";
                 setDefaultCursor();
                 var finded = cleanArray(person);
-                console.log(finded);
+                console.log('FIDED', finded);
                 $('#modBusqueda').fadeIn();
                 contenthtml += '<div class="col-md-6">';
                 contenthtml += "<p> <strong>Nombre completo: </strong>" + finded[0] + " " + finded[1] + "</p>";
@@ -791,7 +812,7 @@
                     confirmEmail: {
                         required: true,
                         email: true,
-                        EqualToGroup: ['andresfelipe9619@gmail.com']
+                        EqualToGroup: [$('#email').val()]
                     },
                     numdoc: {
                         required: true,
@@ -1058,14 +1079,13 @@
         }
 
         function fileUploaded(status) {
-            //document.getElementById('myForm').style.display = 'none';
-            //document.getElementById('output').innerHTML = status;
+
             if (status == "exito") {
                 //swal('Exito','La inscripción se realizó satisfactoriamente','success');
-                console.log(status);
+                console.log('Estatus', status);
                 swal({
                     title: "Exito!",
-                    text: "La inscripción se realizó satisfactoriamente!\nRecibiras un correo para confirmar los datos de tu inscripcion\nFavor entregar el recibo original el primer dia de clases a los monitores",
+                    text: "La inscripción se realizó satisfactoriamente!\nRecibiras un correo para confirmar los datos de tu inscripcion y un link para realizar tu prueba diagnostica\nFavor entregar el recibo original el primer dia de clases a los monitores",
                     type: "success",
                     confirmButtonText: "Ok",
                     closeOnConfirm: true
@@ -1083,7 +1103,7 @@
 
                 //http://semillerociencias.univalle.edu.co/inscripcion
             } else {
-                console.log(status);
+                console.log('Estatus',status);
                 swal('Error', status, 'error');
                 $('#mySpan').fadeOut();
                 setDefaultCursor();

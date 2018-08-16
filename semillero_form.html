@@ -33,9 +33,13 @@
 <body>
     <div class="container">
 
-        <h1 align="center" style="text-align:center;">
-            <img src="http://www.univalle.edu.co/images/logo.jpg" style="padding:20px; display:block; margin:auto;"> Formulario de Inscripción Semilleros de Ciencias
-        </h1>
+       
+            <h1 align="center" style="text-align:center;">
+                    <img src="http://semillero.univalle.edu.co/images/Logo-PNG-Grande-UV.png" style="width: 250px; height: auto; padding:20px; display:block; margin:auto;">
+                    <img src="http://www.univalle.edu.co/images/logo.jpg" style="padding:20px; display:block; margin:auto;"> 
+                     Formulario de Inscripción Semilleros de Ciencias
+        
+                </h1>
         <!--<div class="row">
             <br>
             <div class="col-md-6">
@@ -87,14 +91,21 @@
             </div>
 
             <div class="row">
-                <label class="control-label col-xs-2" for="email">Correo Electrónico*</label>
-                <div class="col-xs-5 input-div">
-                    <input type="email" class="form-control text-uppercase" id="email" name="email" placeholder="Email...">
+                    <label class="control-label col-xs-2" for="email">Correo Electrónico*</label>
+                    <div class="col-xs-5 input-div">
+                        <input type="email" class="form-control text-lowercase" id="email" name="email" placeholder="Correo...">
+                    </div>
+                    <div class="col-xs-3">¿No tienes correo?
+                        <span class="btn btn-info" id="createEmail" style="display:inline;">¡Crea Uno!</span>
+                    </div>
                 </div>
-                <div class="col-xs-3">¿No tienes correo?
-                    <span class="btn btn-info" id="createEmail" style="display:inline;">¡Crea Uno!</span>
+                <div class="row">
+                    <label class="control-label col-xs-2" for="confirmEmail">Confirma Correo Electrónico*</label>
+                    <div class="col-xs-5 input-div">
+                        <input type="email" class="form-control text-lowercase" id="confirmEmail" name="confirmEmail" placeholder="Confirma Correo...">
+                    </div>
+    
                 </div>
-            </div>
 
             <div class="row">
                 <label class="control-label col-xs-2" for="telfijo">Teléfonos*</label>
@@ -345,6 +356,17 @@
                             </div>
                         </div>
                     </div>
+                    <div id="modBiologia" class="col-xs-4 input-div">
+                            <div class="row">
+                                <h4>Biologia</h4>
+                            </div>
+                            <div class="row input-div">
+                                <div class="checkbox">
+                                    <input type="radio" class="biologia" name="seleccion" id="blg" value="blg">
+                                    <label>Biologia</label>
+                                </div>
+                            </div>
+                        </div>
                 </div>
             </div>
             <div class="row">
@@ -395,10 +417,14 @@
     <br>
     <br>
     <script>
-        $(document).ready(function() {
-            $('#myForm #createEmail').on('click', function() {
-                window.open('https://accounts.google.com/SignUp?service=mail&hl=es&continue=http%3A%2F%2Fmail.google.com%2Fmail%2F%3Fpc%3Des-ha-latam-co-bk-xplatform1&utm_campaign=es&utm_source=es-ha-latam-co-bk-xplatform1&utm_medium=ha');
+      $(document).ready(function () {
+            $('#myForm #createEmail').on('click', function () {
+                window.open(
+                    'https://accounts.google.com/SignUp?service=mail&hl=es&continue=http%3A%2F%2Fmail.google.com%2Fmail%2F%3Fpc%3Des-ha-latam-co-bk-xplatform1&utm_campaign=es&utm_source=es-ha-latam-co-bk-xplatform1&utm_medium=ha'
+                );
             });
+
+
             //$("#myForm #pdfDoc").hide();
             $('#myForm #pdfConstanciaEstu').hide();
             $('#myForm #pdfContanciaFun').hide();
@@ -407,10 +433,11 @@
             $('#myForm #modMatematicas #checkboxMate').children().hide();
             $('#myForm #modFisica').hide();
             $('#myForm #modQuimica').hide();
+            $('#myForm #modBiologia').hide();
             $('#myForm #modHumanidades').hide();
             $('#myForm #modArtes').hide();
             $('#modBusqueda').hide();
-            $('#myForm #estamento').on('change', function() {
+            $('#myForm #estamento').on('change', function () {
                 var val = $(this).val();
                 if (val == 'PUBLICO' || val == 'COBERTURA') {
 
@@ -420,7 +447,7 @@
                 } else if (val == 'PRIVADO') {
 
                     $('#myForm #pdfConstanciaEstu').fadeOut();
-                    $('#myForm #constanciaEstudFile').prop('disabled', true);
+                    $('#myForm #constanciaEstudFile').prop('    ', true);
 
                 } else {
                     $('#myForm #pdfConstanciaEstu').fadeOut();
@@ -429,7 +456,8 @@
 
             });
 
-            $('.numeric').on('keypress', function(e) {
+
+            $('.numeric').on('keypress', function (e) {
                 return e.metaKey || // cmd/ctrl
                     e.which <= 0 || // arrow keys
                     e.which == 8 || // delete key
@@ -437,7 +465,7 @@
             });
 
 
-            $('#myForm').on('click', 'input[name="convenio"]', function() {
+            $('#myForm').on('click', 'input[name="convenio"]', function () {
                 var val = $(this).val();
                 var estamento = $('#estamento').val();
                 if (val == 'RELACION_UNIVALLE') {
@@ -450,7 +478,7 @@
 
             });
 
-            $('#eps').on('change', function() {
+            $('#eps').on('change', function () {
                 var epsval = this.value;
                 if (epsval.includes('OTRA')) {
                     $('#otraeps').css('display', 'block');
@@ -459,7 +487,7 @@
                 }
             });
 
-            $('#inscritoanterior').on('change', function() {
+            $('#inscritoanterior').on('change', function () {
                 var myres = this.value;
                 if (myres.includes('SI')) {
                     $('#otrocurso').css('display', 'block');
@@ -468,21 +496,26 @@
                 }
             });
 
- $('#otrocurso').on('change', function() {
+            $('#confirmEmail').on('copy cut paste', function (e) {
+                e.preventDefault()
+            })
+            $('#email').on('copy cut paste', function (e) {
+                e.preventDefault()
+            })
+
+            $('#otrocurso').on('change', function () {
                 var grado = $('#myForm #grado').val();
                 var val = this.value;
                 if ((val.indexOf('racional') || val.indexOf('Conjuntos')) &&
                     (grado == 6 || grado == 7)) {
-                    console.log("WTF");
                     $('#myForm #modMatematicas').fadeIn();
                     $('#myForm #modMatematicas #checkboxMate').children().fadeIn();
                     $('#myForm #modFisica').fadeOut();
                     $('#myForm #modQuimica').fadeOut();
-                    $('#myForm #modArtes').fadeIn();
+                    $('#myForm #modArtes').fadeOut();
                     $('#myForm #modArtes #temamuper').fadeOut();
                     $('#myForm #modHumanidades').fadeOut();
                 } else if ((grado == 6 || grado == 7) && (val == "" || val == " ")) {
-                    console.log("WTF*2");
                     $('#myForm #modMatematicas').fadeIn();
                     $('#myForm #modMatematicas #checkboxMate').children().fadeOut();
                     $('#myForm #modMatematicas #checkboxMate').children('#temaentrac').fadeIn();
@@ -498,7 +531,7 @@
             });
 
 
-            $('#myForm #grado').on('change', function() {
+            $('#myForm #grado').on('change', function () {
                 var anterior = $('#otrocurso').val();
                 console.log('MI ANTERIOR: ', anterior);
                 var val = this.value;
@@ -510,6 +543,7 @@
                     $('#myForm #modHumanidades').fadeIn();
                     $('#myForm #modHumanidades #temalecr').fadeOut();
                     $('#myForm #modArtes').fadeIn();
+                    $('#myForm #modBiologia').fadeIn();
                     $('#myForm #modArtes #temamuper').fadeIn();
                 } else if ((val == 10 || val == 11) || val == "EGRESADO") {
                     $('#myForm #modMatematicas').fadeIn();
@@ -518,17 +552,21 @@
                     $('#myForm #modQuimica').fadeIn();
                     $('#myForm #modHumanidades').fadeIn();
                     $('#myForm #modHumanidades  #temalecr').fadeIn();
-                    $('#myForm #modArtes').fadeIn();
+                    $('#myForm #modArtes').fadeOut();
+                    $('#myForm #modBiologia').fadeIn();
                     $('#myForm #modArtes #temamuper').fadeOut();
-                } else if ((val == 6 || val == 7) && (anterior.indexOf('Conjuntos') >= 0 || anterior.indexOf('racional') >= 0)) {
+                } else if ((val == 6 || val == 7) && (anterior.indexOf('Conjuntos') >= 0 || anterior.indexOf(
+                    'racional') >= 0)) {
                     console.log('MI ANTERIOR IN IF: ', anterior);
                     $('#myForm #modMatematicas').fadeIn();
                     $('#myForm #modMatematicas #checkboxMate').children().fadeIn();
                     $('#myForm #modFisica').fadeOut();
                     $('#myForm #modQuimica').fadeOut();
-                    $('#myForm #modArtes').fadeIn();
+                    $('#myForm #modArtes').fadeOut();
                     $('#myForm #modArtes #temamuper').fadeOut();
                     $('#myForm #modHumanidades').fadeOut();
+                    $('#myForm #modBiologia').fadeOut();
+
                 } else if ((val == 6 || val == 7)) {
                     $('#myForm #modMatematicas').fadeIn();
                     $('#myForm #modMatematicas #checkboxMate').children().fadeOut();
@@ -538,6 +576,7 @@
                     $('#myForm #modArtes').fadeIn();
                     $('#myForm #modArtes #temamuper').fadeOut();
                     $('#myForm #modHumanidades').fadeOut();
+                    $('#myForm #modBiologia').fadeOut();
 
                 } else {
                     $('#myForm #modMatematicas').fadeOut();
@@ -547,6 +586,8 @@
                     $('#myForm #modQuimica').fadeOut();
                     $('#myForm #modHumanidades').fadeOut();
                     $('#myForm #modArtes').fadeOut();
+                    $('#myForm #modBiologia').fadeOut();
+
                 }
             });
             
@@ -594,7 +635,7 @@
                 required: "Este campo es obligatorio.",
                 number: "Este campo es numérico"
             });
-            jQuery.validator.addMethod("EqualToGroup", function(value, element, param) {
+            jQuery.validator.addMethod("EqualToGroup", function (value, element, param) {
                 var isequal = false;
                 for (x in param) {
                     if (param[x] == value) {
@@ -604,7 +645,7 @@
                 return this.optional(element) || isequal;
             }, "selecciona un valor valido");
 
-            $.validator.addMethod('filesize', function(value, element, param) {
+            $.validator.addMethod('filesize', function (value, element, param) {
                 return this.optional(element) || (element.files[0].size <= (param * 1000000))
             }, 'File size must be less than {0}');
 
@@ -632,13 +673,18 @@
                         required: true,
                         email: true
                     },
+                    confirmEmail: {
+                        required: true,
+                        email: true,
+                        EqualToGroup: [$('#email').val()]
+                    },
                     numdoc: {
                         required: true,
                         number: true
                     },
                     telfijo: {
                         required: {
-                            depends: function(element) {
+                            depends: function (element) {
                                 var valuecelular = $('#telcelular').val();
                                 if (valuecelular == '') {
                                     return true;
@@ -652,7 +698,7 @@
                     },
                     telcelular: {
                         required: {
-                            depends: function(element) {
+                            depends: function (element) {
                                 var valuefijo = $('#telfijo').val();
                                 if (valuefijo == '') {
                                     return true;
@@ -675,7 +721,7 @@
                     },
                     otraeps: {
                         required: {
-                            depends: function(element) {
+                            depends: function (element) {
                                 var valeps = $('#eps').val();
                                 if (valeps.includes('OTRA')) {
                                     return true;
@@ -707,9 +753,9 @@
                         required: true,
                         EqualToGroup: ["SI", "NO"]
                     },
-                                        otrocurso: {
+                    otrocurso: {
                         required: {
-                            depends: function(element) {
+                            depends: function (element) {
                                 var valcur = $('#inscritoanterior').val();
                                 if (valcur.includes('SI')) {
                                     return true;
@@ -721,7 +767,7 @@
                     },
                     seleccion: {
                         required: {
-                            depends: function(element) {
+                            depends: function (element) {
                                 if (!$("[name='seleccion']").is(':checked')) {
                                     return true
                                 } else return false;
@@ -729,21 +775,22 @@
                         }
                     },
                     convenio: {
-                        EqualToGroup: ["PARTICULAR", "RELACION_UNIVALLE"]
+                        EqualToGroup: ["CONVENIO_COLEGIO", "PARTICULAR", "RELACION_UNIVALLE"],
+                        required: true
                     },
                     docFile: {
                         required: true
                     },
                     constanciaEstudFile: {
                         required: {
-                            depends: function(element) {
+                            depends: function (element) {
                                 return ($('#estamento').val() == 'público');
                             }
                         }
                     },
                     constanciaFuncFile: {
                         required: {
-                            depends: function(element) {
+                            depends: function (element) {
                                 return ($('#relacion_univalle').is(':checked'));
                             }
                         }
@@ -760,6 +807,10 @@
                     email: {
                         email: "Correo inválido"
                     },
+                    confirmEmail: {
+                        EqualToGroup: "Los correos no son iguales",
+                        email: "Correo inválido"
+                    },
                     telfijo: {
                         required: "Por favor escribe por lo menos un número de contacto"
                     },
@@ -772,19 +823,7 @@
                     grado: {
                         EqualToGroup: "selecciona un grado"
                     },
-                    matematicas: {
-                        required: "selecciona por lo menos un modulo"
-                    },
-                    quimica: {
-                        required: "selecciona por lo menos un modulo"
-                    },
-                    fisica: {
-                        required: "selecciona por lo menos un modulo"
-                    },
-                    humanidades: {
-                        required: "selecciona por lo menos un modulo"
-                    },
-                    artes: {
+                    seleccion: {
                         required: "selecciona por lo menos un modulo"
                     },
                     docFile: {
@@ -800,7 +839,7 @@
                         required: "Seleeciona un archivo PDF correpondiente a la copia de su recibo de pago"
                     }
                 },
-                highlight: function(element) {
+                highlight: function (element) {
                     var modules = $(element).closest('.modules_matricular');
                     var ismodule = $(element).closest('.modules_matricular').length;
                     if (ismodule) {
@@ -810,7 +849,7 @@
                     }
 
                 },
-                unhighlight: function(element) {
+                unhighlight: function (element) {
                     var modules = $(element).closest('.modules_matricular');
                     var ismodule = $(element).closest('.modules_matricular').length;
                     if (ismodule) {
@@ -821,7 +860,7 @@
                 },
                 errorElement: 'span',
                 errorClass: 'help-block',
-                errorPlacement: function(error, element) {
+                errorPlacement: function (error, element) {
                     var modules = $(element).closest('.modules_matricular');
                     var ismodule = $(element).closest('.modules_matricular').length;
 
@@ -835,18 +874,16 @@
                     }
 
                 },
-                submitHandler: function(form) {
+                submitHandler: function (form) {
                     $('#mySpan').fadeIn();
                     setWaitCursor();
-
                     //google.script.run.withSuccessHandler(fileUploaded).uploadFiles(form);
                     //var pag = location.href;
-                    console.log(form);
+                    console.log('FORM-->', form);
                     google.script.run.withSuccessHandler(fileUploaded).uploadFiles(form);
                 }
             });
         }
-
 
         function cleanForm() {
             $('.numeric').val('');
@@ -854,18 +891,20 @@
             $('.text-lowercase').val('');
 
             $('.file').val('');
-            $('.checkbox').map(function(check) {
-                check.attr('checked', false);
-            });
+            $('input:checkbox').removeAttr('checked');
             $('#otrocurso').empty('');
-            location.reload();
+            // window.location.reload(true);
         }
+
+
 
         var country_arr = new Array("Cauca", "Valle del Cauca");
         var s_a = new Array();
         s_a[0] = "";
-        s_a[1] = "Popayán|Cajibío|El tambo|La Sierra|Morales|Piendamó|Rosas|Soatá|Timbío|Buenos aires|Caloto|Corintio|Guachené|Miranda|Padilla|Puerto Tejada|Santander de Quilichao|Suárez|Villa rica|Almaguer|Argelia|Balboa|Bolívar|Florencia|La vega|Mercaderes|Patía|Piamonte|San Sebastián|Santa Rosa|Sucre|Guapí|López de micay|Timbiquí|Caldono|Inzá|Jambaló|Páez|Puracé|Silvia|Toribío|Torotó";
-        s_a[2] = "|Cali|Candelaria|Dagua|Florida|Jamundí|La Cumbre|Palmira|Pradera|Vijes|Yumbo|Andalucía|Buga|Bugalagrande|Calima-El Darién|El Cerrito|Ginebra|Guacarí|Restrepo|Riofrío|San Pedro|Trujillo|Tuluá|Yotoco|Buenaventura|Caicedonia|Sevilla|Cartago|El águila|El Cairo|El Dovio|La Unión|La Victoria|Obando|Restrepo|Rodalnillo|Toro|Ulloa|Versalles|Zarzal|Alcalá";
+        s_a[1] =
+            "Popayán|Cajibío|El tambo|La Sierra|Morales|Piendamó|Rosas|Soatá|Timbío|Buenos aires|Caloto|Corintio|Guachené|Miranda|Padilla|Puerto Tejada|Santander de Quilichao|Suárez|Villa rica|Almaguer|Argelia|Balboa|Bolívar|Florencia|La vega|Mercaderes|Patía|Piamonte|San Sebastián|Santa Rosa|Sucre|Guapí|López de micay|Timbiquí|Caldono|Inzá|Jambaló|Páez|Puracé|Silvia|Toribío|Torotó";
+        s_a[2] =
+            "|Cali|Candelaria|Dagua|Florida|Jamundí|La Cumbre|Palmira|Pradera|Vijes|Yumbo|Andalucía|Buga|Bugalagrande|Calima-El Darién|El Cerrito|Ginebra|Guacarí|Restrepo|Riofrío|San Pedro|Trujillo|Tuluá|Yotoco|Buenaventura|Caicedonia|Sevilla|Cartago|El águila|El Cairo|El Dovio|La Unión|La Victoria|Obando|Restrepo|Rodalnillo|Toro|Ulloa|Versalles|Zarzal|Alcalá";
 
         function populateCountries(countryElementId, stateElementId) {
             // given the id of the <select> tag as function argument, it inserts <option> tags
@@ -880,7 +919,7 @@
             // Assigned all countries. Now assign event listener for the states.
 
             if (stateElementId) {
-                countryElement.onchange = function() {
+                countryElement.onchange = function () {
                     populateStates(countryElementId, stateElementId);
                 };
             }
@@ -904,22 +943,21 @@
         }
 
         function fileUploaded(status) {
-            //document.getElementById('myForm').style.display = 'none';
-            //document.getElementById('output').innerHTML = status;
+
             if (status == "exito") {
                 //swal('Exito','La inscripción se realizó satisfactoriamente','success');
-                console.log(status);
+                console.log('Estatus', status);
                 swal({
-                        title: "Exito!",
-                        text: "La inscripción se realizó satisfactoriamente!\nRecibiras un correo para confirmar los datos de tu inscripcion\nFavor entregar el recibo original el primer dia de clases a los monitores",
-                        type: "success",
-                        confirmButtonText: "Ok",
-                        closeOnConfirm: true
-                    },
-                    function() {
-                        window.open("http://semillerociencias.univalle.edu.co/");
-                        window.location.close();
-                    }
+                    title: "Exito!",
+                    text: "La inscripción se realizó satisfactoriamente!\nRecibiras un correo para confirmar los datos de tu inscripcion y un link para realizar tu prueba diagnostica\nFavor entregar el recibo original el primer dia de clases a los monitores",
+                    type: "success",
+                    confirmButtonText: "Ok",
+                    closeOnConfirm: true
+                }
+                    //                    ,
+                    //                    function() {
+                    //                    window.location.reload(true);
+                    //                    }
                 );
 
                 $('#mySpan').fadeOut();
@@ -929,8 +967,7 @@
 
                 //http://semillerociencias.univalle.edu.co/inscripcion
             } else {
-                console.log(status);
-
+                console.log('Estatus',status);
                 swal('Error', status, 'error');
                 $('#mySpan').fadeOut();
                 setDefaultCursor();
@@ -941,6 +978,10 @@
             //location.href = location.href
         }
     </script>
+
+
+
+
 </body>
 
 </html>

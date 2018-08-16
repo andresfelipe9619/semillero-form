@@ -5,7 +5,7 @@ function doGet(e) {
     if (guess_email == 'andresfelipe9619@gmail.com' || guess_email == 'suarez.andres@correounivalle.edu.co' || guess_email == 'semillero@correounivalle.edu.co' || guess_email == 'yurany.velasco@correounivalle.edu.co' || guess_email == 'samuel.ramirez@correounivalle.edu.co') {
         return HtmlService.createHtmlOutputFromFile("admin.html");
     } else {
-        return HtmlService.createHtmlOutputFromFile("close.html");
+        return HtmlService.createHtmlOutputFromFile("semilleroform.html");
     }
 }
 
@@ -62,14 +62,14 @@ function registerStudentActualPeriod(data, form) {
     return res;
 }
 
-function registerStudentGeneral(data, form, nuevo) {
+function registerStudentGeneral(data, form) {
     //se crea adifiona la informacion a la tabla
     var students = getStudents()
     var modules = getModules()
     var inscritossheet = getSheetFromSpreadSheet(GENERAL_DB, "INSCRITOS")
     var lastRow = inscritossheet.getLastRow();
     var url = data.pop()
-    var actualPeriod = data.pop();
+    // var actualPeriod = data.pop();
 
     var newData = []
     Logger.log('data')
@@ -98,17 +98,17 @@ function registerStudentGeneral(data, form, nuevo) {
     //     space = (size - newDaTa.length) - 3
     //     newData.push(actualPeriod)
     // }
-    newData.push(actualPeriod)
+    // newData.push(actualPeriod)
 
     for (var x in modules) {
         if (modules[x][1] == form.seleccion) {
             newData.push(modules[x][0])
-            if (space > 0) {
-                while (space > 0) {
-                    newData.push('');
-                    space--;
-                }
-            }
+            // if (space > 0) {
+            //     while (space > 0) {
+            //         newData.push('');
+            //         space--;
+            //     }
+            // }
         }
     }
 
@@ -116,20 +116,21 @@ function registerStudentGeneral(data, form, nuevo) {
 
     inscritossheet.appendRow(newData);
     var lastRowRes = inscritossheet.getLastRow();
-    var res = {
-        status: "Error!",
-        data: newData
-    };
+    // var res = {
+    //     status: "Error!",
+    //     data: newData
+    // };
+    var res = "Error!"
     if (lastRowRes > lastRow) {
-        res.status = "exito";
+        res = "exito";
     }
     return res;
 }
 
 
-function registerStudent(data, form, nuevo) {
+function registerStudent(data, form) {
     registerStudentActualPeriod(data, form)
-    return registerStudentGeneral(data, form, nuevo)
+    return registerStudentGeneral(data, form)
 }
 
 function editEstudent(studentId, newEstudent) {
@@ -146,27 +147,29 @@ function createModule(module) {
 
 function validatePerson(cedula) {
     var inscritos = getStudents();
-    var res = {
-        estado: "",
-        index: "",
-        data: []
-    };
+    var res = ""
+    // var res = {
+    //     estado: "",
+    //     index: "",
+    //     data: []
+    // };
     var actulPeriod = getActualPeriod()[0];
 
     for (var person in inscritos) {
 
         if (String(inscritos[person][3]) === String(cedula)) {
-            if (inscritos[person][inscritos.length - 3] == actulPeriod) {
-                res.estado = "actual"
-            } else {
-                res.estado = "antiguo"
-            }
-            res.index = person
-            res.data = inscritos[person]
+            res = "esta";
+            // if (inscritos[person][inscritos.length - 3] == actulPeriod) {
+            //     res.estado = "actual"
+            // } else {
+            //     res.estado = "antiguo"
+            // }
+            // res.index = person
+            // res.data = inscritos[person]
             return res
         }
     }
-    res.estado = "no esta"
+    res = "no esta"
     return res
 }
 
@@ -340,13 +343,13 @@ function uploadFiles(form) {
             getActualPeriod()[0]
         );
 
-        // Logger.log(data);
+        Logger.log(data);
 
         var modulosMatriculados = validateModule(form.seleccion, data)
 
         var res, arrayFiles, lastFiles;
         var personStatus = validatePerson(form.numdoc)
-        if (personStatus = "no esta") {
+        if (personStatus == "no esta") {
 
             for (x in modulosMatriculados) {
                 if (!addToModule(modulosMatriculados[x], form))
@@ -382,12 +385,12 @@ function uploadFiles(form) {
             throw "Ya esta inscrito en este periodo"
         }
 
-
         return res;
     } catch (error) {
         return error.toString();
     }
 }
+
 
 function addPeriodToStudent(form, cedula) {
     var modules = getModules();
@@ -447,11 +450,11 @@ function sendConfirmationEmail(form, lastFiles) {
     var mainFolder = getMainFolder();
 
     for (var module in modules) {
-        if (modules[module].codigo == form.seleccion) {
-            subModule = modules[module].nombre;
+        if (modules[module][1] == form.seleccion) {
+            subModule = modules[module][0];
         }
     }
-    var periodo = getActualPeriod()[2];
+    var periodo = getActualPeriod();
     MailApp.sendEmail({
         to: form.email,
         subject: "Inscripción " + periodo[0] + " " + subModule + " " + form.name.toUpperCase() + " " + form.lastname.toUpperCase(),
@@ -546,6 +549,18 @@ function getPDFFile(data) {
 
 
     var contenthtml = "";
+
+    var moduleName = "";
+    var moduleUrl =""
+    var modulo = data.seleccion;
+    for (var y in modulos) {
+        if (modulos[y][1] == modulo) {
+            moduleName = modulos[y][0];
+            moduleUrl = modulos[y][4];
+        } else {
+            continue;
+        }
+    }
     //           contenthtml += '<img src="http://semillero.univalle.edu.co/images/AFICHE-2017B.png" />  <img src="http://semillero.univalle.edu.co/images/AFICHE-2017B.png" style="margin-left:50px"/> '
     contenthtml += '<div style="text-align:center">';
     contenthtml += "<h3>UNIVERSIDAD DEL VALLE</h3>";
@@ -555,18 +570,12 @@ function getPDFFile(data) {
     contenthtml +=
         '<p><strong>NOTA: No olvide consultar su salón de clase el día 2 de Marzo a partir de las 4:00 pm  en nuestra pagina <a href="http://semillerociencias.univalle.edu.co/">Semillero</a> o revisar el correo electrónico donde también serán enviados los listados.</p></strong>';
     contenthtml +=
+        '<p><strong>NOTA: No olvide realizar la prueba diagnostica <a href="'+ moduleUrl+'">'+moduleName +'</a>.</p></strong>';
+    contenthtml +=
         "<p><strong>Importante:</strong>Conserve el original del recibo de pago, la cual debe de ser entregado el primer dia de clases a los monitores.</p><hr>";
 
 
-    var moduleName = "";
-    var modulo = data.seleccion;
-    for (var y in modulos) {
-        if (modulos[y][1] == modulo) {
-            moduleName = modulos[y][0];
-        } else {
-            continue;
-        }
-    }
+
 
 
     contenthtml += '<h3> Modulo: ' + moduleName + "</h3>";
