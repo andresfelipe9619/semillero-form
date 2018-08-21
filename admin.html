@@ -35,8 +35,7 @@
 
         <h1 align="center" style="text-align:center;">
             <img src="http://semillero.univalle.edu.co/images/Logo-PNG-Grande-UV.png" style="width: 250px; height: auto; padding:20px; display:block; margin:auto;">
-            <img src="http://www.univalle.edu.co/images/logo.jpg" style="padding:20px; display:block; margin:auto;"> 
-             Formulario de Inscripción Semilleros de Ciencias
+            <img src="http://www.univalle.edu.co/images/logo.jpg" style="padding:20px; display:block; margin:auto;"> Formulario de Inscripción Semilleros de Ciencias
 
         </h1>
         <div class="row">
@@ -45,15 +44,18 @@
                 <div class="input-group">
                     <input type="number" class="form-control numeric" id="cedula_buscada" placeholder="Ingrese documento de identidad a buscar...">
                     <span class="input-group-btn">
-                        <button id="btn-buscar" onclick="cargarInfo()" class="btn btn-default" type="button">Buscar</button>
+                        <button id="btn-buscar" onclick="cargarInfo()" class="btn btn-default" type="button">Buscar Estudiante</button>
                     </span>
                 </div>
             </div>
             <div class="col-md-2">
-                <button id="btn-registrar" onclick="mostrarRegistro()" class="btn btn-default" type="button">Registrar</button>
+                <button id="btn-registrar" onclick="mostrarRegistro()" class="btn btn-default" type="button">Registrar Estudiante</button>
             </div>
             <div class="col-md-2">
-                <button id="btn-gestion-form" onclick="mostrarGestionForm()" class="btn btn-default" type="button">Gestionar Formulario</button>
+                <button id="btn-gestion-form" onclick="mostrarGestionForm()" class="btn btn-default" type="button">Gestionar Periodos</button>
+            </div>
+            <div class="col-md-2">
+                <button id="btn-gestion-form" onclick="mostrarGestionForm()" class="btn btn-default" type="button">Gestionar Modulos</button>
             </div>
         </div>
         <br>
@@ -62,16 +64,9 @@
             <div id="modBusqueda" class="row input-div">
             </div>
         </div>
-        <!-- <div class="row">
+        <div class="row">
             <div id="modGestion" class="row">
-                <div class="col-md-4">
-                    <div class="input-group">
-                        <input type="number" class="form-control numeric" id="cedula_editada" placeholder="Documento de identidad a Editar...">
-                        <span class="input-group-btn">
-                            <button id="btn-editar" onclick="cargarInfo()" class="btn btn-default" type="button">Editar</button>
-                        </span>
-                    </div>
-                </div>
+
                 <div class="col-md-3">
                     <label for="periodo-select">Periodo Actual</label>
                     <select name="periodo-select" id="periodo-select">
@@ -80,11 +75,9 @@
                     </select>
 
                 </div>
-                <div class="col-md-2">
-                    <button id="btn-gestion-form" onclick="modificarModulos()" class="btn btn-default" type="button">Modificar Modulos</button>
-                </div>
+
             </div>
-        </div> -->
+        </div>
         <form class="form oculto" role="form" id="myForm" name="myForm">
             <div class="row">
                 <br>
@@ -632,22 +625,9 @@
                 }
             });
 
-
-            $('#myForm #reciboFile').on('change', function () {
-
-                //this.files[0].size gets the size of your file.
-                //console.log(this.files[0].size);
-
-            });
-
-            $('#myForm #save').on('click', function () {
-
-                validateAndSave();
-
-            });
+            $('#myForm #save').on('click', validateAndSave);
 
             populateCountries("deptres", "ciudadres");
-
 
         });
 
@@ -755,7 +735,7 @@
             $('#btn-buscar').css('cursor', '');
             $('body').css('cursor', '');
         }
-        //Quita los valores vacios en el arreglo
+
         function cleanArray(actual) {
             var newArray = [];
             for (var i = 0, j = actual.length; i < j; i++) {
@@ -1033,7 +1013,6 @@
         }
 
 
-
         var country_arr = new Array("Cauca", "Valle del Cauca");
         var s_a = new Array();
         s_a[0] = "";
@@ -1089,35 +1068,20 @@
                     type: "success",
                     confirmButtonText: "Ok",
                     closeOnConfirm: true
-                }
-                    //                    ,
-                    //                    function() {
-                    //                    window.location.reload(true);
-                    //                    }
-                );
+                });
 
                 $('#mySpan').fadeOut();
                 setDefaultCursor();
-                cleanForm();
+                // cleanForm();
 
-
-                //http://semillerociencias.univalle.edu.co/inscripcion
             } else {
-                console.log('Estatus',status);
+                console.log('Estatus', status);
                 swal('Error', status, 'error');
                 $('#mySpan').fadeOut();
                 setDefaultCursor();
             }
-
-
-            //location.reload();
-            //location.href = location.href
         }
     </script>
-
-
-
-
 </body>
 
 </html>

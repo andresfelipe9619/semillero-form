@@ -43,12 +43,6 @@ function getRawDataFromSheet(url, sheet) {
     if (mSheet) return mSheet.getSheetValues(1, 1, mSheet.getLastRow(), mSheet.getLastColumn());
 }
 
-function getRangeDataFromSheet(url, sheet) {
-    var mSheet = getSheetFromSpreadSheet(url, sheet);
-    return mSheet.getRange(1, 1, mSheet.getLastRow(), mSheet.getLastColumn()).getValues();
-}
-
-
 function registerStudentActualPeriod(data, form) {
     var inscritossheet = getSheetFromSpreadSheet(getActualPeriod()[2], "INSCRITOS")
 
@@ -62,68 +56,77 @@ function registerStudentActualPeriod(data, form) {
     return res;
 }
 
-function registerStudentGeneral(data, form) {
+function registerStudentGeneral(data, form, person) {
     //se crea adifiona la informacion a la tabla
-    var students = getStudents()
-    var modules = getModules()
     var inscritossheet = getSheetFromSpreadSheet(GENERAL_DB, "INSCRITOS")
+    var modules = getModules()
+
     var lastRow = inscritossheet.getLastRow();
     var url = data.pop()
-    // var actualPeriod = data.pop();
-
     var newData = []
-    Logger.log('data')
+    var actualPeriod = data.pop();
+
+    Logger.log('data before clean up')
     Logger.log(data)
-    //quitamos los elemntos en blaco y dejamos eldel telefono si lo esta
+    //quitamos los elemntos en blaco de los datos del formulario
+    // y dejamos eldel telefono si lo esta
     for (var x in data) {
-        if (data[x] == 'x' || data[x] == '') {
+        if (data[x] == 'x' || data[x] == '' || data[x] == ' ') {
             if (x == 6 && form.telfijo == '') {
                 newData.push(data[x])
             }
 
         } else { newData.push(data[x]) }
+
     }
+    //si viene con index, revisamos la fila y cojemos los modulos ya inscritos
+    if (person && person.data.length) {
+        Logger.log('Person data')
+        Logger.log(person.data)
+        var lastModule = person.data.length - 2;
+        if (person.data[lastModule] != '') {
 
-    var size = students[0].length;
-    var space = 0;
-    // if (nuevo.estado == "antiguo") {
-    //     // if (nuevo.data[nuevo.data.length -2] == "") {
-
-    //     // }else{
-    //     //     inscritossheet.insertColumn()
-    //     // }
-    //     newData.push(actualPeriod)
-
-    // } else if (nuevo.estado == "no esta") {
-    //     space = (size - newDaTa.length) - 3
-    //     newData.push(actualPeriod)
-    // }
-    // newData.push(actualPeriod)
-
-    for (var x in modules) {
-        if (modules[x][1] == form.seleccion) {
-            newData.push(modules[x][0])
-            // if (space > 0) {
-            //     while (space > 0) {
-            //         newData.push('');
-            //         space--;
-            //     }
-            // }
+            newData.push(person.data[lastModule - 1]);
+            newData.push(person.data[lastModule]);
+            inscritossheet.insertColumnsAfter(person.data.length - 1, 2)
+            var periodColumns = inscritossheet.getRange(newData.length - 3, 1, 1, 2)
+            periodColumns.setValues([['periodo', 'modulo']])
         }
     }
 
-    newData.push(url)
 
-    inscritossheet.appendRow(newData);
-    var lastRowRes = inscritossheet.getLastRow();
-    // var res = {
-    //     status: "Error!",
-    //     data: newData
-    // };
-    var res = "Error!"
-    if (lastRowRes > lastRow) {
-        res = "exito";
+    for (var x in modules) {
+        if (modules[x][1] == form.seleccion) {
+            newData.push(actualPeriod)
+            newData.push(modules[x][0])
+
+        }
     }
+
+    var blank = newData.indexOf('')
+    if (blank > -1) {
+        newData.splice(blank, 1);
+    }
+
+    Logger.log('data after')
+    Logger.log(newData)
+
+    newData.push(url)
+    var res = "Error!"
+
+    if (person && person.index) {
+        var inscritoRange = inscritossheet.getRange(Number(person.index) + 1, 1, 1, inscritossheet.getLastColumn());
+        inscritoRange.setValues([newData])
+        res = "exito"
+    } else {
+        inscritossheet.appendRow(newData);
+        var lastRowRes = inscritossheet.getLastRow();
+
+        if (lastRowRes > lastRow) {
+            res = "exito";
+        }
+    }
+
     return res;
 }
 
@@ -147,30 +150,36 @@ function createModule(module) {
 
 function validatePerson(cedula) {
     var inscritos = getStudents();
-    var res = ""
-    // var res = {
-    //     estado: "",
-    //     index: "",
-    //     data: []
-    // };
+    // var res = ""
+    var result = {
+        state: "",
+        index: -1,
+        data: null
+    };
     var actulPeriod = getActualPeriod()[0];
 
     for (var person in inscritos) {
 
         if (String(inscritos[person][3]) === String(cedula)) {
-            res = "esta";
-            // if (inscritos[person][inscritos.length - 3] == actulPeriod) {
-            //     res.estado = "actual"
-            // } else {
-            //     res.estado = "antiguo"
-            // }
-            // res.index = person
-            // res.data = inscritos[person]
-            return res
+            result.index = person
+            Logger.log('Actual period')
+            Logger.log(inscritos[person][inscritos[person].length - 3])
+            if (String(inscritos[person][inscritos[person].length - 3]) === String(actulPeriod)) {
+                result.state = "actual"
+            } else {
+                result.state = "antiguo"
+                result.data = inscritos[person]
+            }
         }
     }
-    res = "no esta"
-    return res
+
+
+    if (result.index > -1) {
+        return result
+    } else {
+        result.state = "no esta"
+        return result
+    }
 }
 
 function buscarPersona(cedula) {
@@ -348,8 +357,10 @@ function uploadFiles(form) {
         var modulosMatriculados = validateModule(form.seleccion, data)
 
         var res, arrayFiles, lastFiles;
-        var personStatus = validatePerson(form.numdoc)
-        if (personStatus == "no esta") {
+        var person = validatePerson(form.numdoc)
+        Logger.log('Validated person', person)
+        Logger.log(person)
+        if (person.state == "no esta") {
 
             for (x in modulosMatriculados) {
                 if (!addToModule(modulosMatriculados[x], form))
@@ -366,7 +377,7 @@ function uploadFiles(form) {
 
             sendConfirmationEmail(form, lastFiles)
 
-        } else if (personStatus == "esta") {
+        } else if (person.state == "antiguo") {
             for (x in modulosMatriculados) {
                 if (!addToModule(modulosMatriculados[x], form))
                     throw "No se reconoce el modulo seleccionado";
@@ -376,12 +387,14 @@ function uploadFiles(form) {
             //se crea la carpeta que va contener los arhivos actuales
             lastFiles = createStudentFolder(form.numdoc, data, arrayFiles)
 
+            registerStudentGeneral(data, form, person)
+
             //se crea adifiona la informacion a la tabla
             res = registerStudentActualPeriod(data, form);
 
             sendConfirmationEmail(form, lastFiles)
 
-        } else if (personStatus == "activo") {
+        } else if (person.state == "actual") {
             throw "Ya esta inscrito en este periodo"
         }
 
@@ -391,22 +404,6 @@ function uploadFiles(form) {
     }
 }
 
-
-function addPeriodToStudent(form, cedula) {
-    var modules = getModules();
-    var students = getStudents();
-
-    for (var person in students) {
-        if(students){
-
-        }
-        for (var x in modules) {
-            if (modules[x][1] == form.seleccion) {
-                data.push(modules[x][0])
-            }
-        }
-    }
-}
 function getCurrentFolder(name, mainFolder) {
     //se crea la carpeta que va conener todos los docmuentos
     var nameFolder = "Bodega de archivos";
@@ -551,7 +548,7 @@ function getPDFFile(data) {
     var contenthtml = "";
 
     var moduleName = "";
-    var moduleUrl =""
+    var moduleUrl = ""
     var modulo = data.seleccion;
     for (var y in modulos) {
         if (modulos[y][1] == modulo) {
@@ -570,7 +567,7 @@ function getPDFFile(data) {
     contenthtml +=
         '<p><strong>NOTA: No olvide consultar su salón de clase el día 2 de Marzo a partir de las 4:00 pm  en nuestra pagina <a href="http://semillerociencias.univalle.edu.co/">Semillero</a> o revisar el correo electrónico donde también serán enviados los listados.</p></strong>';
     contenthtml +=
-        '<p><strong>NOTA: No olvide realizar la prueba diagnostica <a href="'+ moduleUrl+'">'+moduleName +'</a>.</p></strong>';
+        '<p><strong>NOTA: No olvide realizar la prueba diagnostica <a href="' + moduleUrl + '">' + moduleName + '</a>.</p></strong>';
     contenthtml +=
         "<p><strong>Importante:</strong>Conserve el original del recibo de pago, la cual debe de ser entregado el primer dia de clases a los monitores.</p><hr>";
 
