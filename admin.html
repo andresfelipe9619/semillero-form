@@ -32,13 +32,18 @@
 
 <body>
     <div class="container">
-
-        <h1 align="center" style="text-align:center;">
-            <img src="http://semillero.univalle.edu.co/images/Logo-PNG-Grande-UV.png" style="width: 250px; height: auto; padding:20px; display:block; margin:auto;">
-            <img src="http://www.univalle.edu.co/images/logo.jpg" style="padding:20px; display:block; margin:auto;"> Formulario de Inscripción Semilleros de Ciencias
-
-        </h1>
         <div class="row">
+            <div class="col-md-6">
+                <img src="http://semillero.univalle.edu.co/images/Logo-PNG-Grande-UV.png" style="width: 250px; margin:auto; height: auto;">
+            </div>
+            <div class="col-md-6">
+                <img src="http://www.univalle.edu.co/images/logo.jpg" style="margin-top:80px; display:block;  ">
+            </div>
+        </div>
+        <div class="row">
+            <h1 align="center" style="text-align:center;">
+                Formulario de Inscripción Semilleros de Ciencias
+            </h1>
             <br>
             <div class="col-md-6">
                 <div class="input-group">
@@ -51,12 +56,16 @@
             <div class="col-md-2">
                 <button id="btn-registrar" onclick="mostrarRegistro()" class="btn btn-default" type="button">Registrar Estudiante</button>
             </div>
-            <div class="col-md-2">
-                <button id="btn-gestion-form" onclick="mostrarGestionForm()" class="btn btn-default" type="button">Gestionar Periodos</button>
-            </div>
-            <div class="col-md-2">
-                <button id="btn-gestion-form" onclick="mostrarGestionForm()" class="btn btn-default" type="button">Gestionar Modulos</button>
-            </div>
+            <!-- <div class="col-md-2">
+                <button id="btn-gestion-form" onclick="mostrarGestionForm()" class="btn btn-default" type="button">Gestionar
+                    Periodos
+                </button>
+            </div> -->
+            <!-- <div class="col-md-2">
+                <button id="btn-gestion-form" onclick="mostrarGestionForm()" class="btn btn-default" type="button">Gestionar
+                    Modulos
+                </button>
+            </div> -->
         </div>
         <br>
         <hr>
@@ -64,7 +73,7 @@
             <div id="modBusqueda" class="row input-div">
             </div>
         </div>
-        <div class="row">
+        <!-- <div class="row">
             <div id="modGestion" class="row">
 
                 <div class="col-md-3">
@@ -77,7 +86,7 @@
                 </div>
 
             </div>
-        </div>
+        </div> -->
         <form class="form oculto" role="form" id="myForm" name="myForm">
             <div class="row">
                 <br>
@@ -104,16 +113,17 @@
                     <input type="number" class="form-control numeric" name="numdoc" id="numdoc" placeholder="Su No. de identificación..." patern="\d+">
                 </div>
                 <div class="col-xs-2 input-div">
-                    <input type="text" class="form-control text-uppercase" name="ciudadDoc" id="ciudadDoc" placeholder="Ciudad">
+                    <input type="text" class="form-control text-uppercase" name="ciudadDoc" id="ciudadDoc" placeholder="Ciudad de Expedición">
                 </div>
             </div>
 
             <div class="row">
+                <p>Solo se permite el registro con un correo gmail o univalle</p>
                 <label class="control-label col-xs-2" for="email">Correo Electrónico*</label>
                 <div class="col-xs-5 input-div">
                     <input type="email" class="form-control text-lowercase" id="email" name="email" placeholder="Correo...">
                 </div>
-                <div class="col-xs-3">¿No tienes correo?
+                <div class="col-xs-3">¿No tienes correo gmail?
                     <span class="btn btn-info" id="createEmail" style="display:inline;">¡Crea Uno!</span>
                 </div>
             </div>
@@ -122,7 +132,6 @@
                 <div class="col-xs-5 input-div">
                     <input type="email" class="form-control text-lowercase" id="confirmEmail" name="confirmEmail" placeholder="Confirma Correo...">
                 </div>
-
             </div>
 
             <div class="row">
@@ -189,7 +198,8 @@
                         <option value="COMFAMILIAR CHOCO">COMFAMILIAR CHOCO</option>
                         <option value="EMSSANAR ESS">EMSSANAR ESS</option>
                         <option value="CAPRECOM">CAPRECOM</option>
-                        <option value="ASOCIACIÓN DE CABILDOS INDÍGENAS DEL CESAR Y GUAJIRA “DUSAKAWI A.R.S.I.”">ASOCIACIÓN DE CABILDOS INDÍGENAS DEL CESAR Y GUAJIRA “DUSAKAWI A.R.S.I.”</option>
+                        <option value="ASOCIACIÓN DE CABILDOS INDÍGENAS DEL CESAR Y GUAJIRA “DUSAKAWI A.R.S.I.”">ASOCIACIÓN
+                            DE CABILDOS INDÍGENAS DEL CESAR Y GUAJIRA “DUSAKAWI A.R.S.I.”</option>
                         <option value="MANEXKA EPS">MANEXKA EPS</option>
                         <option value="ASOCIACIÓN INDÍGENA DEL CAUCA AIC-EPS-I">ASOCIACIÓN INDÍGENA DEL CAUCA AIC-EPS-I</option>
                         <option value="PIJAOS SALUD EPSI">PIJAOS SALUD EPSI</option>
@@ -264,7 +274,8 @@
                         <option value="Funciones, Sucesiones y Límite">Funciones, Sucesiones y Límite </option>
                         <option value="Energía y Movimiento">Energía y Movimiento </option>
                         <option value="AGE: átomo, gases y estequiometría">AGE: átomo, gases y estequiometría </option>
-                        <option value="ESE: Estequiometría II, Soluciones y Equilibri">ESE: Estequiometría II, Soluciones y Equilibrio </option>
+                        <option value="ESE: Estequiometría II, Soluciones y Equilibri">ESE: Estequiometría II, Soluciones
+                            y Equilibrio </option>
                         <option value="BIOQ: Química Orgánica y Bioquímica">BIOQ: Química Orgánica y Bioquímica </option>
                         <option value="Lectura Crítica">Lectura Crítica </option>
                         <option value="Escritura Creativa">Escritura Creativa </option>
@@ -396,7 +407,7 @@
                         <div class="row input-div">
                             <div class="checkbox">
                                 <input type="radio" class="biologia" name="seleccion" id="blg" value="blg">
-                                <label>Biologia</label>
+                                <label>Estudio de los seres vivos y sus procesos vitales</label>
                             </div>
                         </div>
                     </div>
@@ -406,8 +417,8 @@
                 <hr>
                 <hr>
                 <h3>Documentos</h3>
-                <p id="parrafo_docs">Por favor cargue los archivos necesarios para completar la inscrpción. Tenga en cuenta que los archivos deben
-                    ser en formato PDF y no deben pesar más de 2Mb</p>
+                <p id="parrafo_docs">Por favor cargue los archivos necesarios para completar la inscrpción. Tenga en cuenta
+                    que los archivos deben ser en formato PDF y no deben pesar más de 2Mb</p>
             </div>
             <div id="pdfDoc" class="row">
                 <label class="control-label col-xs-2" for="docFile">Documento de identidad*</label>
@@ -417,7 +428,7 @@
             </div>
 
             <div id="pdfConstanciaEstu" class="row">
-                <label class="control-label col-xs-2" for="constanciaEstudFile">Constancia de Estudiante*</label>
+                <label class="control-label col-xs-2" for="constanciaEstudFile">Constancia de Estudio*</label>
                 <div class="col-xs-5 input-div">
                     <input class="file" type="file" id="constanciaEstudFile" name="constanciaEstudFile" accept="application/pdf " disabled>
                 </div>
@@ -437,10 +448,12 @@
                 </div>
             </div>
             <hr>
+            <button align="center" class="btn btn-info oculto" type="button" id="edit">Guardar Informacion</button>
             <div id="btn_div" class="row">
                 <input align="center" class="btn btn-info" type="submit" value="Inscribirme" id="save">
                 <span id="mySpan" style="display:none; color: #d51b23;">Procesando Información...</span>
             </div>
+
         </form>
     </div>
 
@@ -589,8 +602,7 @@
                     $('#myForm #modArtes').fadeOut();
                     $('#myForm #modBiologia').fadeIn();
                     $('#myForm #modArtes #temamuper').fadeOut();
-                } else if ((val == 6 || val == 7) && (anterior.indexOf('Conjuntos') >= 0 || anterior.indexOf(
-                    'racional') >= 0)) {
+                } else if ((val == 6 || val == 7) && (anterior.indexOf('Conjuntos') >= 0 || anterior.indexOf('racional') >= 0)) {
                     console.log('MI ANTERIOR IN IF: ', anterior);
                     $('#myForm #modMatematicas').fadeIn();
                     $('#myForm #modMatematicas #checkboxMate').children().fadeIn();
@@ -601,6 +613,7 @@
                     $('#myForm #modHumanidades').fadeOut();
                     $('#myForm #modBiologia').fadeOut();
 
+
                 } else if ((val == 6 || val == 7)) {
                     $('#myForm #modMatematicas').fadeIn();
                     $('#myForm #modMatematicas #checkboxMate').children().fadeOut();
@@ -610,7 +623,7 @@
                     $('#myForm #modArtes').fadeIn();
                     $('#myForm #modArtes #temamuper').fadeOut();
                     $('#myForm #modHumanidades').fadeOut();
-                    $('#myForm #modBiologia').fadeOut();
+                    $('#myForm #modBiologia').fadeIn();
 
                 } else {
                     $('#myForm #modMatematicas').fadeOut();
@@ -626,20 +639,39 @@
             });
 
             $('#myForm #save').on('click', validateAndSave);
+            $('#myForm #edit').on('click', editStudent);
 
             populateCountries("deptres", "ciudadres");
 
         });
 
-        function mostrarGestionForm() {
+        function editStudent() {
+            var valid = validateAndSave();
 
+            var onSuccess = function (person) {
+                if (person) {
+                    person.data
+                }
+            }
+            if (valid) {
+                var serialized = $('#myForm').serializeArray()
+                var dataToEdit = []
 
+                for (var x in serialized) {
+                    if (x != 6) {
+                        dataToEdit.push(serialized[x].value)
+                    }
+                }
+
+                google.run.withSuccessHandler(onSuccess).validatePerson(dataToEdit[0])
+
+            }
+            console.log('SERIAL', serialized)
         }
 
         function cargarInfo() {
             var ced = $('#cedula_buscada').val();
-            $('#modBusqueda').fadeOut();
-            ocultarRegistro();
+            ocultarRegistro()
             if (ced == "") {
                 swal({
                     title: 'Advertencia ...',
@@ -654,12 +686,18 @@
 
         function ocultarRegistro() {
             $('#myForm').css('display', 'none');
+            cleanForm()
             $('#modBusqueda').fadeOut();
         }
 
         function mostrarRegistro() {
             $('#modBusqueda').fadeOut();
+            $('#myForm').css('display', 'none');
+            cleanForm()
             $('#myForm').css('display', 'block');
+
+            $('#myForm #save').css('display', 'block')
+            $('#myForm #edit').css('display', 'none')
         }
 
         function cargarPersona(person) {
@@ -673,56 +711,54 @@
 
             } else {
                 setWaitCursor();
-                var contenthtml = "",
-                    div = document.getElementById('modBusqueda');
+                mostrarRegistro();
+                $('#myForm #save').css('display', 'none')
+                $('#myForm #edit').css('display', 'block')
+                $('#name').val(String(person.data[0]))
+                $('#lastname').val(String(person.data[1]))
+                $('#tipo').val(String(person.data[2]))
+                $('#numdoc').val(String(person.data[3]))
+                $('#ciudadDoc').val(String(person.data[4]))
+                $('#email').val(String(person.data[5]))
+                $('#confirmEmail').val(String(person.data[5]))
+                $('#telfijo').val(String(person.data[6]))
+                $('#telcelular').val(String(person.data[7]))
+                $('#deptres').val(String(person.data[8]))
+                $('#deptres').trigger('change')
+                $('#ciudadres').val(String(person.data[9]))
+                $('#eps').val(String(person.data[10]))
+                $('#colegio').val(String(person.data[11]))
+                $('#estamento').val(String(person.data[12]))
+                $('#grado').val(String(person.data[13]))
+                $('#grado').trigger('change')
+                $('#acudiente').val(String(person.data[14]))
+                $('#telacudiente').val(String(person.data[15]))
+                if (String(person.data[16]) != 'NO') {
+                    console.log('atleast')
+                    $('#inscritoanterior').val('SI')
+                    $('#inscritoanterior').trigger('change')
+                    $('#otrocurso').val(String(person.data[16]))
+                    $('#otrocurso').trigger('change')
 
-                div.innerHTML = "";
-                setDefaultCursor();
-                var finded = cleanArray(person);
-                console.log('FIDED', finded);
-                $('#modBusqueda').fadeIn();
-                contenthtml += '<div class="col-md-6">';
-                contenthtml += "<p> <strong>Nombre completo: </strong>" + finded[0] + " " + finded[1] + "</p>";
-                contenthtml += "<p> <strong>Documento de identidad:	</strong>" + finded[2] + " " + finded[3] + "</p>";
-                contenthtml += "<p> <strong>Ciudad expedición: </strong>" + finded[4] + "</p>";
-                contenthtml += "<p> <strong>Email:	</strong>" + finded[5] + "</p>";
-                contenthtml += "<p> <strong>Telefono: </strong>" + finded[6] + "</p>";
-                contenthtml += "<p> <strong>Celular: 	</strong>" + finded[7] + "</p>";
-                contenthtml += "<p> <strong>Ciudad residencia:	 </strong>" + finded[9] + "</p>";
-                contenthtml += "</div>";
-                contenthtml += '<div class="col-md-6">';
-                contenthtml += "<p> <strong>Eps: </strong>" + finded[10] + "</p>";
-                contenthtml += "<p> <strong>Institucion educativa: </strong>" + finded[11] + "</p>";
-                contenthtml += "<p> <strong>Modalidad:  </strong>" + finded[12] + "</p>";
-                contenthtml += "<p> <strong>Grado:	</strong>" + finded[13] + "</p>";
-                contenthtml += "<p> <strong>Acudiente:  </strong>" + finded[14] + "</p>";
-                contenthtml += "<p> <strong>Telefono acudiente: </strong>" + finded[15] + "</p>";
-                contenthtml += "<p> <strong>Convenio: </strong>" + finded[17] + "</p>";
-                contenthtml += "<p> <strong>Inscrito anteriormente: </strong>" + finded[16] + "</p></div>";
-                contenthtml += "<p style='font-size:18px'> <strong>Curso Matriculado: </strong>" + finded[21] + "</p>";
-                contenthtml += '<hr><p> <strong>Documentos: </strong></p><ul>';
-
-
-                for (var f = 22; f < finded.length - 1; f++) {
-                    if (finded[f].includes("DOCUMENTO")) {
-                        contenthtml += '<li><p><a target="blank" href="' + finded[f + 1] + '">' +
-                            "DOCUMENTO DE IDENTIDAD" + '</a></p></li>';
-                    } else if (finded[f].includes("RECIBO")) {
-                        contenthtml += '<li><p><a target="blank" href="' + finded[f + 1] + '">' + "RECIBO DE PAGO" +
-                            '</a></p></li>';
-                    } else if (finded[f].includes("FUNC")) {
-                        contenthtml += '<li><p><a target="blank" href="' + finded[f + 1] + '">' +
-                            "CONSTANCIA FUNCIONARIO" + '</a></p></li>';
-                    } else if (finded[f].includes("STUD")) {
-                        contenthtml += '<li><p><a target="blank" href="' + finded[f + 1] + '">' +
-                            "CONSTANCIA ESTUDIANTE" + '</a></p></li>';
-                    }
                 }
 
-                contenthtml += "</ul> <hr>";
+                if (String(person.data[17])) {//convenio
+                    $(`#${person.data[17].toLowerCase()}`).prop('checked', true)
+                    $(`#${person.data[17].toLowerCase()}`).trigger("change");
+                }
 
-                div.insertAdjacentHTML('beforeend', contenthtml);
-
+                if (String(person.data[person.data.length - 2])) {//modulos
+                    google.script.run.withSuccessHandler(onSuccess).getModules();
+                    function onSuccess(modules) {
+                        for (var x in modules) {
+                            if (modules[x][0] == person.data[person.data.length - 2]) {
+                                $(`#${modules[x][1]}`).prop('checked', true)
+                                $(`#${modules[x][1]}`).trigger("change");
+                            }
+                        }
+                    }
+                }
+                setDefaultCursor();
             }
         }
 
@@ -751,6 +787,10 @@
                 required: "Este campo es obligatorio.",
                 number: "Este campo es numérico"
             });
+            jQuery.validator.email = function (value, element) {
+                return this.optional(element) || /^[a-z0-9](\.?[a-z0-9]){5,}@g(oogle)?mail\.com$/.test(value);
+            }
+
             jQuery.validator.addMethod("EqualToGroup", function (value, element, param) {
                 var isequal = false;
                 for (x in param) {
@@ -787,12 +827,13 @@
                     },
                     email: {
                         required: true,
-                        email: true
+                        email: true,
+
                     },
                     confirmEmail: {
                         required: true,
                         email: true,
-                        EqualToGroup: [$('#email').val()]
+                        equalTo: '#email'
                     },
                     numdoc: {
                         required: true,
@@ -895,24 +936,49 @@
                         required: true
                     },
                     docFile: {
-                        required: true
+                        required: {
+                            depends: function (element) {
+                                if ($('#btn-registrar').is(":visible")) {
+                                    return false
+                                } else {
+                                    return true
+                                }
+                            }
+                        }
                     },
                     constanciaEstudFile: {
                         required: {
                             depends: function (element) {
-                                return ($('#estamento').val() == 'público');
+                                if ($('#btn-registrar').is(":visible")) {
+                                    return false
+                                } else {
+                                    return ($('#estamento').val() == 'público');
+                                }
                             }
                         }
                     },
                     constanciaFuncFile: {
                         required: {
                             depends: function (element) {
-                                return ($('#relacion_univalle').is(':checked'));
+                                if ($('#btn-registrar').is(":visible")) {
+                                    return false
+                                } else {
+                                    return ($('#relacion_univalle').is(':checked'));
+                                }
                             }
                         }
                     },
                     reciboFile: {
-                        required: true
+                        required: {
+                            depends: function (element) {
+                                if ($('#btn-registrar').is(":visible")) {
+                                    return false
+                                } else {
+                                    return true
+
+                                }
+                            }
+                        }
                     }
                 },
                 messages: {
@@ -924,7 +990,7 @@
                         email: "Correo inválido"
                     },
                     confirmEmail: {
-                        EqualToGroup: "Los correos no son iguales",
+                        equalTo: "Los correos no son iguales",
                         email: "Correo inválido"
                     },
                     telfijo: {
@@ -996,24 +1062,29 @@
                     //google.script.run.withSuccessHandler(fileUploaded).uploadFiles(form);
                     //var pag = location.href;
                     console.log('FORM-->', form);
+
                     google.script.run.withSuccessHandler(fileUploaded).uploadFiles(form);
                 }
             });
+
+            return isvalid;
         }
 
-        function cleanForm() {
+        function cleanForm(reload) {
             $('.numeric').val('');
             $('.text-uppercase').val('');
             $('.text-lowercase').val('');
 
             $('.file').val('');
             $('input:checkbox').removeAttr('checked');
-            $('#otrocurso').empty('');
-            window.location.reload(true);
+            // $('#otrocurso').empty('');
+            if (reload) {
+                window.location.reload(true);
+            }
         }
 
 
-        var country_arr = new Array("Cauca", "Valle del Cauca");
+        var country_arr = new Array("CAUCA", "VALLE DEL CAUCA");
         var s_a = new Array();
         s_a[0] = "";
         s_a[1] =
@@ -1053,7 +1124,7 @@
             var state_arr = s_a[selectedCountryIndex].split("|");
 
             for (var i = 0; i < state_arr.length; i++) {
-                stateElement.options[stateElement.length] = new Option(state_arr[i], state_arr[i]);
+                stateElement.options[stateElement.length] = new Option(state_arr[i], state_arr[i].toUpperCase());
             }
         }
 

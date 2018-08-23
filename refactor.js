@@ -64,7 +64,6 @@ function registerStudentGeneral(data, form, person) {
     var lastRow = inscritossheet.getLastRow();
     var url = data.pop()
     var newData = []
-    var actualPeriod = data.pop();
 
     Logger.log('data before clean up')
     Logger.log(data)
@@ -79,37 +78,56 @@ function registerStudentGeneral(data, form, person) {
         } else { newData.push(data[x]) }
 
     }
+    var actualPeriod = newData.pop();
+    var spaces = 0;
     //si viene con index, revisamos la fila y cojemos los modulos ya inscritos
     if (person && person.data.length) {
         Logger.log('Person data')
         Logger.log(person.data)
-        var lastModule = person.data.length - 2;
-        if (person.data[lastModule] != '') {
+        for (var i = 0; i <= person.lastModules.length - 1; i += 2) {
+            if (person.lastModules[i] != '' || person.lastModules[i + 1] != '') {
+                newData.push(person.lastModules[i])
+                newData.push(person.lastModules[i + 1])
+            } else {
+                spaces++
+            }
+        }
 
-            newData.push(person.data[lastModule - 1]);
-            newData.push(person.data[lastModule]);
+        if (spaces == 0) {
             inscritossheet.insertColumnsAfter(person.data.length - 1, 2)
-            var periodColumns = inscritossheet.getRange(newData.length - 3, 1, 1, 2)
-            periodColumns.setValues([['periodo', 'modulo']])
+            // var periodColumns = inscritossheet.getRange(newData.length - 3, 1, 1, 2)
+            // periodColumns.setValues([['periodo', 'modulo']])
         }
     }
 
-
+    Logger.log('NEW data')
+    Logger.log(newData)
     for (var x in modules) {
         if (modules[x][1] == form.seleccion) {
-            newData.push(actualPeriod)
-            newData.push(modules[x][0])
-
+            newData.push(actualPeriod);
+            newData.push(modules[x][0]);
         }
     }
 
     var blank = newData.indexOf('')
-    if (blank > -1) {
+    if (blank > -1 && blank != 6) {
         newData.splice(blank, 1);
     }
 
     Logger.log('data after')
     Logger.log(newData)
+    Logger.log('-----------------')
+    Logger.log(inscritossheet.getLastColumn())
+    Logger.log(newData.length)
+
+    if (inscritossheet.getLastColumn() > newData.length + 1) {
+        var diff = inscritossheet.getLastColumn() - newData.length;
+        while (diff > 1) {
+            newData.push('')
+            diff--
+        }
+
+    }
 
     newData.push(url)
     var res = "Error!"
@@ -154,22 +172,26 @@ function validatePerson(cedula) {
     var result = {
         state: "",
         index: -1,
-        data: null
+        data: null,
+        lastModules: null
     };
-    var actulPeriod = getActualPeriod()[0];
+    var actualPeriod = getActualPeriod()[0];
 
     for (var person in inscritos) {
-
         if (String(inscritos[person][3]) === String(cedula)) {
             result.index = person
-            Logger.log('Actual period')
-            Logger.log(inscritos[person][inscritos[person].length - 3])
-            if (String(inscritos[person][inscritos[person].length - 3]) === String(actulPeriod)) {
-                result.state = "actual"
-            } else {
-                result.state = "antiguo"
-                result.data = inscritos[person]
+            result.lastModules = inscritos[person].slice(18, inscritos[person].length - 1);
+            Logger.log('lastmodules')
+            Logger.log(result.lastModules)
+            for (var col in inscritos[person]) {
+                if (String(inscritos[person][col]) === String(actualPeriod)) {
+                    result.state = "actual"
+                    break;
+                } else {
+                    result.state = "antiguo"
+                }
             }
+            result.data = inscritos[person]
         }
     }
 
@@ -185,52 +207,30 @@ function validatePerson(cedula) {
 function buscarPersona(cedula) {
     var mainFolder = getMainFolder()
     var folder;
-    var esta;
-    var inscritos = getStudents();
-
-    for (var person in inscritos) {
-        Logger.log('buscando: ' + inscritos[person][3]);
-        Logger.log('cedula: ' + cedula);
-        if (String(inscritos[person][3]) === String(cedula)) {
-            folder = getCurrentFolder(cedula, mainFolder);
-            var files = folder.getFiles();
-            Logger.log('files: ' + files);
-            while (files.hasNext()) {
-                var file = files.next();
-                inscritos[person].push(file.getName());
-                inscritos[person].push(file.getUrl());
-            }
-            return inscritos[person]
-            //     for (var j in inscritos[0]) {
-            // Logger.log('cedulonnn ' + cedula);
-
-            //         if (inscritos[person][j] == "x") {
-            //             inscritos[person].push(inscritos[0][j]);
-            //             while (files.hasNext()) {
-            //                 var file = files.next();
-            //                 inscritos[person].push(file.getName());
-            //                 inscritos[person].push(file.getUrl());
-            //             }
-
-            //             return inscritos[person];
-            //         } else {
-            //             continue;
-            //         }
-            //     }
+    var person = validatePerson(cedula);
+    Logger.log('THIS IS WHAT U ARE LOOKING FOR');
+    Logger.log(person);
+    if (person.state != "no esta") {
+        person.files = [];
+        folder = getCurrentFolder(cedula, mainFolder);
+        var files = folder.getFiles();
+        Logger.log('files: ' + files);
+        while (files.hasNext()) {
+            var file = files.next();
+            person.files.push(file.getName());
+            person.files.push(file.getUrl());
         }
+    } else {
+        person = null
     }
-    esta = false;
-    return esta;
+
+    return person;
 }
 
 
 function validateModule(modulos, data) {
 
-    //array que almacena todos los modulos matriculados
     var modulosMatriculados = []
-
-    // se adicionan modulos matematicas
-    //var modulosMatematicas = form.matematicas;
 
     var miModulos = getModules()
     Logger.log('modulos selected')
@@ -260,6 +260,7 @@ function validateModule(modulos, data) {
             data.push("");
         }
     }
+
     Logger.log('modulo matriculado')
     Logger.log(modulosMatriculados)
     return modulosMatriculados;
@@ -326,7 +327,7 @@ function uploadFiles(form) {
             form.eps = form.otraeps;
         }
         Logger.log('anterior: ' + form.inscritoanterior);
-        if (form.otrocurso !== "") {
+        if (form.inscritoanterior == "SI") {
             form.inscritoanterior = form.otrocurso;
         }
 
@@ -471,7 +472,7 @@ function sendConfirmationEmail(form, lastFiles) {
         var myname = mfile.getName();
 
         if (myname.indexOf('STUD') !== -1) {
-            links += '<p> <strong>Enlace Constancia Estudiante: </strong><a href="' + mfile.getUrl() + '">Constancia de Estudiante</a></p>';
+            links += '<p> <strong>Enlace Constancia Estudio: </strong><a href="' + mfile.getUrl() + '">Constancia de Estudio</a></p>';
 
         } else if (myname.indexOf('FUNC') !== -1) {
             links += '<p> <strong>Enlace Constancia Funcionario: </strong><a href="' + mfile.getUrl() + '">Constancia de Funcionario</a></p>';
@@ -494,7 +495,7 @@ function sendConfirmationEmail(form, lastFiles) {
     });
 }
 
-function validateFormFiles(form, data) {
+function validateFormFiles(form) {
 
     //arreglo que almacena temporalmente los archivos
     var arrayFiles = new Array();
@@ -671,8 +672,6 @@ function createModulesSheets() {
             if (!getSheetFromSpreadSheet(actualPeriod, modules[x][0])) {
                 addSheetToSpreadSheet(modules[x][0], periodSpreadSheet)
                 moduleSheet = getSheetFromSpreadSheet(actualPeriod, modules[x][0])
-                Logger.log('created modules')
-
                 if (moduleSheet.getLastRow() == 0) {
                     moduleSheet.appendRow([
                         "nombre",
