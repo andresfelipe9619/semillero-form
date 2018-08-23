@@ -48,7 +48,7 @@
 
         </div>
 
-        <form class="form oculto" role="form" id="myForm" name="myForm">
+        <form class="form" role="form" id="myForm" name="myForm">
             <div class="row">
                 <br>
                 <label class="control-label col-xs-2 " for="name">Nombres y Apellidos*</label>
@@ -425,7 +425,7 @@
     <br>
     <br>
     <script>
-              $(document).ready(function () {
+        $(document).ready(function () {
             $('#myForm #createEmail').on('click', function () {
                 window.open(
                     'https://accounts.google.com/SignUp?service=mail&hl=es&continue=http%3A%2F%2Fmail.google.com%2Fmail%2F%3Fpc%3Des-ha-latam-co-bk-xplatform1&utm_campaign=es&utm_source=es-ha-latam-co-bk-xplatform1&utm_medium=ha'
@@ -539,6 +539,7 @@
             });
 
 
+
             $('#myForm #grado').on('change', function () {
                 var anterior = $('#otrocurso').val();
                 console.log('MI ANTERIOR: ', anterior);
@@ -581,10 +582,10 @@
                     $('#myForm #modMatematicas #checkboxMate').children('#temaentrac').fadeIn();
                     $('#myForm #modFisica').fadeOut();
                     $('#myForm #modQuimica').fadeOut();
-                    $('#myForm #modArtes').fadeIn();
+                    $('#myForm #modArtes').fadeOut();
                     $('#myForm #modArtes #temamuper').fadeOut();
                     $('#myForm #modHumanidades').fadeOut();
-                    $('#myForm #modBiologia').fadeIn();
+                    $('#myForm #modBiologia').fadeOut();
 
                 } else {
                     $('#myForm #modMatematicas').fadeOut();
@@ -604,7 +605,7 @@
             populateCountries("deptres", "ciudadres");
 
         });
-        
+
         function setWaitCursor() {
             $('#btn-buscar').css('cursor', 'wait');
             $('body').css('cursor', 'wait');
@@ -626,7 +627,7 @@
             return newArray;
         }
 
-         function setWaitCursor() {
+        function setWaitCursor() {
             $('#btn-buscar').css('cursor', 'wait');
             $('body').css('cursor', 'wait');
         }

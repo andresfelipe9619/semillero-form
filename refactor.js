@@ -455,7 +455,7 @@ function sendConfirmationEmail(form, lastFiles) {
     var periodo = getActualPeriod();
     MailApp.sendEmail({
         to: form.email,
-        subject: "Inscripción " + periodo[0] + " " + subModule + " " + form.name.toUpperCase() + " " + form.lastname.toUpperCase(),
+        subject: "Inscripción " + periodo[0] + " " + subModule ,
         htmlBody: filetoSend,
         name: "SEMILLEROS UNIVALLE",
         attachments: lastFiles
@@ -564,7 +564,7 @@ function getPDFFile(data) {
     contenthtml += "<h3>UNIVERSIDAD DEL VALLE</h3>";
     contenthtml += "<h3>CONFIRMACION INSCRIPCION SEMILLERO DE CIENCIAS</h3>";
     contenthtml +=
-        "<h3>Actualmente se encuentra inscrito en el semillero de ciencias, periodo académico Marzo - Junio de 2018.</h3></div>";
+        "<h3>Actualmente se encuentra inscrito en el semillero de ciencias, periodo académico Agosto - Diciembre de 2018.</h3></div>";
     contenthtml +=
         '<p><strong>NOTA: No olvide consultar su salón de clase el día 2 de Marzo a partir de las 4:00 pm  en nuestra pagina <a href="http://semillerociencias.univalle.edu.co/">Semillero</a> o revisar el correo electrónico donde también serán enviados los listados.</p></strong>';
     contenthtml +=
