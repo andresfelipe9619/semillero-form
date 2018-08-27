@@ -100,7 +100,6 @@ function registerStudentGeneral(data, form, person) {
         }
     }
 
-    Logger.log('NEW data')
     Logger.log(newData)
     for (var x in modules) {
         if (modules[x][1] == form.seleccion) {
@@ -109,12 +108,12 @@ function registerStudentGeneral(data, form, person) {
         }
     }
 
-    var blank = newData.indexOf('')
-    if (blank > -1 && blank != 6) {
-        newData.splice(blank, 1);
-    }
+    // var blank = newData.indexOf('')
+    // if (blank > -1 && blank != 6) {
+    //     newData.splice(blank, 1);
+    // }
 
-    Logger.log('data after')
+    Logger.log('NEW DATA')
     Logger.log(newData)
     Logger.log('-----------------')
     Logger.log(inscritossheet.getLastColumn())
@@ -154,7 +153,62 @@ function registerStudent(data, form) {
     return registerStudentGeneral(data, form)
 }
 
-function editEstudent(studentId, newEstudent) {
+function editStudent(student) {
+
+    var person = validatePerson(student[3])
+    var url = person.data.pop()
+
+    var newData = student.slice()
+    newData.pop()
+    var general = newData.slice()
+    newData.push(getActualPeriod()[0])
+
+    Logger.log('generañ')
+    Logger.log(general)
+    Logger.log('newdata')
+    Logger.log(newData)
+    var modulosMatriculados = validateModule(student[student.length - 1], newData)
+
+
+    var last = person.lastModules.length
+    while (last-- && person.lastModules[last] == '');
+    Logger.log('last')
+
+    last = parseInt(last)
+    Logger.log(last)
+    for (x in modulosMatriculados) {
+        if (modulosMatriculados[x]) {
+            var modulos = getModules();
+            for (var y in modulos) {
+                if (String(modulosMatriculados[x]) === String(modulos[y][1])) {
+                    Logger.log('lastModules')
+                    Logger.log(person.lastModules[last])
+                    person.lastModules[last] = modulos[y][0]
+                    for(var z in person.lastModules){
+                        general.push(person.lastModules[z])
+                    }
+                }
+            }
+        }
+    }
+    general.push(url)
+    newData.push(url)
+    editEstudentGeneral({data: general, index: person.index})
+    editStudentActualPeriod({data: newData})
+}
+
+function editStudentActualPeriod(student) {
+
+    Logger.log('ACTUAL PERIOD')
+    Logger.log(student)
+}
+
+function editEstudentGeneral(student) {
+    var inscritossheet = getSheetFromSpreadSheet(GENERAL_DB, "INSCRITOS")
+
+    var inscritoRange = inscritossheet.getRange(Number(student.index) + 1, 1, 1, inscritossheet.getLastColumn());
+    inscritoRange.setValues([student.data])
+    res = "exito"
 
 }
 
@@ -455,7 +509,7 @@ function sendConfirmationEmail(form, lastFiles) {
     var periodo = getActualPeriod();
     MailApp.sendEmail({
         to: form.email,
-        subject: "Inscripción " + periodo[0] + " " + subModule ,
+        subject: "Inscripción " + periodo[0] + " " + subModule,
         htmlBody: filetoSend,
         name: "SEMILLEROS UNIVALLE",
         attachments: lastFiles
@@ -471,16 +525,16 @@ function sendConfirmationEmail(form, lastFiles) {
         //Logger.log('my name:' + typeof mfile.getName());
         var myname = mfile.getName();
 
-        if (myname.indexOf('STUD') !== -1) {
+        if (myname.indexOf('STUD') > -1) {
             links += '<p> <strong>Enlace Constancia Estudio: </strong><a href="' + mfile.getUrl() + '">Constancia de Estudio</a></p>';
 
-        } else if (myname.indexOf('FUNC') !== -1) {
+        } else if (myname.indexOf('FUNC') > -1) {
             links += '<p> <strong>Enlace Constancia Funcionario: </strong><a href="' + mfile.getUrl() + '">Constancia de Funcionario</a></p>';
 
-        } else if (myname.indexOf('DOC') !== -1) {
+        } else if (myname.indexOf('DOC') > -1) {
             links += '<p> <strong>Enlace Documento: </strong><a href="' + mfile.getUrl() + '">Documento Identidad</a></p>';
 
-        } else if (myname.indexOf('RECI') !== -1) {
+        } else if (myname.indexOf('RECI') > -1) {
             links += '<p> <strong>Enlace Recibo: </strong><a href="' + mfile.getUrl() + '">Recibo de Pago</a></p>';
 
         }
@@ -559,7 +613,6 @@ function getPDFFile(data) {
             continue;
         }
     }
-    //           contenthtml += '<img src="http://semillero.univalle.edu.co/images/AFICHE-2017B.png" />  <img src="http://semillero.univalle.edu.co/images/AFICHE-2017B.png" style="margin-left:50px"/> '
     contenthtml += '<div style="text-align:center">';
     contenthtml += "<h3>UNIVERSIDAD DEL VALLE</h3>";
     contenthtml += "<h3>CONFIRMACION INSCRIPCION SEMILLERO DE CIENCIAS</h3>";
@@ -571,10 +624,6 @@ function getPDFFile(data) {
         '<p><strong>NOTA: No olvide realizar la prueba diagnostica <a href="' + moduleUrl + '">' + moduleName + '</a>.</p></strong>';
     contenthtml +=
         "<p><strong>Importante:</strong>Conserve el original del recibo de pago, la cual debe de ser entregado el primer dia de clases a los monitores.</p><hr>";
-
-
-
-
 
     contenthtml += '<h3> Modulo: ' + moduleName + "</h3>";
     contenthtml += "<p> <strong>Fecha de inscripcion:</strong>	" + new Date() + "</p>";
@@ -649,11 +698,6 @@ function addToModule(module, data) {
     return true
 }
 
-
-function addSheetToSpreadSheet(sheet, spreadsheet) {
-    spreadsheet.insertSheet(sheet)
-}
-
 function createModulesSheets() {
     var actualPeriod = getActualPeriod()[2]
     var periodSpreadSheet = SpreadsheetApp.openByUrl(actualPeriod);
@@ -670,7 +714,7 @@ function createModulesSheets() {
         if (x > 0) {
 
             if (!getSheetFromSpreadSheet(actualPeriod, modules[x][0])) {
-                addSheetToSpreadSheet(modules[x][0], periodSpreadSheet)
+                periodSpreadSheet.insertSheet(modules[x][0])
                 moduleSheet = getSheetFromSpreadSheet(actualPeriod, modules[x][0])
                 if (moduleSheet.getLastRow() == 0) {
                     moduleSheet.appendRow([
@@ -689,5 +733,5 @@ function createModulesSheets() {
             }
         }
     }
-    return true;
+    return true
 }

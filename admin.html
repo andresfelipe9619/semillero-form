@@ -639,34 +639,33 @@
             });
 
             $('#myForm #save').on('click', validateAndSave);
-            $('#myForm #edit').on('click', editStudent);
+            $('#myForm #edit').on('click', editStudentData);
 
             populateCountries("deptres", "ciudadres");
 
         });
 
-        function editStudent() {
+        function editStudentData() {
             var valid = validateAndSave();
 
             var onSuccess = function (person) {
-                if (person) {
-                    person.data
-                }
+
             }
             if (valid) {
                 var serialized = $('#myForm').serializeArray()
                 var dataToEdit = []
 
                 for (var x in serialized) {
-                    if (x != 6) {
+                    if (x != 6 && serialized[x].value != '') {
                         dataToEdit.push(serialized[x].value)
                     }
                 }
 
-                google.run.withSuccessHandler(onSuccess).validatePerson(dataToEdit[0])
+                google.script.run.withSuccessHandler(onSuccess).editStudent(dataToEdit)
 
             }
             console.log('SERIAL', serialized)
+            console.log('NORMAL', dataToEdit)
         }
 
         function cargarInfo() {
@@ -701,6 +700,7 @@
         }
 
         function cargarPersona(person) {
+            console.log('the hell', person)
             if (!person) {
                 setDefaultCursor();
                 swal({
@@ -709,7 +709,13 @@
                     type: 'warning',
                 });
 
-            } else {
+            } else if (person.state == 'antiguo') {
+                swal({
+                    title: 'Advertencia ...',
+                    text: 'El estudiante esta inscrito anteriormente, pero no el periodo actual ',
+                    type: 'warning',
+                });
+            } else if (person.state == 'actual'){
                 setWaitCursor();
                 mostrarRegistro();
                 $('#myForm #save').css('display', 'none')
@@ -733,6 +739,12 @@
                 $('#grado').trigger('change')
                 $('#acudiente').val(String(person.data[14]))
                 $('#telacudiente').val(String(person.data[15]))
+                console.log('eps', $('#eps').val())
+                if (!$('#eps').val()) {
+                    $('#eps').val('OTRA')
+                    $('#eps').trigger('change')
+                    $('#otraeps').val(String(person.data[10]))
+                }
                 if (String(person.data[16]) != 'NO') {
                     console.log('atleast')
                     $('#inscritoanterior').val('SI')
