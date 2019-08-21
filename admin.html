@@ -121,7 +121,7 @@
                 <p>Solo se permite el registro con un correo gmail o univalle</p>
                 <label class="control-label col-xs-2" for="email">Correo Electrónico*</label>
                 <div class="col-xs-5 input-div">
-                    <input type="email" class="form-control text-lowercase" id="email" name="email" placeholder="Correo...">
+                    <input type="email" class="form-control text-lowercase" id="email" name="email" placeholder="Correo..." autocomplete="off">
                 </div>
                 <div class="col-xs-3">¿No tienes correo gmail?
                     <span class="btn btn-info" id="createEmail" style="display:inline;">¡Crea Uno!</span>
@@ -130,7 +130,7 @@
             <div class="row">
                 <label class="control-label col-xs-2" for="confirmEmail">Confirma Correo Electrónico*</label>
                 <div class="col-xs-5 input-div">
-                    <input type="email" class="form-control text-lowercase" id="confirmEmail" name="confirmEmail" placeholder="Confirma Correo...">
+                    <input type="email" class="form-control text-lowercase" id="confirmEmail" name="confirmEmail" placeholder="Confirma Correo..." autocomplete="off">
                 </div>
             </div>
 
@@ -235,7 +235,7 @@
                         <option value="9">9°</option>
                         <option value="10">10°</option>
                         <option value="11">11°</option>
-                        <option value="EGRESADO">Egresado</option>
+                        <option value="EGRESADO">Egresado colegios</option>
                     </select>
                 </div>
             </div>
@@ -279,7 +279,8 @@
                         <option value="BIOQ: Química Orgánica y Bioquímica">BIOQ: Química Orgánica y Bioquímica </option>
                         <option value="Lectura Crítica">Lectura Crítica </option>
                         <option value="Escritura Creativa">Escritura Creativa </option>
-                        <option value="Música, Percusión y Flauta Dulce ">Música, Percusión y Flauta Dulce } </option>
+                        <option value="Música, Percusión y Flauta Dulce ">Música, Percusión y Flauta Dulce </option>
+                        <option value="Nivelación Académica Semilleros"> Nivelación Académica Semilleros </option>
                     </select>
                 </div>
             </div>
@@ -294,7 +295,18 @@
                     <input type="radio" id="particular" name="convenio" value="PARTICULAR">PARTICULAR</label>
                 <label class="radio-inline lg">
                     <input type="radio" id="relacion_univalle" name="convenio" value="RELACION_UNIVALLE">RELACIÓN UNIVALLE</label>
+                <label class="radio-inline lg">
+                    <input type="radio" id="becado" name="convenio" value="BECADOS">BECADOS</label>    
             </div>
+            <!-- Campo valor consignado -->
+            <div class="row">
+                <br>
+                <label class="control-label col-xs-2" for="valconsignado">Valor Consignado*</label>
+                <div class="col-xs-4 input-div">
+                    <input type="text" class="form-control numeric" id="valconsignado" name="valconsignado" placeholder="Valor consignado">
+                </div>
+            </div>
+            <!-- Fin campo valor consignado -->
 
             <div class="row">
                 <h3>Módulo a Matricular*:</h3>
@@ -409,6 +421,21 @@
                                 <input type="radio" class="biologia" name="seleccion" id="blg" value="blg">
                                 <label>Estudio de los seres vivos y sus procesos vitales</label>
                             </div>
+                            <div id="estsertwo-div" class="checkbox">
+                                <input type="radio" class="biologia" name="seleccion" id="estsertwo" value="estsertwo">
+                                <label>Estudio de los seres vivos y sus procesos vitales II</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="modNas" class="col-xs-4 input-div">
+                        <div class="row">
+                            <h4>NAS</h4>
+                        </div>
+                        <div class="row input-div">
+                            <div class="checkbox">
+                                <input type="radio" class="niv_acad_semi" name="seleccion" id="nas" value="nas">
+                                <label>Nivelación Académica Semilleros</label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -440,6 +467,32 @@
                     <input class="file" type="file" id="constanciaFuncFile" name="constanciaFuncFile" accept="application/pdf" disabled>
                 </div>
             </div>
+            
+            
+            <!-- Nueva carga de archivos -->
+            <div id="pdfRecibos" class="row">
+                <label class="control-label col-xs-2" for="recibosPublicos">Recibos Públicos*</label>
+                <div class="col-xs-5 input-div">
+                    <input class="file" type="file" id="recibosPublicos" name="recibosPublicos" accept="application/pdf " disabled>
+                </div>
+            </div>
+
+            <div id="pdfCartaSolicitud" class="row">
+                <label class="control-label col-xs-2" for="cartaSolicitud">Carta de Solicitud*</label>
+                <div class="col-xs-5 input-div">
+                    <input class="file" type="file" id="cartaSolicitud" name="cartaSolicitud" accept="application/pdf" disabled>
+                </div>
+            </div>
+            
+            <div id="pdfActaGrado" class="row">
+                <label class="control-label col-xs-2" for="actaGrado">Acta de Grado*</label>
+                <div class="col-xs-5 input-div">
+                    <input class="file" type="file" id="actaGrado" name="actaGrado" accept="application/pdf" disabled>
+                </div>
+            </div>
+            <!-- Fin nueva carga archivos -->
+            
+            
 
             <div id="pdfRecibo" class="row">
                 <label class="control-label col-xs-2" for="reciboFile">Recibo de pago*</label>
@@ -447,12 +500,24 @@
                     <input class="file" type="file" id="reciboFile" name="reciboFile" accept="application/pdf">
                 </div>
             </div>
+            
+            <hr>
+            <h3>Términos y condiciones</h3>
+            <div id="termsCond" class="row">
+              <p>
+                Al enviar este formulario usted autoriza a la Universidad del Valle de que maneje sus datos personales con fines
+                académicos, estudios estadísticos y/o socioeducativos. La institución garantiza el adecuado uso de su información 
+                y que no será usada con fines diferentes a los ya mencionados.
+              </p>
+              <input type="radio" name="terms" value="Acepto"> Acepto<br>
+            </div>
+            
             <hr>
             <button align="center" class="btn btn-info oculto" type="button" id="edit">Guardar Informacion</button>
             <div id="btn_div" class="row">
                 <input align="center" class="btn btn-info" type="submit" value="Inscribirme" id="save">
                 <span id="mySpan" style="display:none; color: #d51b23;">Procesando Información...</span>
-            </div>
+            </div>          
 
         </form>
     </div>
@@ -475,7 +540,9 @@
             //$("#myForm #pdfDoc").hide();
             $('#myForm #pdfConstanciaEstu').hide();
             $('#myForm #pdfContanciaFun').hide();
-            //$('#myForm #pdfRecibo').hide();
+            $('#myForm #pdfRecibos').hide();
+            $('#myForm #pdfCartaSolicitud').hide();
+            $('#myForm #pdfActaGrado').hide();
             $('#myForm #modMatematicas').hide();
             $('#myForm #modMatematicas #checkboxMate').children().hide();
             $('#myForm #modFisica').hide();
@@ -484,17 +551,34 @@
             $('#myForm #modHumanidades').hide();
             $('#myForm #modArtes').hide();
             $('#modBusqueda').hide();
+            $('#myForm #modNas').hide();
             $('#myForm #estamento').on('change', function () {
                 var val = $(this).val();
+                var grado = $('#grado').val();
                 if (val == 'PUBLICO' || val == 'COBERTURA') {
-
-                    $('#myForm #pdfConstanciaEstu').fadeIn();
-                    $('#myForm #constanciaEstudFile').prop('disabled', false);
-
+                    if (grado == 'EGRESADO') {
+                       $('#myForm #pdfActaGrado').fadeIn();
+                       $('#myForm #actaGrado').prop('disabled', false);
+                       $('#myForm #pdfConstanciaEstu').fadeOut();
+                       $('#myForm #constanciaEstudFile').prop('disabled', true);              
+                    } else {
+                       $('#myForm #pdfConstanciaEstu').fadeIn();
+                       $('#myForm #constanciaEstudFile').prop('disabled', false);
+                       $('#myForm #pdfActaGrado').fadeOut();
+                       $('#myForm #actaGrado').prop('disabled', true);
+                    }
                 } else if (val == 'PRIVADO') {
-
-                    $('#myForm #pdfConstanciaEstu').fadeOut();
-                    $('#myForm #constanciaEstudFile').prop('    ', true);
+                    if (grado == 'EGRESADO') {
+                       $('#myForm #pdfActaGrado').fadeIn();
+                       $('#myForm #actaGrado').prop('disabled', false);
+                       $('#myForm #pdfConstanciaEstu').fadeOut();
+                       $('#myForm #constanciaEstudFile').prop('disabled', true);              
+                    } else {
+                      $('#myForm #pdfConstanciaEstu').fadeOut();
+                      $('#myForm #constanciaEstudFile').prop('disabled', true);
+                      $('#myForm #pdfActaGrado').fadeOut();
+                      $('#myForm #actaGrado').prop('disabled', true);
+                    }
 
                 } else {
                     $('#myForm #pdfConstanciaEstu').fadeOut();
@@ -518,9 +602,30 @@
                 if (val == 'RELACION_UNIVALLE') {
                     $('#myForm #pdfContanciaFun').fadeIn();
                     $('#myForm #constanciaFuncFile').prop('disabled', false);
+                    $('#myForm #pdfRecibo').fadeIn();
+                    $('#myForm #reciboFile').prop('disabled', false);                    
+                    $('#myForm #pdfRecibos').fadeOut();
+                    $('#myForm #pdfCartaSolicitud').fadeOut();
+                    $('#myForm #recibosPublicos').prop('disabled', true);
+                    $('#myForm #cartaSolicitud').prop('disabled', true);
+                } else if (val == 'BECADOS'){
+                    $('#myForm #pdfRecibos').fadeIn();
+                    $('#myForm #pdfCartaSolicitud').fadeIn();
+                    $('#myForm #recibosPublicos').prop('disabled', false);
+                    $('#myForm #cartaSolicitud').prop('disabled', false);
+                    $('#myForm #pdfRecibo').fadeOut();
+                    $('#myForm #reciboFile').prop('disabled', true);                    
+                    $('#myForm #pdfContanciaFun').fadeOut();
+                    $('#myForm #constanciaFuncFile').prop('disabled',true);
                 } else {
                     $('#myForm #pdfContanciaFun').fadeOut();
                     $('#myForm #constanciaFuncFile').prop('disabled', true);
+                    $('#myForm #pdfRecibos').fadeOut();
+                    $('#myForm #pdfCartaSolicitud').fadeOut();
+                    $('#myForm #recibosPublicos').prop('disabled', true);
+                    $('#myForm #cartaSolicitud').prop('disabled', true);
+                    $('#myForm #pdfRecibo').fadeIn();
+                    $('#myForm #reciboFile').prop('disabled', false);
                 }
 
             });
@@ -580,7 +685,7 @@
 
             $('#myForm #grado').on('change', function () {
                 var anterior = $('#otrocurso').val();
-                console.log('MI ANTERIOR: ', anterior);
+                var estamento = $('#estamento').val();
                 var val = this.value;
                 if (val == 8 || val == 9) {
                     $('#myForm #modMatematicas').fadeIn();
@@ -592,6 +697,7 @@
                     $('#myForm #modArtes').fadeIn();
                     $('#myForm #modBiologia').fadeIn();
                     $('#myForm #modArtes #temamuper').fadeIn();
+                    $('#myForm #modNas').fadeOut();
                 } else if ((val == 10 || val == 11) || val == "EGRESADO") {
                     $('#myForm #modMatematicas').fadeIn();
                     $('#myForm #modMatematicas #checkboxMate').children().fadeIn();
@@ -602,6 +708,7 @@
                     $('#myForm #modArtes').fadeOut();
                     $('#myForm #modBiologia').fadeIn();
                     $('#myForm #modArtes #temamuper').fadeOut();
+                    $('#myForm #modNas').fadeOut();
                 } else if ((val == 6 || val == 7) && (anterior.indexOf('Conjuntos') >= 0 || anterior.indexOf('racional') >= 0)) {
                     console.log('MI ANTERIOR IN IF: ', anterior);
                     $('#myForm #modMatematicas').fadeIn();
@@ -612,6 +719,7 @@
                     $('#myForm #modArtes #temamuper').fadeOut();
                     $('#myForm #modHumanidades').fadeOut();
                     $('#myForm #modBiologia').fadeOut();
+                    $('#myForm #modNas').fadeOut();
 
 
                 } else if ((val == 6 || val == 7)) {
@@ -624,6 +732,7 @@
                     $('#myForm #modArtes #temamuper').fadeOut();
                     $('#myForm #modHumanidades').fadeOut();
                     $('#myForm #modBiologia').fadeOut();
+                    $('#myForm #modNas').fadeOut();
 
                 } else {
                     $('#myForm #modMatematicas').fadeOut();
@@ -634,11 +743,47 @@
                     $('#myForm #modHumanidades').fadeOut();
                     $('#myForm #modArtes').fadeOut();
                     $('#myForm #modBiologia').fadeOut();
+                    $('#myForm #modNas').fadeOut();
 
+                }                 
+                if (val == 11 || val == "EGRESADO") {
+                   $('#myForm #modNas').fadeIn();
+                   $('#myForm #pdfActaGrado').fadeOut();
+                }
+                if (val == "EGRESADO") {
+                   $('#myForm #pdfActaGrado').fadeIn();
+                   $('#myForm #actaGrado').prop('disabled', false);
+                   $('#myForm #pdfConstanciaEstu').fadeOut();
+                   $('#myForm #constanciaEstudFile').prop('disabled', true);
+                }
+                if (val != "EGRESADO"){
+                   $('#myForm #pdfActaGrado').fadeOut();
+                   $('#myForm #actaGrado').prop('disabled', true);
+                   $('#myForm #pdfConstanciaEstu').fadeIn();
+                   $('#myForm #constanciaEstudFile').prop('disabled', false);
+                }
+                if (estamento == "PRIVADO"){
+                   $('#myForm #pdfConstanciaEstu').fadeOut();
+                   $('#myForm #constanciaEstudFile').prop('disabled', true);
                 }
             });
-
-            $('#myForm #save').on('click', validateAndSave);
+            
+            $('#myForm #save').on('click', function (e) {              
+              var terminos = $('input[name=terms]:checked', '#myForm').val();
+              console.log(terminos);
+              if (terminos !== "Acepto") {
+                e.preventDefault();
+                  swal({
+                    title: "Advertencia",
+                    text: "Debe aceptar los términos y condiciones para enviar el formulario.",
+                    type: "warning",
+                    confirmButtonText: "Ok",
+                    closeOnConfirm: true
+                  });                 
+              }else {
+                validateAndSave();
+              }
+            });
             $('#myForm #edit').on('click', editStudentData);
 
             populateCountries("deptres", "ciudadres");
@@ -649,14 +794,24 @@
             var valid = validateAndSave();
 
             var onSuccess = function (person) {
-
+                swal({
+                    title: "Exito!",
+                    text: "Se edito el estudiante satisfactoriamente!",
+                    type: "success",
+                    confirmButtonText: "Ok",
+                    closeOnConfirm: true
+                });
             }
             if (valid) {
                 var serialized = $('#myForm').serializeArray()
                 var dataToEdit = []
 
                 for (var x in serialized) {
-                    if (x != 6 && serialized[x].value != '') {
+                    if(x==7){
+                        dataToEdit.push(serialized[Number(x)+1].value)
+                        dataToEdit.push(serialized[x].value)
+                    }else
+                    if ((x != 6 && x!= 8) && (serialized[x].value != '' && serialized[x].value != 'OTRA' && serialized[x].value != 'SI')) {
                         dataToEdit.push(serialized[x].value)
                     }
                 }
@@ -752,20 +907,29 @@
                     $('#otrocurso').val(String(person.data[16]))
                     $('#otrocurso').trigger('change')
 
-                }
+                }          
+                
 
                 if (String(person.data[17])) {//convenio
-                    $(`#${person.data[17].toLowerCase()}`).prop('checked', true)
-                    $(`#${person.data[17].toLowerCase()}`).trigger("change");
+                    var convenio = person.data[17].toLowerCase();
+                    $('#' + convenio).prop('checked', true)
+                    $('#' + convenio).trigger("change");
                 }
-
-                if (String(person.data[person.data.length - 2])) {//modulos
+                
+                if (String(person.data[18])) {
+                    $('#valconsignado').val(String(person.data[18]));
+                }                
+                if (String(person.data[person.data.length - 4])) {//modulos.
+                    //IMPORTANTE:
+                    //CADA VEZ QUE SE AÑADA UN NUEVO CAMPO AL FORMULARIO, SE DEBE REVISAR ESTE CONDICIONAL.
+                    //AÑADIR SIEMPRE EL NUEVO CAMPO ANTES DE LA CARGA DE LA URL DE LOS ARCHIVOS EN LA HOJA DE
+                    //CALCULO.                                              
                     google.script.run.withSuccessHandler(onSuccess).getModules();
                     function onSuccess(modules) {
                         for (var x in modules) {
-                            if (modules[x][0] == person.data[person.data.length - 2]) {
-                                $(`#${modules[x][1]}`).prop('checked', true)
-                                $(`#${modules[x][1]}`).trigger("change");
+                            if (modules[x][0] == person.data[person.data.length - 4]) {
+                                $('#'+ modules[x][1]).prop('checked', true)
+                                $('#'+ modules[x][1]).trigger("change");
                             }
                         }
                     }
@@ -794,14 +958,12 @@
             return newArray;
         }
 
+
         function validateAndSave() {
             jQuery.extend(jQuery.validator.messages, {
                 required: "Este campo es obligatorio.",
                 number: "Este campo es numérico"
             });
-            jQuery.validator.email = function (value, element) {
-                return this.optional(element) || /^[a-z0-9](\.?[a-z0-9]){5,}@g(oogle)?mail\.com$/.test(value);
-            }
 
             jQuery.validator.addMethod("EqualToGroup", function (value, element, param) {
                 var isequal = false;
@@ -866,17 +1028,7 @@
                         number: true
                     },
                     telcelular: {
-                        required: {
-                            depends: function (element) {
-                                var valuefijo = $('#telfijo').val();
-                                if (valuefijo == '') {
-                                    return true;
-                                } else {
-                                    return false;
-                                }
-
-                            }
-                        },
+                        required: true,
                         number: true
                     },
                     ciudadres: {
@@ -944,7 +1096,14 @@
                         }
                     },
                     convenio: {
-                        EqualToGroup: ["CONVENIO_COLEGIO", "PARTICULAR", "RELACION_UNIVALLE"],
+                        EqualToGroup: ["CONVENIO_COLEGIO", "PARTICULAR", "RELACION_UNIVALLE", "BECADOS"],
+                        required: true
+                    },
+                    valconsignado: {
+                        required: true,
+                        number: true
+                    },
+                    terms: {
                         required: true
                     },
                     docFile: {
@@ -991,7 +1150,40 @@
                                 }
                             }
                         }
-                    }
+                    },
+                    recibosPublicos: {
+                        required: {
+                            depends: function (element) {
+                                if ($('#btn-registrar').is(":visible")) {
+                                    return false
+                                } else {
+                                    return ($('#becado').is(':checked'));
+                                }
+                            }
+                        }
+                    },
+                    cartaSolicitud: {
+                        required: {
+                            depends: function (element) {
+                                if ($('#btn-registrar').is(":visible")) {
+                                    return false
+                                } else {
+                                    return ($('#becado').is(':checked'));
+                                }
+                            }
+                        }
+                    },
+                    actaGrado: {
+                        required: {
+                            depends: function (element) {
+                                if ($('#btn-registrar').is(":visible")) {
+                                    return false
+                                } else {
+                                    return ($('#grado').val() == 'EGRESADO');
+                                }
+                            }
+                        }
+                    },
                 },
                 messages: {
 
@@ -1020,18 +1212,24 @@
                     seleccion: {
                         required: "selecciona por lo menos un modulo"
                     },
+                    valconsignado: {
+                        required: "Por favor digita el valor total consignado"
+                    },
                     docFile: {
-                        required: "Seleeciona un archivo PDF correpondiente a la copia de su número de Identificación"
+                        required: "Seleeciona un archivo PDF correspondiente a la copia de su número de Identificación"
                     },
                     constanciaEstudFile: {
-                        required: "Seleeciona un archivo PDF correpondiente a la copia de su constancia estudiantil"
+                        required: "Seleeciona un archivo PDF correspondiente a la copia de su constancia estudiantil"
                     },
                     constanciaFuncFile: {
-                        required: "Seleeciona un archivo PDF correpondiente a la copia de la constancia del Funcionario"
+                        required: "Seleeciona un archivo PDF correspondiente a la copia de la constancia del Funcionario"
                     },
                     reciboFile: {
-                        required: "Seleeciona un archivo PDF correpondiente a la copia de su recibo de pago"
-                    }
+                        required: "Seleeciona un archivo PDF correspondiente a la copia de su recibo de pago"
+                    },
+                    actaGrado: {
+                        required: "Selecciona un archivo PDF correspondiente a la copia de su acta de grado"
+                    },
                 },
                 highlight: function (element) {
                     var modules = $(element).closest('.modules_matricular');
@@ -1147,7 +1345,7 @@
                 console.log('Estatus', status);
                 swal({
                     title: "Exito!",
-                    text: "La inscripción se realizó satisfactoriamente!\nRecibiras un correo para confirmar los datos de tu inscripcion y un link para realizar tu prueba diagnostica\nFavor entregar el recibo original el primer dia de clases a los monitores",
+                    text: "La inscripción se realizó satisfactoriamente!\nRecibiras un correo para confirmar los datos de tu inscripcion.\nFavor entregar el recibo original el primer dia de clases a los monitores",
                     type: "success",
                     confirmButtonText: "Ok",
                     closeOnConfirm: true
