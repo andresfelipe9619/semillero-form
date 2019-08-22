@@ -364,19 +364,19 @@
                                 <input type="radio" class="artes" name="seleccion" id="muper" value="muper">
                                 <label>Música, Percusión y Flauta Dulce</label>
                             </div>
-                            <div class="checkbox">
+                            <div id="temaapmus" class="checkbox">
                                 <input type="radio" class="artes" name="seleccion" id="apmus" value="apmus">
                                 <label>Apreciación Musical</label>
                             </div>
-                            <div class="checkbox">
+                            <div id="tematit" class="checkbox">
                                 <input type="radio" class="artes" name="seleccion" id="tit" value="tit">
                                 <label>Taller infantil de Teatro</label>
                             </div>
-                            <div class="checkbox">
+                            <div id="tematjt" class="checkbox">
                                 <input type="radio" class="artes" name="seleccion" id="tjt" value="tjt">
                                 <label>Taller Juvenil de Teatro</label>
                             </div>
-                            <div class="checkbox">
+                            <div id="tematpd" class="checkbox">
                                 <input type="radio" class="artes" name="seleccion" id="tpd" value="tpd">
                                 <label>Taller Preparatorio de Danza</label>
                             </div>
@@ -631,6 +631,9 @@
                     $('#myForm #modBiologia').fadeIn();
                     $('#myForm #modArtes #temamuper').fadeIn();
                     $('#myForm #modNas').fadeOut();
+                    $('#myForm #modArtes').fadeIn();
+                    $('#myForm #modArtes .input-div').children().fadeOut()
+                    $('#myForm #modArtes #tematjt').fadeIn();
                 } else if ((val == 10 || val == 11) || val == "EGRESADO") {
                     $('#myForm #modMatematicas').fadeIn();
                     $('#myForm #modMatematicas #checkboxMate').children().fadeIn();
@@ -642,6 +645,12 @@
                     $('#myForm #modBiologia').fadeIn();
                     $('#myForm #modArtes #temamuper').fadeOut();
                     $('#myForm #modNas').fadeOut();
+                    $('#myForm #modArtes').fadeIn();
+                    $('#myForm #modArtes .input-div').children().fadeOut()
+                    $('#myForm #modArtes #tematpd').fadeIn();
+                    if(val != "EGRESADO"){
+                        $('#myForm #modArtes #tematjt').fadeIn();
+                    }
                 } else if ((val == 6 || val == 7) && (anterior.indexOf('Conjuntos') >= 0 || anterior.indexOf('racional') >= 0)) {
                     console.log('MI ANTERIOR IN IF: ', anterior);
                     $('#myForm #modMatematicas').fadeIn();
@@ -653,7 +662,12 @@
                     $('#myForm #modHumanidades').fadeOut();
                     $('#myForm #modBiologia').fadeOut();
                     $('#myForm #modNas').fadeOut();
-
+                    $('#myForm #modArtes').fadeIn();
+                    $('#myForm #modArtes .input-div').children().fadeOut()
+                    if(val==6){
+                        $('#myForm #modArtes #tematit').fadeIn();
+                    }
+                    $('#myForm #modArtes #tematjt').fadeIn();
 
                 } else if ((val == 6 || val == 7)) {
                     $('#myForm #modMatematicas').fadeIn();
@@ -666,8 +680,16 @@
                     $('#myForm #modHumanidades').fadeOut();
                     $('#myForm #modBiologia').fadeOut();
                     $('#myForm #modNas').fadeOut();
+                    $('#myForm #modArtes').fadeIn();
+                    $('#myForm #modArtes .input-div').children().fadeOut()
+                    if(val==6){
+                        $('#myForm #modArtes #tematit').fadeIn();
+                    }
+                    $('#myForm #modArtes #tematjt').fadeIn();
+                    
+                } 
 
-                } else {
+                else {
                     $('#myForm #modMatematicas').fadeOut();
                     $('#myForm #modMatematicas #checkboxMate').children().fadeOut();
                     $('#myForm #modMatematicas #checkboxMate').children('#temaentrac').fadeOut();

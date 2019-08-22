@@ -56,6 +56,7 @@ function getRawDataFromSheet(url, sheet) {
 }
 
 function registerStudentActualPeriod(data, form) {
+  Logger.log("=============Registrando Periodo actual===========");
   var inscritossheet = getSheetFromSpreadSheet(
     getActualPeriod()[2],
     "INSCRITOS"
@@ -63,6 +64,8 @@ function registerStudentActualPeriod(data, form) {
 
   Logger.log("Datos en registerStudentActualPeriod: ");
   Logger.log(data);
+  Logger.log("Datos en FORM registerStudentActualPeriod: ");
+  Logger.log(form);
 
   var lastRow = inscritossheet.getLastRow();
   inscritossheet.appendRow(data);
@@ -71,6 +74,7 @@ function registerStudentActualPeriod(data, form) {
   if (lastRowRes > lastRow) {
     res = "exito";
   }
+  Logger.log("=============FIN Registrando Periodo actual===========");
   return res;
 }
 
@@ -315,6 +319,7 @@ function editModule(moduleName, newModule) {}
 function createModule(module) {}
 
 function validatePerson(cedula) {
+  Logger.log("=============Validando Persona===========");
   var inscritos = getStudents();
   // var res = ""
   var result = {
@@ -345,13 +350,14 @@ function validatePerson(cedula) {
       result.data = inscritos[person];
     }
   }
-
+  Logger.log("=============FIN Validando Persona===========");
   if (result.index > -1) {
     return result;
   } else {
     result.state = "no esta";
     return result;
   }
+  
 }
 
 function buscarPersona(cedula) {
@@ -379,38 +385,41 @@ function buscarPersona(cedula) {
 
 function validateModule(modulos, data) {
   var modulosMatriculados = [];
+  Logger.log("=============Validando modulos===========");
 
   var miModulos = getModules();
   Logger.log("modulos selected");
   Logger.log(modulos);
 
-  var arraytitulos = [];
+  var titulosModulos = [];
 
   for (var x in miModulos) {
     if (x > 0) {
-      arraytitulos.push(miModulos[x][1]);
+      titulosModulos.push(miModulos[x][1]);
     }
   }
-  Logger.log("array titulos");
-  Logger.log(arraytitulos);
+  Logger.log("Titulos modulos");
+  Logger.log(titulosModulos);
 
   if (modulos) {
-    for (var i in arraytitulos) {
-      if (modulos.localeCompare(arraytitulos[i]) == 0) {
+    for (var i in titulosModulos) {
+      if (modulos.localeCompare(titulosModulos[i]) == 0) {
         data.push("x");
-        modulosMatriculados.push(arraytitulos[i]);
+        modulosMatriculados.push(titulosModulos[i]);
       } else {
         data.push("");
       }
     }
   } else {
-    for (var i in arraytitulos) {
+    for (var i in titulosModulos) {
       data.push("");
     }
   }
 
   Logger.log("modulo matriculado");
   Logger.log(modulosMatriculados);
+  Logger.log("=============FIN Validando modulos===========");
+
   return modulosMatriculados;
 }
 
