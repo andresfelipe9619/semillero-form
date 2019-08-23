@@ -314,10 +314,6 @@ function editEstudentGeneral(student) {
   res = "exito";
 }
 
-function editModule(moduleName, newModule) {}
-
-function createModule(module) {}
-
 function validatePerson(cedula) {
   Logger.log("=============Validando Persona===========");
   var inscritos = getStudents();

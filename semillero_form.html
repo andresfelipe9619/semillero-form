@@ -190,6 +190,11 @@
                 <div class="col-xs-2 input-div">
                     <select class="form-control" id="grado" name="grado" placeholder="Colegio...">
                         <option>Grado*</option>
+                        <option value="1">1°</option>
+                        <option value="2">2°</option>
+                        <option value="3">3°</option>
+                        <option value="4">4°</option>
+                        <option value="5">5°</option>
                         <option value="6">6°</option>
                         <option value="7">7°</option>
                         <option value="8">8°</option>
@@ -664,9 +669,6 @@
                     $('#myForm #modNas').fadeOut();
                     $('#myForm #modArtes').fadeIn();
                     $('#myForm #modArtes .input-div').children().fadeOut()
-                    if(val==6){
-                        $('#myForm #modArtes #tematit').fadeIn();
-                    }
                     $('#myForm #modArtes #tematjt').fadeIn();
 
                 } else if ((val == 6 || val == 7)) {
@@ -682,12 +684,20 @@
                     $('#myForm #modNas').fadeOut();
                     $('#myForm #modArtes').fadeIn();
                     $('#myForm #modArtes .input-div').children().fadeOut()
-                    if(val==6){
-                        $('#myForm #modArtes #tematit').fadeIn();
-                    }
                     $('#myForm #modArtes #tematjt').fadeIn();
                     
-                } 
+                } else if(val >=1 && val <=5){
+                    $('#myForm #modNas').fadeOut();
+                    $('#myForm #modMatematicas').fadeOut();
+                    $('#myForm #modMatematicas #checkboxMate').children().fadeOut();
+                    $('#myForm #modFisica').fadeOut();
+                    $('#myForm #modQuimica').fadeOut();
+                    $('#myForm #modHumanidades').fadeOut();
+                    $('#myForm #modBiologia').fadeOut();
+                    $('#myForm #modArtes').fadeIn();
+                    $('#myForm #modArtes .input-div').children().fadeOut()
+                    $('#myForm #modArtes #tematit').fadeIn();
+                }
 
                 else {
                     $('#myForm #modMatematicas').fadeOut();
@@ -889,7 +899,7 @@
                     },
                     grado: {
                         required: true,
-                        EqualToGroup: ["6", "7", "8", "9", "10", "11", "EGRESADO"]
+                        EqualToGroup: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "EGRESADO"]
                     },
                     acudiente: {
                         required: true
