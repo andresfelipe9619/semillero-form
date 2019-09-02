@@ -2,7 +2,8 @@ var GENERAL_DB =
   "https://docs.google.com/spreadsheets/d/1TsbNe2yNzhhmJ4vwyS3X0qztIP8kdKeSgoFY95C5-5U/edit#gid=0";
 
 function doGet(e) {
-  var guess_email = Session.getActiveUser().getEmail();
+  var guess_email = Session.getEffectiveUser();
+  Logger.log(Session.getEffectiveUser());
   if (
     guess_email == "andresfelipe9619@gmail.com" ||
     guess_email == "suarez.andres@correounivalle.edu.co" ||
@@ -353,7 +354,6 @@ function validatePerson(cedula) {
     result.state = "no esta";
     return result;
   }
-  
 }
 
 function buscarPersona(cedula) {
