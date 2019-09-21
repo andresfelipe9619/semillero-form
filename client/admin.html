@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Formulario Inscripción Semillero de Ciencias</title>
+
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css"
+    />
+    <style>
+      h1 {
+        color: rgba(235, 30, 0, 1);
+      }
+
+      ::placeholder {
+        /* Recent browsers */
+        text-transform: none;
+      }
+
+      .oculto {
+        display: none;
+      }
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.15.1/jquery.validate.min.js"></script>
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.0.272/jspdf.debug.js"
+    ></script>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <img
+            src="http://semillero.univalle.edu.co/images/Logo-PNG-Grande-UV.png"
+            style="width: 250px; margin:auto; height: auto;"
+          />
+        </div>
+        <div class="col-md-6">
+          <img
+            src="http://www.univalle.edu.co/images/logo.jpg"
+            style="margin-top:80px; display:block;  "
+          />
+        </div>
+      </div>
+      <div class="row">
+        <h1 align="center" style="text-align:center;">
+          Formulario de Inscripción Semilleros de Ciencias
+        </h1>
+        <br />
+        <div class="col-md-6">
+          <div class="input-group">
+            <input
+              type="number"
+              class="form-control numeric"
+              id="cedula_buscada"
+              placeholder="Ingrese documento de identidad a buscar..."
+            />
+            <span class="input-group-btn">
+              <button
+                id="btn-buscar"
+                onclick="cargarInfo()"
+                class="btn btn-default"
+                type="button"
+              >
+                Buscar Estudiante
+              </button>
+            </span>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <button
+            id="btn-registrar"
+            onclick="mostrarRegistro()"
+            class="btn btn-default"
+            type="button"
+          >
+            Registrar Estudiante
+          </button>
+        </div>
+        <!-- <div class="col-md-2">
+                <button id="btn-gestion-form" onclick="mostrarGestionForm()" class="btn btn-default" type="button">Gestionar
+                    Periodos
+                </button>
+            </div> -->
+        <!-- <div class="col-md-2">
+                <button id="btn-gestion-form" onclick="mostrarGestionForm()" class="btn btn-default" type="button">Gestionar
+                    Modulos
+                </button>
+            </div> -->
+      </div>
+      <br />
+      <hr />
+      <div class="row">
+        <div id="modBusqueda" class="row input-div"></div>
+      </div>
+      <!-- <div class="row">
+            <div id="modGestion" class="row">
+
+                <div class="col-md-3">
+                    <label for="periodo-select">Periodo Actual</label>
+                    <select name="periodo-select" id="periodo-select">
+                        <option value="2018A">Nuevo</option>
+                        <option value="2018A">2018A</option>
+                    </select>
+
+                </div>
+
+            </div>
+        </div> -->
+      <form class="form oculto" role="form" id="myForm" name="myForm">
+        <div class="row">
+          <br />
+          <label class="control-label col-xs-2 " for="name"
+            >Nombres y Apellidos*</label
+          >
+          <div class="col-xs-4 input-div">
+            <input
+              type="text"
+              class="form-control text-uppercase"
+              name="name"
+              id="name"
+              placeholder="Su Nombre..."
+              vallue=""
+            />
+          </div>
+          <div class="col-xs-4 input-div">
+            <input
+              type="text"
+              class="form-control text-uppercase"
+              name="lastname"
+              id="lastname"
+              placeholder="Sus Apellidos..."
+            />
+          </div>
+        </div>
+
+        <div class="row">
+          <label class="control-label col-xs-2" for="tipo"
+            >Documento de Identidad*</label
+          >
+          <div class="col-xs-2 input-div">
+            <select class="form-control" id="tipo" name="tipo">
+              <option value="Tipo">Tipo*</option>
+              <option value="T.I">T.I*</option>
+              <option value="C.C">C.C*</option>
+            </select>
+          </div>
+          <div class="col-xs-4 input-div">
+            <input
+              type="number"
+              class="form-control numeric"
+              name="numdoc"
+              id="numdoc"
+              placeholder="Su No. de identificación..."
+              patern="\d+"
+            />
+          </div>
+          <div class="col-xs-2 input-div">
+            <input
+              type="text"
+              class="form-control text-uppercase"
+              name="ciudadDoc"
+              id="ciudadDoc"
+              placeholder="Ciudad de Expedición"
+            />
+          </div>
+        </div>
+
+        <div class="row">
+          <p>Solo se permite el registro con un correo gmail o univalle</p>
+          <label class="control-label col-xs-2" for="email"
+            >Correo Electrónico*</label
+          >
+          <div class="col-xs-5 input-div">
+            <input
+              type="email"
+              class="form-control text-lowercase"
+              id="email"
+              name="email"
+              placeholder="Correo..."
+              autocomplete="off"
+            />
+          </div>
+          <div class="col-xs-3">
+            ¿No tienes correo gmail?
+            <span class="btn btn-info" id="createEmail" style="display:inline;"
+              >¡Crea Uno!</span
+            >
+          </div>
+        </div>
+        <div class="row">
+          <label class="control-label col-xs-2" for="confirmEmail"
+            >Confirma Correo Electrónico*</label
+          >
+          <div class="col-xs-5 input-div">
+            <input
+              type="email"
+              class="form-control text-lowercase"
+              id="confirmEmail"
+              name="confirmEmail"
+              placeholder="Confirma Correo..."
+              autocomplete="off"
+            />
+          </div>
+        </div>
+
+        <div class="row">
+          <label class="control-label col-xs-2" for="telfijo">Teléfonos*</label>
+          <div class="col-xs-3 input-div">
+            <input
+              type="tel"
+              class="form-control numeric"
+              id="telcelular"
+              name="telcelular"
+              placeholder="Teléfono Celular..."
+            />
+          </div>
+          <div class="col-xs-3 input-div">
+            <input
+              type="text"
+              class="form-control numeric"
+              id="telfijo"
+              name="telfijo"
+              placeholder="Teléfono fijo..."
+            />
+          </div>
+          <!-- <label class="control-label col-xs-1" for="telcelular">Teléfono Celular</label>-->
+        </div>
+
+        <div class="row">
+          <label class="control-label col-xs-2" for="deptres"
+            >Departamento de Residencia*</label
+          >
+          <div class="col-xs-3 input-div">
+            <select
+              type="text"
+              class="form-control"
+              id="deptres"
+              name="deptres"
+              placeholder="Departamento"
+            >
+            </select>
+          </div>
+          <label class="control-label col-xs-2" for="ciudadres"
+            >Ciudad de Residencia*</label
+          >
+          <div class="col-xs-3 input-div">
+            <select
+              type="text"
+              class="form-control"
+              id="ciudadres"
+              name="ciudadres"
+              placeholder="Ciudad"
+            >
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <label class="control-label col-xs-2" for="eps">EPS*</label>
+          <div class="col-xs-6 input-div">
+            <select
+              type="text"
+              class="form-control"
+              id="eps"
+              name="eps"
+              placeholder="eps"
+            >
+              <option value="EPS SURAMERICANA S.A."
+                >EPS SURAMERICANA S.A.</option
+              >
+              <option value="SANITAS S.A. E.P.S.">SANITAS S.A. E.P.S.</option>
+              <option value="ALIANSALUD EPS S.A.">ALIANSALUD EPS S.A.</option>
+              <option value="COMPENSAR E.P.S.">COMPENSAR E.P.S.</option>
+              <option value="COOMEVA E.P.S. S.A.">COOMEVA E.P.S. S.A.</option>
+              <option value="NUEVA EPS">NUEVA EPS</option>
+              <option value="EPS FAMISANAR LTDA">EPS FAMISANAR LTDA</option>
+              <option value="SALUD TOTAL S.A. EPS">SALUD TOTAL S.A. EPS</option>
+              <option value="SERVICIO OCCIDENTAL DE SALUD SOS EPS"
+                >SERVICIO OCCIDENTAL DE SALUD SOS EPS</option
+              >
+              <option value="COMFENALCO VALLE E.P.S."
+                >COMFENALCO VALLE E.P.S.
+              </option>
+              <option value="CRUZ BLANCA EPS S.A.">CRUZ BLANCA EPS S.A.</option>
+              <option value="SALUDCOOP">SALUDCOOP</option>
+              <option value="COOSALUD EPS">COOSALUD EPS</option>
+              <option value="ASOCIACIÓN MUTUAL SER ESS"
+                >ASOCIACIÓN MUTUAL SER ESS</option
+              >
+              <option value="COMFACOR">COMFACOR</option>
+              <option value="AMBUQ ARS">AMBUQ ARS</option>
+              <option value="COMFASUCRE">COMFASUCRE</option>
+              <option value="CCF CAJACOPI ATLÁNTICO"
+                >CCF CAJACOPI ATLÁNTICO</option
+              >
+              <option value="ASMET SALUD">ASMET SALUD</option>
+              <option value="ECOOPSOS ESS">ECOOPSOS ESS</option>
+              <option value="SAVIA SALUD EPS">SAVIA SALUD EPS</option>
+              <option value="COMFABOY">COMFABOY</option>
+              <option value="CCF DE LA GUAJIRA">CCF DE LA GUAJIRA</option>
+              <option value="SALUDVIDA E.P.S. S.A."
+                >SALUDVIDA E.P.S. S.A.</option
+              >
+              <option value="COMFAMILIAR HUILA">COMFAMILIAR HUILA</option>
+              <option value="CCF DE NARIÑO">CCF DE NARIÑO</option>
+              <option value="EMDISALUD E.S.S.">EMDISALUD E.S.S.</option>
+              <option value="CAPITAL SALUD EPS">CAPITAL SALUD EPS</option>
+              <option value="CAPRESOCA E.P.S.">CAPRESOCA E.P.S.</option>
+              <option value="COMPARTA">COMPARTA</option>
+              <option value="COMFACUNDI">COMFACUNDI</option>
+              <option value="A.R.S. CONVIDA">A.R.S. CONVIDA</option>
+              <option value="COMFAMILIAR CARTAGENA"
+                >COMFAMILIAR CARTAGENA</option
+              >
+              <option value="CAFÉSALUD EPS">CAFÉSALUD EPS</option>
+              <option value="COMFAMILIAR CHOCO">COMFAMILIAR CHOCO</option>
+              <option value="EMSSANAR ESS">EMSSANAR ESS</option>
+              <option value="CAPRECOM">CAPRECOM</option>
+              <option
+                value="ASOCIACIÓN DE CABILDOS INDÍGENAS DEL CESAR Y GUAJIRA “DUSAKAWI A.R.S.I.”"
+                >ASOCIACIÓN DE CABILDOS INDÍGENAS DEL CESAR Y GUAJIRA “DUSAKAWI
+                A.R.S.I.”</option
+              >
+              <option value="MANEXKA EPS">MANEXKA EPS</option>
+              <option value="ASOCIACIÓN INDÍGENA DEL CAUCA AIC-EPS-I"
+                >ASOCIACIÓN INDÍGENA DEL CAUCA AIC-EPS-I</option
+              >
+              <option value="PIJAOS SALUD EPSI">PIJAOS SALUD EPSI</option>
+              <option value="ANAS WAYUU EPS INDIGENA"
+                >ANAS WAYUU EPS INDIGENA</option
+              >
+              <option value="ENTIDAD PROMOTORA DE SALUD MALLAMAS EPSI"
+                >ENTIDAD PROMOTORA DE SALUD MALLAMAS EPSI</option
+              >
+              <option value="OTRA">OTRA</option>
+            </select>
+          </div>
+          <div class="col-xs-4">
+            <input
+              type="text"
+              class="form-control oculto text-uppercase"
+              id="otraeps"
+              name="otraeps"
+              placeholder="Otra EPS.."
+            />
+          </div>
+        </div>
+
+        <div class="row">
+          <label class="control-label col-xs-2" for="colegio">Colegio*</label>
+          <div class="col-xs-4 input-div">
+            <input
+              type="text"
+              class="form-control text-uppercase"
+              id="colegio"
+              name="colegio"
+              placeholder="Colegio..."
+            />
+          </div>
+          <div class="col-xs-2 input-div">
+            <select
+              class="form-control"
+              id="estamento"
+              name="estamento"
+              placeholder="Colegio..."
+            >
+              <option>Estamento*</option>
+              <option value="PUBLICO">Público</option>
+              <option value="PRIVADO">Privado</option>
+              <option value="COBERTURA">Cobertura</option>
+            </select>
+          </div>
+          <div class="col-xs-2 input-div">
+            <select
+              class="form-control"
+              id="grado"
+              name="grado"
+              placeholder="Colegio..."
+            >
+              <option>Grado*</option>
+              <option value="1">1°</option>
+              <option value="2">2°</option>
+              <option value="3">3°</option>
+              <option value="4">4°</option>
+              <option value="5">5°</option>
+              <option value="6">6°</option>
+              <option value="7">7°</option>
+              <option value="8">8°</option>
+              <option value="9">9°</option>
+              <option value="10">10°</option>
+              <option value="11">11°</option>
+              <option value="EGRESADO">Egresado colegios</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <label class="control-label col-xs-2" for="acudiente"
+            >Nombre Acudiente*</label
+          >
+          <div class="col-xs-6 input-div">
+            <input
+              type="text"
+              class="form-control text-uppercase"
+              id="acudiente"
+              name="acudiente"
+              placeholder="Nombre completo del Acudiente..."
+            />
+          </div>
+        </div>
+
+        <div class="row">
+          <label class="control-label col-xs-2" for="telacudiente"
+            >Teléfono Acudiente*</label
+          >
+          <div class="col-xs-6 input-div">
+            <input
+              type="text"
+              class="form-control numeric"
+              id="telacudiente"
+              name="telacudiente"
+              placeholder="Telefono acudiente"
+            />
+          </div>
+        </div>
+
+        <div class="row">
+          <label class="control-label col-xs-2" for="inscritoanterior"
+            >Se ha inscrito antes en algun curso?*</label
+          >
+          <div class="col-xs-2 input-div">
+            <select
+              class="form-control"
+              id="inscritoanterior"
+              name="inscritoanterior"
+            >
+              <option value="NO">NO</option>
+              <option value="SI">SI</option>
+            </select>
+          </div>
+          <div class="col-xs-4 input-div">
+            <select id="otrocurso" class="form-control oculto" name="otrocurso">
+              <option value=""> </option>
+              <option value="De los Enteros A los racionales NUEVO!!"
+                >De los Enteros A los racionales NUEVO!!
+              </option>
+              <option value="Lógica, Conjuntos y Sistemas Numéricos"
+                >Lógica, Conjuntos y Sistemas Numéricos
+              </option>
+              <option value="Álgebra Fundamental">Álgebra Fundamental </option>
+              <option value="Geometría Plana y del Espacio"
+                >Geometría Plana y del Espacio
+              </option>
+              <option value="Geometría Analítica y Trigonometría"
+                >Geometría Analítica y Trigonometría
+              </option>
+              <option value="Probabilidad y Estadística"
+                >Probabilidad y Estadística
+              </option>
+              <option value="Funciones, Sucesiones y Límite"
+                >Funciones, Sucesiones y Límite
+              </option>
+              <option value="Energía y Movimiento"
+                >Energía y Movimiento
+              </option>
+              <option value="AGE: átomo, gases y estequiometría"
+                >AGE: átomo, gases y estequiometría
+              </option>
+              <option value="ESE: Estequiometría II, Soluciones y Equilibri"
+                >ESE: Estequiometría II, Soluciones y Equilibrio
+              </option>
+              <option value="BIOQ: Química Orgánica y Bioquímica"
+                >BIOQ: Química Orgánica y Bioquímica
+              </option>
+              <option value="Lectura Crítica">Lectura Crítica </option>
+              <option value="Escritura Creativa">Escritura Creativa </option>
+              <option value="Música, Percusión y Flauta Dulce "
+                >Música, Percusión y Flauta Dulce
+              </option>
+              <option value="Nivelación Académica Semilleros">
+                Nivelación Académica Semilleros
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row input-div">
+          <hr />
+          <hr />
+          <label class="radio-inline lg">
+            <input
+              type="radio"
+              id="convenio_colegio"
+              name="convenio"
+              value="CONVENIO_COLEGIO"
+            />CONVENIO COLEGIO</label
+          >
+          <label class="radio-inline lg">
+            <input
+              type="radio"
+              id="particular"
+              name="convenio"
+              value="PARTICULAR"
+            />PARTICULAR</label
+          >
+          <label class="radio-inline lg">
+            <input
+              type="radio"
+              id="relacion_univalle"
+              name="convenio"
+              value="RELACION_UNIVALLE"
+            />RELACIÓN UNIVALLE</label
+          >
+          <label class="radio-inline lg">
+            <input
+              type="radio"
+              id="becado"
+              name="convenio"
+              value="BECADOS"
+            />BECADOS</label
+          >
+        </div>
+        <!-- Campo valor consignado -->
+        <div class="row">
+          <br />
+          <label class="control-label col-xs-2" for="valconsignado"
+            >Valor Consignado*</label
+          >
+          <div class="col-xs-4 input-div">
+            <input
+              type="text"
+              class="form-control numeric"
+              id="valconsignado"
+              name="valconsignado"
+              placeholder="Valor consignado"
+            />
+          </div>
+        </div>
+        <!-- Fin campo valor consignado -->
+
+        <div class="row">
+          <h3>Módulo a Matricular*:</h3>
+        </div>
+
+        <div class="container modules_matricular">
+          <div class="row">
+            <div id="modMatematicas" class="col-xs-4 input-div">
+              <div class="row">
+                <h4>Matemáticas</h4>
+              </div>
+              <div id="checkboxMate" class="row">
+                <div id="temaentrac" class="checkbox">
+                  <input
+                    type="radio"
+                    class="matematicas"
+                    name="seleccion"
+                    id="ern"
+                    value="ern"
+                  />
+                  <label>De los Enteros A los racionales NUEVO!!</label>
+                </div>
+                <div id="temalogcon" class="checkbox">
+                  <input
+                    type="radio"
+                    class="matematicas"
+                    name="seleccion"
+                    id="lcsn"
+                    value="lcsn"
+                  />
+                  <label>Lógica, Conjuntos y Sistemas Numéricos</label>
+                </div>
+                <div id="temaalgfun" class="checkbox">
+                  <input
+                    type="radio"
+                    class="matematicas"
+                    name="seleccion"
+                    id="af"
+                    value="af"
+                  />
+                  <label>Álgebra Fundamental</label>
+                </div>
+                <div id="temageopl" class="checkbox">
+                  <input
+                    type="radio"
+                    class="matematicas"
+                    name="seleccion"
+                    id="gpe"
+                    value="gpe"
+                  />
+                  <label>Geometría Plana y del Espacio</label>
+                </div>
+                <div class="checkbox">
+                  <input
+                    type="radio"
+                    class="matematicas"
+                    name="seleccion"
+                    id="gat"
+                    value="gat"
+                  />
+                  <label>Geometría Analítica y Trigonometría</label>
+                </div>
+                <div class="checkbox">
+                  <input
+                    type="radio"
+                    class="matematicas"
+                    name="seleccion"
+                    id="pe"
+                    value="pe"
+                  />
+                  <label>Probabilidad y Estadística</label>
+                </div>
+                <div class="checkbox">
+                  <input
+                    type="radio"
+                    class="matematicas"
+                    name="seleccion"
+                    id="fsl"
+                    value="fsl"
+                  />
+                  <label>Funciones, Sucesiones y Límites</label>
+                </div>
+              </div>
+            </div>
+            <div id="modFisica" class="col-xs-4 input-div">
+              <div class="row">
+                <h4>Física</h4>
+              </div>
+              <div class="row input-div">
+                <div class="checkbox">
+                  <input
+                    type="radio"
+                    class="fisica"
+                    name="seleccion"
+                    id="em"
+                    value="em"
+                  />
+                  <label>Energía y Movimiento</label>
+                </div>
+              </div>
+            </div>
+            <div id="modQuimica" class="col-xs-4 input-div">
+              <div class="row">
+                <h4>Química</h4>
+              </div>
+              <div class="row">
+                <div class="checkbox input-div">
+                  <input
+                    type="radio"
+                    class="quimica"
+                    name="seleccion"
+                    id="age"
+                    value="age"
+                  />
+                  <label>AGE: átomo, gases y estequiometría</label>
+                </div>
+                <div class="checkbox">
+                  <input
+                    type="radio"
+                    class="quimica"
+                    name="seleccion"
+                    id="ese"
+                    value="ese"
+                  />
+                  <label>ESE: Estequiometría II, Soluciones y Equilibrio</label>
+                </div>
+                <div class="checkbox">
+                  <input
+                    type="radio"
+                    class="quimica"
+                    name="seleccion"
+                    id="bioq"
+                    value="bioq"
+                  />
+                  <label>BIOQ: Química Orgánica y Bioquímica</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div id="modHumanidades" class="col-xs-4 input-div">
+              <div class="row">
+                <h4>Humanidades</h4>
+              </div>
+              <div class="row input-div">
+                <div id="temalecr" class="checkbox">
+                  <input
+                    type="radio"
+                    class="humanidades"
+                    name="seleccion"
+                    id="lecr"
+                    value="lecr"
+                  />
+                  <label>Lectura Crítica</label>
+                </div>
+                <div class="checkbox">
+                  <input
+                    type="radio"
+                    class="humanidades"
+                    name="seleccion"
+                    id="escr"
+                    value="escr"
+                  />
+                  <label>Escritura Creativa</label>
+                </div>
+              </div>
+            </div>
+            <div id="modArtes" class="col-xs-4 inpdiv">
+              <div class="row">
+                <h4>Artes</h4>
+              </div>
+              <div class="row input-div">
+                <div id="temamuper" class="checkbox">
+                  <input
+                    type="radio"
+                    class="artes"
+                    name="seleccion"
+                    id="muper"
+                    value="muper"
+                  />
+                  <label>Música, Percusión y Flauta Dulce</label>
+                </div>
+                <div id="temaapmus" class="checkbox">
+                  <input
+                    type="radio"
+                    class="artes"
+                    name="seleccion"
+                    id="apmus"
+                    value="apmus"
+                  />
+                  <label>Apreciación Musical</label>
+                </div>
+                <div id="tematit" class="checkbox">
+                  <input
+                    type="radio"
+                    class="artes"
+                    name="seleccion"
+                    id="tit"
+                    value="tit"
+                  />
+                  <label>Taller infantil de Teatro</label>
+                </div>
+                <div id="tematjt" class="checkbox">
+                  <input
+                    type="radio"
+                    class="artes"
+                    name="seleccion"
+                    id="tjt"
+                    value="tjt"
+                  />
+                  <label>Taller Juvenil de Teatro</label>
+                </div>
+                <div id="tematpd" class="checkbox">
+                  <input
+                    type="radio"
+                    class="artes"
+                    name="seleccion"
+                    id="tpd"
+                    value="tpd"
+                  />
+                  <label>Taller Preparatorio de Danza</label>
+                </div>
+              </div>
+            </div>
+            <div id="modBiologia" class="col-xs-4 input-div">
+              <div class="row">
+                <h4>Biologia</h4>
+              </div>
+              <div class="row input-div">
+                <div class="checkbox">
+                  <input
+                    type="radio"
+                    class="biologia"
+                    name="seleccion"
+                    id="blg"
+                    value="blg"
+                  />
+                  <label
+                    >Estudio de los seres vivos y sus procesos vitales</label
+                  >
+                </div>
+                <div id="estsertwo-div" class="checkbox">
+                  <input
+                    type="radio"
+                    class="biologia"
+                    name="seleccion"
+                    id="estsertwo"
+                    value="estsertwo"
+                  />
+                  <label
+                    >Estudio de los seres vivos y sus procesos vitales II</label
+                  >
+                </div>
+              </div>
+            </div>
+            <div id="modNas" class="col-xs-4 input-div">
+              <div class="row">
+                <h4>NAS</h4>
+              </div>
+              <div class="row input-div">
+                <div class="checkbox">
+                  <input
+                    type="radio"
+                    class="niv_acad_semi"
+                    name="seleccion"
+                    id="nas"
+                    value="nas"
+                  />
+                  <label>Nivelación Académica Semilleros</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <hr />
+          <hr />
+          <h3>Documentos</h3>
+          <p id="parrafo_docs">
+            Por favor cargue los archivos necesarios para completar la
+            inscrpción. Tenga en cuenta que los archivos deben ser en formato
+            PDF y no deben pesar más de 2Mb
+          </p>
+        </div>
+        <div id="pdfDoc" class="row">
+          <label class="control-label col-xs-2" for="docFile"
+            >Documento de identidad*</label
+          >
+          <div class="col-xs-5 input-div">
+            <input
+              class="file"
+              type="file"
+              id="docFile"
+              name="docFile"
+              accept="application/pdf"
+            />
+          </div>
+        </div>
+
+        <div id="pdfConstanciaEstu" class="row">
+          <label class="control-label col-xs-2" for="constanciaEstudFile"
+            >Constancia de Estudio*</label
+          >
+          <div class="col-xs-5 input-div">
+            <input
+              class="file"
+              type="file"
+              id="constanciaEstudFile"
+              name="constanciaEstudFile"
+              accept="application/pdf "
+              disabled
+            />
+          </div>
+        </div>
+
+        <div id="pdfContanciaFun" class="row">
+          <label class="control-label col-xs-2" for="constanciaFuncFile"
+            >Cosnstancia de Funcionario*</label
+          >
+          <div class="col-xs-5 input-div">
+            <input
+              class="file"
+              type="file"
+              id="constanciaFuncFile"
+              name="constanciaFuncFile"
+              accept="application/pdf"
+              disabled
+            />
+          </div>
+        </div>
+
+        <!-- Nueva carga de archivos -->
+        <div id="pdfRecibos" class="row">
+          <label class="control-label col-xs-2" for="recibosPublicos"
+            >Recibos Públicos*</label
+          >
+          <div class="col-xs-5 input-div">
+            <input
+              class="file"
+              type="file"
+              id="recibosPublicos"
+              name="recibosPublicos"
+              accept="application/pdf "
+              disabled
+            />
+          </div>
+        </div>
+
+        <div id="pdfCartaSolicitud" class="row">
+          <label class="control-label col-xs-2" for="cartaSolicitud"
+            >Carta de Solicitud*</label
+          >
+          <div class="col-xs-5 input-div">
+            <input
+              class="file"
+              type="file"
+              id="cartaSolicitud"
+              name="cartaSolicitud"
+              accept="application/pdf"
+              disabled
+            />
+          </div>
+        </div>
+
+        <div id="pdfActaGrado" class="row">
+          <label class="control-label col-xs-2" for="actaGrado"
+            >Acta de Grado*</label
+          >
+          <div class="col-xs-5 input-div">
+            <input
+              class="file"
+              type="file"
+              id="actaGrado"
+              name="actaGrado"
+              accept="application/pdf"
+              disabled
+            />
+          </div>
+        </div>
+        <!-- Fin nueva carga archivos -->
+
+        <div id="pdfRecibo" class="row">
+          <label class="control-label col-xs-2" for="reciboFile"
+            >Recibo de pago*</label
+          >
+          <div class="col-xs-5 input-div">
+            <input
+              class="file"
+              type="file"
+              id="reciboFile"
+              name="reciboFile"
+              accept="application/pdf"
+            />
+          </div>
+        </div>
+
+        <hr />
+        <h3>Términos y condiciones</h3>
+        <div id="termsCond" class="row">
+          <p>
+            Al enviar este formulario usted autoriza a la Universidad del Valle
+            de que maneje sus datos personales con fines académicos, estudios
+            estadísticos y/o socioeducativos. La institución garantiza el
+            adecuado uso de su información y que no será usada con fines
+            diferentes a los ya mencionados.
+          </p>
+          <input type="radio" name="terms" value="Acepto" /> Acepto<br />
+        </div>
+
+        <hr />
+        <button
+          align="center"
+          class="btn btn-info oculto"
+          type="button"
+          id="edit"
+        >
+          Guardar Informacion
+        </button>
+        <div id="btn_div" class="row">
+          <input
+            align="center"
+            class="btn btn-info"
+            type="submit"
+            value="Inscribirme"
+            id="save"
+          />
+          <span id="mySpan" style="display:none; color: #d51b23;"
+            >Procesando Información...</span
+          >
+        </div>
+      </form>
+    </div>
+
+    <div id="output"></div>
+
+    <script></script>
+  </body>
+</html>

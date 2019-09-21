@@ -2,26 +2,25 @@ var GENERAL_DB =
   "https://docs.google.com/spreadsheets/d/1TsbNe2yNzhhmJ4vwyS3X0qztIP8kdKeSgoFY95C5-5U/edit#gid=0";
 
 function doGet(e) {
-  var guess_email = Session.getEffectiveUser();
   Logger.log(Session.getEffectiveUser());
-  if (
-    guess_email == "andresfelipe9619@gmail.com" ||
-    guess_email == "suarez.andres@correounivalle.edu.co" ||
-    guess_email == "semillero@correounivalle.edu.co" ||
-    guess_email == "yurany.velasco@correounivalle.edu.co" ||
-    guess_email == "samuel.ramirez@correounivalle.edu.co" ||
-    guess_email == "moreno.juan@correounivalle.edu.co"
-  ) {
-    return HtmlService.createHtmlOutputFromFile("admin.html");
-  } else {
-    return HtmlService.createHtmlOutputFromFile("semilleroform.html");
-  }
+  return HtmlService.createHtmlOutputFromFile("admin.html");
+}
+
+function isAdmin() {
+  var guess_email = Session.getEffectiveUser();
+  var admins = [
+    "suarez.andres@correounivalle.edu.co",
+    "semillero@correounivalle.edu.co",
+    "yurany.velasco@correounivalle.edu.co",
+    "samuel.ramirez@correounivalle.edu.co",
+    "moreno.juan@correounivalle.edu.co"
+  ];
+  return admins.includes(guess_email);
 }
 
 function getModules() {
   var rawModules = getRawDataFromSheet(GENERAL_DB, "MODULOS");
   Logger.log("modules");
-
   return rawModules;
 }
 
@@ -141,11 +140,6 @@ function registerStudentGeneral(data, form, person) {
       newData.push(modules[x][0]);
     }
   }
-
-  // var blank = newData.indexOf('')
-  // if (blank > -1 && blank != 6) {
-  //     newData.splice(blank, 1);
-  // }
 
   Logger.log("NEW DATA");
   Logger.log(newData);
@@ -434,8 +428,6 @@ function getMainFolder() {
 
 function editModuleConditionals(module, conditions) {}
 
-function setActualPeriod() {}
-
 function getActualPeriod() {
   var periodos = getPeriods();
   // Logger.log(periodos)
@@ -446,8 +438,6 @@ function getActualPeriod() {
     }
   }
 }
-
-function createPeriod(period) {}
 
 function createStudentFolder(numdoc, data, arrayFiles) {
   //se crea la carpeta que va contener los arhivos actuales
@@ -752,8 +742,6 @@ function getPDFFile(data) {
     if (modulos[y][1] == modulo) {
       moduleName = modulos[y][0];
       moduleUrl = modulos[y][4];
-    } else {
-      continue;
     }
   }
   contenthtml += '<div style="text-align:center">';
