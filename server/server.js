@@ -3,7 +3,7 @@ var GENERAL_DB =
 
 function doGet(e) {
   Logger.log(Session.getEffectiveUser());
-  return HtmlService.createHtmlOutputFromFile("admin.html");
+  return HtmlService.createHtmlOutputFromFile("index.html");
 }
 
 function isAdmin() {
