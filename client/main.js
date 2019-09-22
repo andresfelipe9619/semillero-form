@@ -1,3 +1,4 @@
+let modulesByGrades = null;
 $(document).ready(function() {
   $("#myForm #createEmail").on("click", function() {
     window.open(
@@ -162,6 +163,7 @@ $(document).ready(function() {
     console.log("MI ANTERIOR: ", anterior);
     var val = this.value;
     var estamento = $("#estamento").val();
+    
     if (val == 8 || val == 9) {
       $("#myForm #modMatematicas").fadeIn();
       $("#myForm #modMatematicas #checkboxMate")
@@ -310,10 +312,18 @@ $(document).ready(function() {
       closeOnConfirm: true
     });
   });
+
   $("#myForm #edit").on("click", editStudentData);
 
   populateCountries("deptres", "ciudadres");
+
+  google.script.run.withSuccessHandler(onSuccessGrades).getModulesByGrades();
 });
+
+function onSuccessGrades(modules) {
+  if (!modules) return;
+  modulesByGrades = modules;
+}
 
 function editStudentData() {
   var valid = validateAndSave();

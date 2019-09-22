@@ -3,7 +3,7 @@ var GENERAL_DB =
 
 function doGet(e) {
   Logger.log(Session.getEffectiveUser());
-  return HtmlService.createHtmlOutputFromFile("index.html");
+  return HtmlService.createHtmlOutputFromFile("admin.html");
 }
 
 function isAdmin() {
@@ -15,7 +15,8 @@ function isAdmin() {
     "samuel.ramirez@correounivalle.edu.co",
     "moreno.juan@correounivalle.edu.co"
   ];
-  return admins.includes(guess_email);
+  var isAdmin = admins.indexOf(guess_email) >= 0;
+  return isAdmin;
 }
 
 function getModules() {
@@ -356,7 +357,7 @@ function buscarPersona(cedula) {
   var person = validatePerson(cedula);
   Logger.log("THIS IS WHAT U ARE LOOKING FOR");
   Logger.log(person);
-  if (person.state != "no esta") {
+  if (person.state !== "no esta") {
     person.files = [];
     folder = getCurrentFolder(cedula, mainFolder);
     var files = folder.getFiles();
@@ -817,6 +818,41 @@ function getPDFFile(data) {
   return contenthtml;
 }
 
+function getModulesByGrades() {
+  var rawModules = getModules();
+  var modules = sheetValuesToObject(rawModules);
+  var allowedColumns = ["nombre", "codigo", "area", "prueba"];
+  modules = modules.map(function(newModule) {
+    newModule.grades = Object.keys(newModule).reduce(function(prevArray, key) {
+      if (allowedColumns.indexOf(key) >= 0) return prevArray;
+      var currentValue = newModule[key];
+      delete newModule[key];
+      if (currentValue === "x") {
+        prevArray.push(key);
+      }
+      return prevArray;
+    }, []);
+    return newModule;
+  });
+  var modulesByGrades = modules.reduce(function(prevModules, module) {
+    module.grades.map(function(grade) {
+      if (!(grade in prevModules)) {
+        prevModules[grade] = {};
+      }
+      if (!(module.area in prevModules[grade])) {
+        prevModules[grade][module.area] = [];
+      }
+      prevModules[grade][module.area].push({
+        nombre: module.nombre,
+        codigo: module.codigo,
+        prueba: module.prueba
+      });
+    });
+    return prevModules;
+  }, {});
+  Logger.log(modulesByGrades);
+}
+
 function addToModule(module, data) {
   Logger.log("addtomodule");
   Logger.log(module);
@@ -862,7 +898,17 @@ function createModulesSheets() {
   Logger.log(actualPeriod);
   Logger.log(modules[1][0]);
   Logger.log("--------------------------");
-
+  var headers = [
+    "nombre",
+    "apellido",
+    "tipo de documento",
+    "número de documento",
+    "telefono",
+    "email",
+    "grado",
+    "colegio",
+    "convenio_colegio"
+  ];
   for (var x in modules) {
     var moduleSheet;
     if (x > 0) {
@@ -870,20 +916,52 @@ function createModulesSheets() {
         periodSpreadSheet.insertSheet(modules[x][0]);
         moduleSheet = getSheetFromSpreadSheet(actualPeriod, modules[x][0]);
         if (moduleSheet.getLastRow() == 0) {
-          moduleSheet.appendRow([
-            "nombre",
-            "apellido",
-            "tipo de documento",
-            "número de documento",
-            "telefono",
-            "email",
-            "grado",
-            "colegio",
-            "convenio_colegio"
-          ]);
+          moduleSheet.appendRow(headers);
         }
       }
     }
   }
   return true;
+}
+
+function jsonToSheetValues(json, headers) {
+  var arrayValues = new Array(headers.length);
+  var lowerHeaders = headers.map(function(item) {
+    item.toLowerCase();
+  });
+
+  for (var key in json) {
+    for (var header in lowerHeaders) {
+      if (key == String(lowerHeaders[header])) {
+        if (key == "nombre" || key == "apellidos") {
+          arrayValues[header] = json[key].toUpperCase();
+        } else {
+          arrayValues[header] = json[key];
+        }
+      }
+    }
+  }
+  // logFunctionOutput(jsonToSheetValues.name, arrayValues)
+  return arrayValues;
+}
+
+function sheetValuesToObject(sheetValues, headers) {
+  var headings = headers || sheetValues[0].map(String.toLowerCase);
+  var people = null;
+  if (sheetValues) people = sheetValues.slice(1);
+  var peopleWithHeadings = addHeadings(people, headings);
+
+  function addHeadings(people, headings) {
+    return people.map(function(personAsArray) {
+      var personAsObj = {};
+
+      headings.forEach(function(heading, i) {
+        personAsObj[heading] = personAsArray[i];
+      });
+
+      return personAsObj;
+    });
+  }
+  // logFunctionOutput(sheetValuesToObject.name, peopleWithHeadings)
+  return peopleWithHeadings;
 }
