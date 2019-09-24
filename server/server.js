@@ -851,6 +851,7 @@ function getModulesByGrades() {
     return prevModules;
   }, {});
   Logger.log(modulesByGrades);
+  return modulesByGrades;
 }
 
 function addToModule(module, data) {

@@ -161,9 +161,10 @@ $(document).ready(function() {
   $("#myForm #grado").on("change", function() {
     var anterior = $("#otrocurso").val();
     console.log("MI ANTERIOR: ", anterior);
+    console.log("modulesByGrades", modulesByGrades);
     var val = this.value;
     var estamento = $("#estamento").val();
-    
+
     if (val == 8 || val == 9) {
       $("#myForm #modMatematicas").fadeIn();
       $("#myForm #modMatematicas #checkboxMate")
