@@ -1,11 +1,14 @@
 let modulesByGrades = null;
-$(document).ready(function() {
-  $("#myForm #createEmail").on("click", function() {
-    window.open(
-      "https://accounts.google.com/SignUp?service=mail&hl=es&continue=http%3A%2F%2Fmail.google.com%2Fmail%2F%3Fpc%3Des-ha-latam-co-bk-xplatform1&utm_campaign=es&utm_source=es-ha-latam-co-bk-xplatform1&utm_medium=ha"
-    );
-  });
+$(document).ready(runApp);
 
+function runApp() {
+  hideInitialData();
+  subscribeEventHandlers();
+  populateCountries("deptres", "ciudadres");
+  google.script.run.withSuccessHandler(onSuccessGrades).getModulesByGrades();
+}
+
+function hideInitialData() {
   //$("#myForm #pdfDoc").hide();
   $("#myForm #pdfConstanciaEstu").hide();
   $("#myForm #pdfContanciaFun").hide();
@@ -23,313 +26,179 @@ $(document).ready(function() {
   $("#myForm #modArtes").hide();
   $("#modBusqueda").hide();
   $("#myForm #modNas").hide();
-  $("#myForm #estamento").on("change", function() {
-    var val = $(this).val();
-    var grado = $("#grado").val();
-    if (val == "PUBLICO" || val == "COBERTURA") {
-      if (grado == "EGRESADO") {
-        $("#myForm #pdfActaGrado").fadeIn();
-        $("#myForm #actaGrado").prop("disabled", false);
-        $("#myForm #pdfConstanciaEstu").fadeOut();
-        $("#myForm #constanciaEstudFile").prop("disabled", true);
-      } else {
-        $("#myForm #pdfConstanciaEstu").fadeIn();
-        $("#myForm #constanciaEstudFile").prop("disabled", false);
-        $("#myForm #pdfActaGrado").fadeOut();
-        $("#myForm #actaGrado").prop("disabled", true);
-      }
-    } else if (val == "PRIVADO") {
-      if (grado == "EGRESADO") {
-        $("#myForm #pdfActaGrado").fadeIn();
-        $("#myForm #actaGrado").prop("disabled", false);
-        $("#myForm #pdfConstanciaEstu").fadeOut();
-        $("#myForm #constanciaEstudFile").prop("disabled", true);
-      } else {
-        $("#myForm #pdfConstanciaEstu").fadeOut();
-        $("#myForm #constanciaEstudFile").prop("disabled", true);
-        $("#myForm #pdfActaGrado").fadeOut();
-        $("#myForm #actaGrado").prop("disabled", true);
-      }
-    } else {
-      $("#myForm #pdfConstanciaEstu").fadeOut();
-      $("#myForm #constanciaEstudFile").prop("disabled", true);
-    }
-  });
+}
 
-  $(".numeric").on("keypress", function(e) {
-    return (
-      e.metaKey || // cmd/ctrl
-      e.which <= 0 || // arrow keys
-      e.which == 8 || // delete key
-      /[0-9]/.test(String.fromCharCode(e.which))
-    ); // numbers
-  });
-
-  $("#myForm").on("click", 'input[name="convenio"]', function() {
-    var val = $(this).val();
-    var estamento = $("#estamento").val();
-    if (val == "RELACION_UNIVALLE") {
-      $("#myForm #pdfContanciaFun").fadeIn();
-      $("#myForm #constanciaFuncFile").prop("disabled", false);
-      $("#myForm #pdfRecibo").fadeIn();
-      $("#myForm #reciboFile").prop("disabled", false);
-      $("#myForm #pdfRecibos").fadeOut();
-      $("#myForm #pdfCartaSolicitud").fadeOut();
-      $("#myForm #recibosPublicos").prop("disabled", true);
-      $("#myForm #cartaSolicitud").prop("disabled", true);
-    } else if (val == "BECADOS") {
-      $("#myForm #pdfRecibos").fadeIn();
-      $("#myForm #pdfCartaSolicitud").fadeIn();
-      $("#myForm #recibosPublicos").prop("disabled", false);
-      $("#myForm #cartaSolicitud").prop("disabled", false);
-      $("#myForm #pdfRecibo").fadeOut();
-      $("#myForm #reciboFile").prop("disabled", true);
-      $("#myForm #pdfContanciaFun").fadeOut();
-      $("#myForm #constanciaFuncFile").prop("disabled", true);
-    } else {
-      $("#myForm #pdfContanciaFun").fadeOut();
-      $("#myForm #constanciaFuncFile").prop("disabled", true);
-      $("#myForm #pdfRecibos").fadeOut();
-      $("#myForm #pdfCartaSolicitud").fadeOut();
-      $("#myForm #recibosPublicos").prop("disabled", true);
-      $("#myForm #cartaSolicitud").prop("disabled", true);
-      $("#myForm #pdfRecibo").fadeIn();
-      $("#myForm #reciboFile").prop("disabled", false);
-    }
-  });
-
-  $("#eps").on("change", function() {
-    var epsval = this.value;
-    if (epsval.includes("OTRA")) return $("#otraeps").css("display", "block");
-    $("#otraeps").css("display", "none");
-  });
-
-  $("#inscritoanterior").on("change", function() {
-    var myres = this.value;
-    if (myres.includes("SI")) return $("#otrocurso").css("display", "block");
-    $("#otrocurso").css("display", "none");
-  });
-
-  $("#confirmEmail").on("copy cut paste", function(e) {
-    e.preventDefault();
-  });
-  $("#email").on("copy cut paste", function(e) {
-    e.preventDefault();
-  });
-
-  $("#otrocurso").on("change", function() {
-    var grado = $("#myForm #grado").val();
-    var val = this.value;
-    if (
-      (val.indexOf("racional") || val.indexOf("Conjuntos")) &&
-      (grado == 6 || grado == 7)
-    ) {
-      $("#myForm #modMatematicas").fadeIn();
-      $("#myForm #modMatematicas #checkboxMate")
-        .children()
-        .fadeIn();
-      $("#myForm #modFisica").fadeOut();
-      $("#myForm #modQuimica").fadeOut();
-      $("#myForm #modArtes").fadeOut();
-      $("#myForm #modArtes #temamuper").fadeOut();
-      $("#myForm #modHumanidades").fadeOut();
-    } else if ((grado == 6 || grado == 7) && (val == "" || val == " ")) {
-      $("#myForm #modMatematicas").fadeIn();
-      $("#myForm #modMatematicas #checkboxMate")
-        .children()
-        .fadeOut();
-      $("#myForm #modMatematicas #checkboxMate")
-        .children("#temaentrac")
-        .fadeIn();
-      $("#myForm #modMatematicas #checkboxMate")
-        .children("#temalogcon")
-        .fadeIn();
-      $("#myForm #modMatematicas #checkboxMate")
-        .children("#temaalgfun")
-        .fadeOut();
-      $("#myForm #modMatematicas #checkboxMate")
-        .children("#temageopl")
-        .fadeOut();
-      $("#myForm #modFisica").fadeOut();
-      $("#myForm #modQuimica").fadeOut();
-      $("#myForm #modArtes").fadeIn();
-      $("#myForm #modArtes #temamuper").fadeOut();
-      $("#myForm #modHumanidades").fadeOut();
-    }
-  });
-
-  $("#myForm #grado").on("change", function() {
-    var anterior = $("#otrocurso").val();
-    console.log("MI ANTERIOR: ", anterior);
-    console.log("modulesByGrades", modulesByGrades);
-    var val = this.value;
-    var estamento = $("#estamento").val();
-
-    if (val == 8 || val == 9) {
-      $("#myForm #modMatematicas").fadeIn();
-      $("#myForm #modMatematicas #checkboxMate")
-        .children()
-        .fadeIn();
-      $("#myForm #modFisica").fadeOut();
-      $("#myForm #modQuimica").fadeOut();
-      $("#myForm #modHumanidades").fadeIn();
-      $("#myForm #modHumanidades #temalecr").fadeOut();
-      $("#myForm #modBiologia").fadeIn();
-      $("#myForm #modNas").fadeOut();
-      $("#myForm #modArtes").fadeIn();
-      $("#myForm #modArtes .input-div")
-        .children()
-        .fadeOut();
-      $("#myForm #modArtes #temamuper").fadeIn();
-      $("#myForm #modArtes #temaapmus").fadeIn();
-      $("#myForm #modArtes #tematjt").fadeIn();
-    } else if (val == 10 || val == 11 || val == "EGRESADO") {
-      $("#myForm #modMatematicas").fadeIn();
-      $("#myForm #modMatematicas #checkboxMate")
-        .children()
-        .fadeIn();
-      $("#myForm #modFisica").fadeIn();
-      $("#myForm #modQuimica").fadeIn();
-      $("#myForm #modHumanidades").fadeIn();
-      $("#myForm #modHumanidades  #temalecr").fadeIn();
-      $("#myForm #modBiologia").fadeIn();
-      $("#myForm #modNas").fadeOut();
-      $("#myForm #modArtes").fadeIn();
-      $("#myForm #modArtes .input-div")
-        .children()
-        .fadeOut();
-      $("#myForm #modArtes #tematpd").fadeIn();
-      $("#myForm #modArtes #temamuper").fadeIn();
-
-      if (val != "EGRESADO") {
-        $("#myForm #modArtes #tematjt").fadeIn();
-      }
-    } else if (
-      (val == 6 || val == 7) &&
-      (anterior.indexOf("Conjuntos") >= 0 || anterior.indexOf("racional") >= 0)
-    ) {
-      console.log("MI ANTERIOR IN IF: ", anterior);
-      $("#myForm #modMatematicas").fadeIn();
-      $("#myForm #modMatematicas #checkboxMate")
-        .children()
-        .fadeIn();
-      $("#myForm #modFisica").fadeOut();
-      $("#myForm #modQuimica").fadeOut();
-      $("#myForm #modArtes").fadeOut();
-      $("#myForm #modArtes #temamuper").fadeOut();
-      $("#myForm #modHumanidades").fadeOut();
-      $("#myForm #modBiologia").fadeOut();
-      $("#myForm #modNas").fadeOut();
-      $("#myForm #modArtes").fadeIn();
-      $("#myForm #modArtes .input-div")
-        .children()
-        .fadeOut();
-      $("#myForm #modArtes #tematjt").fadeIn();
-    } else if (val == 6 || val == 7) {
-      $("#myForm #modMatematicas").fadeIn();
-      $("#myForm #modMatematicas #checkboxMate")
-        .children()
-        .fadeOut();
-      $("#myForm #modMatematicas #checkboxMate")
-        .children("#temaentrac")
-        .fadeIn();
-      $("#myForm #modFisica").fadeOut();
-      $("#myForm #modQuimica").fadeOut();
-      $("#myForm #modArtes").fadeOut();
-      $("#myForm #modArtes #temamuper").fadeOut();
-      $("#myForm #modHumanidades").fadeOut();
-      $("#myForm #modBiologia").fadeOut();
-      $("#myForm #modNas").fadeOut();
-      $("#myForm #modArtes").fadeIn();
-      $("#myForm #modArtes .input-div")
-        .children()
-        .fadeOut();
-      $("#myForm #modArtes #tematjt").fadeIn();
-    } else if (val >= 1 && val <= 5) {
-      $("#myForm #modNas").fadeOut();
-      $("#myForm #modMatematicas").fadeOut();
-      $("#myForm #modMatematicas #checkboxMate")
-        .children()
-        .fadeOut();
-      $("#myForm #modFisica").fadeOut();
-      $("#myForm #modQuimica").fadeOut();
-      $("#myForm #modHumanidades").fadeOut();
-      $("#myForm #modBiologia").fadeOut();
-      $("#myForm #modArtes").fadeIn();
-      $("#myForm #modArtes .input-div")
-        .children()
-        .fadeOut();
-      $("#myForm #modArtes #tematit").fadeIn();
-    } else {
-      $("#myForm #modMatematicas").fadeOut();
-      $("#myForm #modMatematicas #checkboxMate")
-        .children()
-        .fadeOut();
-      $("#myForm #modMatematicas #checkboxMate")
-        .children("#temaentrac")
-        .fadeOut();
-      $("#myForm #modFisica").fadeOut();
-      $("#myForm #modQuimica").fadeOut();
-      $("#myForm #modHumanidades").fadeOut();
-      $("#myForm #modArtes").fadeOut();
-      $("#myForm #modBiologia").fadeOut();
-      $("#myForm #modNas").fadeOut();
-    }
-
-    if (val == 11 || val == "EGRESADO") {
-      $("#myForm #modNas").fadeIn();
-      $("#myForm #pdfActaGrado").fadeOut();
-    }
-
-    if (val == "EGRESADO") {
-      $("#myForm #pdfActaGrado").fadeIn();
-      $("#myForm #actaGrado").prop("disabled", false);
-      $("#myForm #pdfConstanciaEstu").fadeOut();
-      $("#myForm #constanciaEstudFile").prop("disabled", true);
-    }
-    if (val != "EGRESADO") {
-      $("#myForm #pdfActaGrado").fadeOut();
-      $("#myForm #actaGrado").prop("disabled", true);
-      $("#myForm #pdfConstanciaEstu").fadeIn();
-      $("#myForm #constanciaEstudFile").prop("disabled", false);
-    }
-    if (estamento == "PRIVADO") {
-      $("#myForm #pdfConstanciaEstu").fadeOut();
-      $("#myForm #constanciaEstudFile").prop("disabled", true);
-    }
-  });
-
-  $("#myForm #save").on("click", function(e) {
-    var terminos = $("input[name=terms]:checked", "#myForm").val();
-    console.log(terminos);
-    if (terminos === "Acepto") return validateAndSave();
-    e.preventDefault();
-    swal({
-      title: "Advertencia",
-      text:
-        "Debe aceptar los términos y condiciones para enviar el formulario.",
-      type: "warning",
-      confirmButtonText: "Ok",
-      closeOnConfirm: true
-    });
-  });
-
+function subscribeEventHandlers() {
+  $("#eps").on("change", handleChangeEps);
+  $("#myForm #save").on("click", enrollStudent);
+  $(".numeric").on("keypress", allowOnlyNumbers);
   $("#myForm #edit").on("click", editStudentData);
-
-  populateCountries("deptres", "ciudadres");
-
-  google.script.run.withSuccessHandler(onSuccessGrades).getModulesByGrades();
-});
+  $("#email").on("copy cut paste", DoNotCopyPaste);
+  $("#myForm #createEmail").on("click", createEmail);
+  $("#myForm #grado").on("change", hadleChangeGrade);
+  $("#otrocurso").on("change", handleChangeAnotherGrade);
+  $("#confirmEmail").on("copy cut paste", DoNotCopyPaste);
+  $("#myForm #estamento").on("change", handleChangeEstate);
+  $("#inscritoanterior").on("change", handleChangePreviousRegister);
+  $("#myForm").on("click", 'input[name="convenio"]', handleClickAgreement);
+}
 
 function onSuccessGrades(modules) {
   if (!modules) return;
   modulesByGrades = modules;
 }
 
-function editStudentData() {
-  var valid = validateAndSave();
+function enrollStudent(e) {
+  let terminos = $("input[name=terms]:checked", "#myForm").val();
+  console.log(terminos);
+  if (terminos === "Acepto") return validateAndSave();
+  e.preventDefault();
+  swal({
+    title: "Advertencia",
+    text: "Debe aceptar los términos y condiciones para enviar el formulario.",
+    type: "warning",
+    confirmButtonText: "Ok",
+    closeOnConfirm: true
+  });
+}
 
-  var onSuccess = function(person) {
+function handleClickAgreement() {
+  let val = $(this).val();
+  if (val == "RELACION_UNIVALLE") {
+    $("#myForm #pdfContanciaFun").fadeIn();
+    $("#myForm #constanciaFuncFile").prop("disabled", false);
+    $("#myForm #pdfRecibo").fadeIn();
+    $("#myForm #reciboFile").prop("disabled", false);
+    $("#myForm #pdfRecibos").fadeOut();
+    $("#myForm #pdfCartaSolicitud").fadeOut();
+    $("#myForm #recibosPublicos").prop("disabled", true);
+    $("#myForm #cartaSolicitud").prop("disabled", true);
+  } else if (val == "BECADOS") {
+    $("#myForm #pdfRecibos").fadeIn();
+    $("#myForm #pdfCartaSolicitud").fadeIn();
+    $("#myForm #recibosPublicos").prop("disabled", false);
+    $("#myForm #cartaSolicitud").prop("disabled", false);
+    $("#myForm #pdfRecibo").fadeOut();
+    $("#myForm #reciboFile").prop("disabled", true);
+    $("#myForm #pdfContanciaFun").fadeOut();
+    $("#myForm #constanciaFuncFile").prop("disabled", true);
+  } else {
+    $("#myForm #pdfContanciaFun").fadeOut();
+    $("#myForm #constanciaFuncFile").prop("disabled", true);
+    $("#myForm #pdfRecibos").fadeOut();
+    $("#myForm #pdfCartaSolicitud").fadeOut();
+    $("#myForm #recibosPublicos").prop("disabled", true);
+    $("#myForm #cartaSolicitud").prop("disabled", true);
+    $("#myForm #pdfRecibo").fadeIn();
+    $("#myForm #reciboFile").prop("disabled", false);
+  }
+}
+
+function handleChangeEstate() {
+  let val = $(this).val();
+  let grado = $("#grado").val();
+  if (val == "PUBLICO" || val == "COBERTURA") {
+    if (grado == "EGRESADO") {
+      $("#myForm #pdfActaGrado").fadeIn();
+      $("#myForm #actaGrado").prop("disabled", false);
+      $("#myForm #pdfConstanciaEstu").fadeOut();
+      $("#myForm #constanciaEstudFile").prop("disabled", true);
+    } else {
+      $("#myForm #pdfConstanciaEstu").fadeIn();
+      $("#myForm #constanciaEstudFile").prop("disabled", false);
+      $("#myForm #pdfActaGrado").fadeOut();
+      $("#myForm #actaGrado").prop("disabled", true);
+    }
+  } else if (val == "PRIVADO") {
+    if (grado == "EGRESADO") {
+      $("#myForm #pdfActaGrado").fadeIn();
+      $("#myForm #actaGrado").prop("disabled", false);
+      $("#myForm #pdfConstanciaEstu").fadeOut();
+      $("#myForm #constanciaEstudFile").prop("disabled", true);
+    } else {
+      $("#myForm #pdfConstanciaEstu").fadeOut();
+      $("#myForm #constanciaEstudFile").prop("disabled", true);
+      $("#myForm #pdfActaGrado").fadeOut();
+      $("#myForm #actaGrado").prop("disabled", true);
+    }
+  } else {
+    $("#myForm #pdfConstanciaEstu").fadeOut();
+    $("#myForm #constanciaEstudFile").prop("disabled", true);
+  }
+}
+function createEmail() {
+  window.open(
+    "https://accounts.google.com/SignUp?service=mail&hl=es&continue=http%3A%2F%2Fmail.google.com%2Fmail%2F%3Fpc%3Des-ha-latam-co-bk-xplatform1&utm_campaign=es&utm_source=es-ha-latam-co-bk-xplatform1&utm_medium=ha"
+  );
+}
+function handleChangeEps() {
+  let epsval = this.value;
+  if (epsval.includes("OTRA")) return $("#otraeps").css("display", "block");
+  $("#otraeps").css("display", "none");
+}
+
+function hadleChangeGrade() {
+  let anterior = $("#otrocurso").val();
+  console.log("MI ANTERIOR: ", anterior);
+  console.log("modulesByGrades", modulesByGrades);
+  let grade = this.value;
+  let state = $("#estamento").val();
+  hideModules();
+  if (grade in modulesByGrades) {
+    showModules(grade);
+    showFiles({ grade, state });
+  }
+}
+function handleChangePreviousRegister() {
+  let myres = this.value;
+  if (myres.includes("SI")) return $("#otrocurso").css("display", "block");
+  $("#otrocurso").css("display", "none");
+}
+function handleChangeAnotherGrade() {
+  let grado = $("#myForm #grado").val();
+  let val = this.value;
+  if (
+    (val.indexOf("racional") || val.indexOf("Conjuntos")) &&
+    (grado == 6 || grado == 7)
+  ) {
+    $("#myForm #modMatematicas").fadeIn();
+    $("#myForm #modMatematicas #checkboxMate")
+      .children()
+      .fadeIn();
+    $("#myForm #modFisica").fadeOut();
+    $("#myForm #modQuimica").fadeOut();
+    $("#myForm #modArtes").fadeOut();
+    $("#myForm #modArtes #temamuper").fadeOut();
+    $("#myForm #modHumanidades").fadeOut();
+  } else if ((grado == 6 || grado == 7) && (val == "" || val == " ")) {
+    $("#myForm #modMatematicas").fadeIn();
+    $("#myForm #modMatematicas #checkboxMate")
+      .children()
+      .fadeOut();
+    $("#myForm #modMatematicas #checkboxMate")
+      .children("#temaentrac")
+      .fadeIn();
+    $("#myForm #modMatematicas #checkboxMate")
+      .children("#temalogcon")
+      .fadeIn();
+    $("#myForm #modMatematicas #checkboxMate")
+      .children("#temaalgfun")
+      .fadeOut();
+    $("#myForm #modMatematicas #checkboxMate")
+      .children("#temageopl")
+      .fadeOut();
+    $("#myForm #modFisica").fadeOut();
+    $("#myForm #modQuimica").fadeOut();
+    $("#myForm #modArtes").fadeIn();
+    $("#myForm #modArtes #temamuper").fadeOut();
+    $("#myForm #modHumanidades").fadeOut();
+  }
+}
+
+function editStudentData() {
+  let valid = validateAndSave();
+
+  let onSuccess = function(person) {
     swal({
       title: "Exito!",
       text: "Se edito el estudiante satisfactoriamente!",
@@ -338,53 +207,103 @@ function editStudentData() {
       closeOnConfirm: true
     });
   };
-  if (valid) {
-    var serialized = $("#myForm").serializeArray();
-    var dataToEdit = [];
+  if (!valid) return;
+  let serialized = $("#myForm").serializeArray();
+  let dataToEdit = [];
 
-    for (var x in serialized) {
-      if (x == 7) {
-        dataToEdit.push(serialized[Number(x) + 1].value);
-        dataToEdit.push(serialized[x].value);
-      } else if (
-        x != 6 &&
-        x != 8 &&
-        (serialized[x].value != "" &&
-          serialized[x].value != "OTRA" &&
-          serialized[x].value != "SI")
-      ) {
-        dataToEdit.push(serialized[x].value);
-      }
+  for (let x in serialized) {
+    if (x == 7) {
+      dataToEdit.push(serialized[Number(x) + 1].value);
+      dataToEdit.push(serialized[x].value);
+    } else if (
+      x != 6 &&
+      x != 8 &&
+      (serialized[x].value != "" &&
+        serialized[x].value != "OTRA" &&
+        serialized[x].value != "SI")
+    ) {
+      dataToEdit.push(serialized[x].value);
     }
-
-    google.script.run.withSuccessHandler(onSuccess).editStudent(dataToEdit);
   }
-  console.log("SERIAL", serialized);
-  console.log("NORMAL", dataToEdit);
+
+  google.script.run.withSuccessHandler(onSuccess).editStudent(dataToEdit);
 }
 
 function cargarInfo() {
-  var ced = $("#cedula_buscada").val();
-  ocultarRegistro();
-  if (ced == "") {
-    swal({
+  let ced = $("#cedula_buscada").val();
+  hideStudentRecord();
+  if (!ced) {
+    return swal({
       title: "Advertencia ...",
       text: "Ingrese una cedula para consultar",
       type: "warning"
     });
-  } else {
-    setWaitCursor();
-    google.script.run.withSuccessHandler(cargarPersona).buscarPersona(ced);
+  }
+  setWaitCursor();
+  google.script.run.withSuccessHandler(loadStudent).buscarPersona(ced);
+}
+
+function allowOnlyNumbers(e) {
+  return (
+    e.metaKey || // cmd/ctrl
+    e.which <= 0 || // arrow keys
+    e.which == 8 || // delete key
+    /[0-9]/.test(String.fromCharCode(e.which))
+  ); // numbers
+}
+
+function DoNotCopyPaste(e) {
+  e.preventDefault();
+}
+
+function showFiles({ grade, state }) {
+  if (grade == 11 || grade === "EGRESADO") {
+    $("#myForm #modNas").fadeIn();
+    $("#myForm #pdfActaGrado").fadeOut();
+  }
+
+  if (grade === "EGRESADO") {
+    $("#myForm #pdfActaGrado").fadeIn();
+    $("#myForm #actaGrado").prop("disabled", false);
+    $("#myForm #pdfConstanciaEstu").fadeOut();
+    $("#myForm #constanciaEstudFile").prop("disabled", true);
+  }
+  if (grade !== "EGRESADO") {
+    $("#myForm #pdfActaGrado").fadeOut();
+    $("#myForm #actaGrado").prop("disabled", true);
+    $("#myForm #pdfConstanciaEstu").fadeIn();
+    $("#myForm #constanciaEstudFile").prop("disabled", false);
+  }
+  if (state === "PRIVADO") {
+    $("#myForm #pdfConstanciaEstu").fadeOut();
+    $("#myForm #constanciaEstudFile").prop("disabled", true);
   }
 }
 
-function ocultarRegistro() {
+function showModules(grade) {
+  Object.keys(modulesByGrades[grade]).map(module => {
+    $(`#myForm ${moduleSelector(module)}`).fadeIn();
+  });
+}
+
+function moduleSelector() {
+  const selector = `#mod${module.charAt(0).toUpperCase()}${module.slice(1)}`;
+  return selector;
+}
+
+function hideModules() {
+  Object.keys(modulesByGrades["11"]).map(module => {
+    $(`#myForm ${moduleSelector(module)}`).fadeOut();
+  });
+}
+
+function hideStudentRecord() {
   $("#myForm").css("display", "none");
   cleanForm();
   $("#modBusqueda").fadeOut();
 }
 
-function mostrarRegistro() {
+function showStudentRecord() {
   $("#modBusqueda").fadeOut();
   $("#myForm").css("display", "none");
   cleanForm();
@@ -394,88 +313,92 @@ function mostrarRegistro() {
   $("#myForm #edit").css("display", "none");
 }
 
-function cargarPersona(person) {
-  console.log("the hell", person);
+function loadStudent(person) {
+  console.log("Person", person);
   if (!person) {
     setDefaultCursor();
-    swal({
+    return swal({
       title: "Advertencia ...",
       text: "La cedula ingresada no corresponde a ningún estudiante",
       type: "warning"
     });
-  } else if (person.state == "antiguo") {
-    swal({
+  }
+  if (person.state === "antiguo") {
+    return swal({
       title: "Advertencia ...",
       text:
         "El estudiante esta inscrito anteriormente, pero no el periodo actual ",
       type: "warning"
     });
-  } else if (person.state == "actual") {
-    setWaitCursor();
-    mostrarRegistro();
-    $("#myForm #save").css("display", "none");
-    $("#myForm #edit").css("display", "block");
-    $("#name").val(String(person.data[0]));
-    $("#lastname").val(String(person.data[1]));
-    $("#tipo").val(String(person.data[2]));
-    $("#numdoc").val(String(person.data[3]));
-    $("#ciudadDoc").val(String(person.data[4]));
-    $("#email").val(String(person.data[5]));
-    $("#confirmEmail").val(String(person.data[5]));
-    $("#telfijo").val(String(person.data[6]));
-    $("#telcelular").val(String(person.data[7]));
-    $("#deptres").val(String(person.data[8]));
-    $("#deptres").trigger("change");
-    $("#ciudadres").val(String(person.data[9]));
-    $("#eps").val(String(person.data[10]));
-    $("#colegio").val(String(person.data[11]));
-    $("#estamento").val(String(person.data[12]));
-    $("#grado").val(String(person.data[13]));
-    $("#grado").trigger("change");
-    $("#acudiente").val(String(person.data[14]));
-    $("#telacudiente").val(String(person.data[15]));
-    console.log("eps", $("#eps").val());
-    if (!$("#eps").val()) {
-      $("#eps").val("OTRA");
-      $("#eps").trigger("change");
-      $("#otraeps").val(String(person.data[10]));
-    }
-    if (String(person.data[16]) != "NO") {
-      console.log("atleast");
-      $("#inscritoanterior").val("SI");
-      $("#inscritoanterior").trigger("change");
-      $("#otrocurso").val(String(person.data[16]));
-      $("#otrocurso").trigger("change");
-    }
+  }
+  if (person.state === "actual") return fillInStudentData(person);
+}
 
-    if (String(person.data[17])) {
-      //convenio
-      var convenio = person.data[17].toLowerCase();
-      $("#" + convenio).prop("checked", true);
-      $("#" + convenio).trigger("change");
-    }
+function fillInStudentData(person) {
+  setWaitCursor();
+  showStudentRecord();
+  $("#myForm #save").css("display", "none");
+  $("#myForm #edit").css("display", "block");
+  $("#name").val(String(person.data[0]));
+  $("#lastname").val(String(person.data[1]));
+  $("#tipo").val(String(person.data[2]));
+  $("#numdoc").val(String(person.data[3]));
+  $("#ciudadDoc").val(String(person.data[4]));
+  $("#email").val(String(person.data[5]));
+  $("#confirmEmail").val(String(person.data[5]));
+  $("#telfijo").val(String(person.data[6]));
+  $("#telcelular").val(String(person.data[7]));
+  $("#deptres").val(String(person.data[8]));
+  $("#deptres").trigger("change");
+  $("#ciudadres").val(String(person.data[9]));
+  $("#eps").val(String(person.data[10]));
+  $("#colegio").val(String(person.data[11]));
+  $("#estamento").val(String(person.data[12]));
+  $("#grado").val(String(person.data[13]));
+  $("#grado").trigger("change");
+  $("#acudiente").val(String(person.data[14]));
+  $("#telacudiente").val(String(person.data[15]));
+  console.log("eps", $("#eps").val());
+  if (!$("#eps").val()) {
+    $("#eps").val("OTRA");
+    $("#eps").trigger("change");
+    $("#otraeps").val(String(person.data[10]));
+  }
+  if (String(person.data[16]) != "NO") {
+    console.log("atleast");
+    $("#inscritoanterior").val("SI");
+    $("#inscritoanterior").trigger("change");
+    $("#otrocurso").val(String(person.data[16]));
+    $("#otrocurso").trigger("change");
+  }
 
-    if (String(person.data[18])) {
-      $("#valconsignado").val(String(person.data[18]));
-    }
-    if (String(person.data[person.data.length - 4])) {
-      //modulos.
-      //IMPORTANTE:
-      //CADA VEZ QUE SE AÑADA UN NUEVO CAMPO AL FORMULARIO, SE DEBE REVISAR ESTE CONDICIONAL.
-      //AÑADIR SIEMPRE EL NUEVO CAMPO ANTES DE LA CARGA DE LA URL DE LOS ARCHIVOS EN LA HOJA DE
-      //CALCULO.
-      google.script.run.withSuccessHandler(onSuccess).getModules();
-      function onSuccess(modules) {
-        for (var x in modules) {
-          if (modules[x][0] == person.data[person.data.length - 4]) {
-            $("#" + modules[x][1]).prop("checked", true);
-            $("#" + modules[x][1]).trigger("change");
-          }
+  if (String(person.data[17])) {
+    //convenio
+    let convenio = person.data[17].toLowerCase();
+    $("#" + convenio).prop("checked", true);
+    $("#" + convenio).trigger("change");
+  }
+
+  if (String(person.data[18])) {
+    $("#valconsignado").val(String(person.data[18]));
+  }
+  if (String(person.data[person.data.length - 4])) {
+    //modulos.
+    //IMPORTANTE:
+    //CADA VEZ QUE SE AÑADA UN NUEVO CAMPO AL FORMULARIO, SE DEBE REVISAR ESTE CONDICIONAL.
+    //AÑADIR SIEMPRE EL NUEVO CAMPO ANTES DE LA CARGA DE LA URL DE LOS ARCHIVOS EN LA HOJA DE
+    //CALCULO.
+    google.script.run.withSuccessHandler(onSuccess).getModules();
+    function onSuccess(modules) {
+      for (let x in modules) {
+        if (modules[x][0] == person.data[person.data.length - 4]) {
+          $("#" + modules[x][1]).prop("checked", true);
+          $("#" + modules[x][1]).trigger("change");
         }
       }
     }
-    setDefaultCursor();
   }
+  setDefaultCursor();
 }
 
 function setWaitCursor() {
@@ -489,8 +412,8 @@ function setDefaultCursor() {
 }
 
 function cleanArray(actual) {
-  var newArray = [];
-  for (var i = 0, j = actual.length; i < j; i++) {
+  let newArray = [];
+  for (let i = 0, j = actual.length; i < j; i++) {
     if (actual[i] != "") {
       newArray.push(actual[i]);
     }
@@ -507,7 +430,7 @@ function validateAndSave() {
   jQuery.validator.addMethod(
     "EqualToGroup",
     function(value, element, param) {
-      var isequal = false;
+      let isequal = false;
       for (x in param) {
         if (param[x] == value) {
           isequal = true;
@@ -526,7 +449,7 @@ function validateAndSave() {
     "File size must be less than {0}"
   );
 
-  var isvalid = $("#myForm").validate({
+  let isvalid = $("#myForm").validate({
     debug: false,
     rules: {
       name: {
@@ -562,7 +485,7 @@ function validateAndSave() {
       telfijo: {
         required: {
           depends: function(element) {
-            var valuecelular = $("#telcelular").val();
+            let valuecelular = $("#telcelular").val();
             if (valuecelular == "") return true;
             return false;
           }
@@ -585,7 +508,7 @@ function validateAndSave() {
       otraeps: {
         required: {
           depends: function(element) {
-            var valeps = $("#eps").val();
+            let valeps = $("#eps").val();
             if (valeps.includes("OTRA")) return true;
             return false;
           }
@@ -629,7 +552,7 @@ function validateAndSave() {
       otrocurso: {
         required: {
           depends: function(element) {
-            var valcur = $("#inscritoanterior").val();
+            let valcur = $("#inscritoanterior").val();
             if (valcur.includes("SI")) return true;
             return false;
           }
@@ -767,8 +690,8 @@ function validateAndSave() {
       }
     },
     highlight: function(element) {
-      var modules = $(element).closest(".modules_matricular");
-      var ismodule = $(element).closest(".modules_matricular").length;
+      let modules = $(element).closest(".modules_matricular");
+      let ismodule = $(element).closest(".modules_matricular").length;
       if (ismodule) {
         modules.addClass("has-error");
       } else {
@@ -778,8 +701,8 @@ function validateAndSave() {
       }
     },
     unhighlight: function(element) {
-      var modules = $(element).closest(".modules_matricular");
-      var ismodule = $(element).closest(".modules_matricular").length;
+      let modules = $(element).closest(".modules_matricular");
+      let ismodule = $(element).closest(".modules_matricular").length;
       if (ismodule) {
         modules.removeClass("has-error");
       } else {
@@ -791,13 +714,13 @@ function validateAndSave() {
     errorElement: "span",
     errorClass: "help-block",
     errorPlacement: function(error, element) {
-      var modules = $(element).closest(".modules_matricular");
-      var ismodule = $(element).closest(".modules_matricular").length;
+      let modules = $(element).closest(".modules_matricular");
+      let ismodule = $(element).closest(".modules_matricular").length;
 
       if (ismodule) {
         error.insertAfter(modules);
       } else if ($(element).attr("name") == "convenio") {
-        var parent = $(element).closest(".input-div");
+        let parent = $(element).closest(".input-div");
         error.insertAfter(parent);
       } else {
         error.insertAfter(element);
@@ -807,7 +730,7 @@ function validateAndSave() {
       $("#mySpan").fadeIn();
       setWaitCursor();
       //google.script.run.withSuccessHandler(fileUploaded).uploadFiles(form);
-      //var pag = location.href;
+      //let pag = location.href;
       console.log("FORM-->", form);
 
       google.script.run.withSuccessHandler(fileUploaded).uploadFiles(form);
@@ -825,26 +748,24 @@ function cleanForm(reload) {
   $(".file").val("");
   $("input:checkbox").removeAttr("checked");
   // $('#otrocurso').empty('');
-  if (reload) {
-    window.location.reload(true);
-  }
+  if (reload) window.location.reload(true);
 }
 
-var country_arr = new Array("CAUCA", "VALLE DEL CAUCA");
-var s_a = new Array();
+let country_arr = new Array("CAUCA", "VALLE DEL CAUCA");
+let s_a = new Array();
 s_a[0] = "";
 s_a[1] =
-  "Popayán|Cajibío|El tambo|La Sierra|Morales|Piendamó|Rosas|Soatá|Timbío|Buenos aires|Caloto|Corintio|Guachené|Miranda|Padilla|Puerto Tejada|Santander de Quilichao|Suárez|Villa rica|Almaguer|Argelia|Balboa|Bolívar|Florencia|La vega|Mercaderes|Patía|Piamonte|San Sebastián|Santa Rosa|Sucre|Guapí|López de micay|Timbiquí|Caldono|Inzá|Jambaló|Páez|Puracé|Silvia|Toribío|Torotó";
+  "Popayán|Cajibío|El tambo|La Sierra|Morales|Piendamó|Rosas|Soatá|Timbío|Buenos aires|Caloto|Corintio|Guachené|Miranda|Padilla|Puerto Tejada|Santander de Quilichao|Suárez|Villa rica|Almaguer|Argelia|Balboa|Bolílet|Florencia|La vega|Mercaderes|Patía|Piamonte|San Sebastián|Santa Rosa|Sucre|Guapí|López de micay|Timbiquí|Caldono|Inzá|Jambaló|Páez|Puracé|Silvia|Toribío|Torotó";
 s_a[2] =
   "|Cali|Candelaria|Dagua|Florida|Jamundí|La Cumbre|Palmira|Pradera|Vijes|Yumbo|Andalucía|Buga|Bugalagrande|Calima-El Darién|El Cerrito|Ginebra|Guacarí|Restrepo|Riofrío|San Pedro|Trujillo|Tuluá|Yotoco|Buenaventura|Caicedonia|Sevilla|Cartago|El águila|El Cairo|El Dovio|La Unión|La Victoria|Obando|Restrepo|Rodalnillo|Toro|Ulloa|Versalles|Zarzal|Alcalá";
 
 function populateCountries(countryElementId, stateElementId) {
   // given the id of the <select> tag as function argument, it inserts <option> tags
-  var countryElement = document.getElementById(countryElementId);
+  let countryElement = document.getElementById(countryElementId);
   countryElement.length = 0;
   countryElement.options[0] = new Option("Seleccione Departamento", "-1");
   countryElement.selectedIndex = 0;
-  for (var i = 0; i < country_arr.length; i++) {
+  for (let i = 0; i < country_arr.length; i++) {
     countryElement.options[countryElement.length] = new Option(
       country_arr[i],
       country_arr[i]
@@ -861,18 +782,18 @@ function populateCountries(countryElementId, stateElementId) {
 }
 
 function populateStates(countryElementId, stateElementId) {
-  var selectedCountryIndex = document.getElementById(countryElementId)
+  let selectedCountryIndex = document.getElementById(countryElementId)
     .selectedIndex;
 
-  var stateElement = document.getElementById(stateElementId);
+  let stateElement = document.getElementById(stateElementId);
 
   stateElement.length = 0;
   stateElement.options[0] = new Option("Seleccione Ciudad", "");
   stateElement.selectedIndex = 0;
 
-  var state_arr = s_a[selectedCountryIndex].split("|");
+  let state_arr = s_a[selectedCountryIndex].split("|");
 
-  for (var i = 0; i < state_arr.length; i++) {
+  for (let i = 0; i < state_arr.length; i++) {
     stateElement.options[stateElement.length] = new Option(
       state_arr[i],
       state_arr[i].toUpperCase()
@@ -881,9 +802,8 @@ function populateStates(countryElementId, stateElementId) {
 }
 
 function fileUploaded(status) {
-  if (status == "exito") {
-    //swal('Exito','La inscripción se realizó satisfactoriamente','success');
-    console.log("Estatus", status);
+  console.log("Estatus", status);
+  if (status === "exito") {
     swal({
       title: "Exito!",
       text:
@@ -892,14 +812,11 @@ function fileUploaded(status) {
       confirmButtonText: "Ok",
       closeOnConfirm: true
     });
-
     $("#mySpan").fadeOut();
     setDefaultCursor();
-    // cleanForm();
-  } else {
-    console.log("Estatus", status);
-    swal("Error", status, "error");
-    $("#mySpan").fadeOut();
-    setDefaultCursor();
+    return;
   }
+  swal("Error", status, "error");
+  $("#mySpan").fadeOut();
+  setDefaultCursor();
 }
