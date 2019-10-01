@@ -2,12 +2,15 @@ var GENERAL_DB =
   "https://docs.google.com/spreadsheets/d/1TsbNe2yNzhhmJ4vwyS3X0qztIP8kdKeSgoFY95C5-5U/edit#gid=0";
 
 function doGet(e) {
-  Logger.log(Session.getEffectiveUser());
-  return HtmlService.createHtmlOutputFromFile("admin.html");
+  return HtmlService.createTemplateFromFile("admin.html").evaluate();
+}
+
+function include(filename) {
+  return HtmlService.createHtmlOutputFromFile(filename).getContent();
 }
 
 function isAdmin() {
-  var guess_email = Session.getEffectiveUser();
+  var guess_email = Session.getActiveUser().getEmail();
   var admins = [
     "suarez.andres@correounivalle.edu.co",
     "semillero@correounivalle.edu.co",
@@ -15,8 +18,12 @@ function isAdmin() {
     "samuel.ramirez@correounivalle.edu.co",
     "moreno.juan@correounivalle.edu.co"
   ];
-  var isAdmin = admins.indexOf(guess_email) >= 0;
-  return isAdmin;
+  Logger.log("guess_email");
+  Logger.log(guess_email);
+  var isGuessAdmin = admins.indexOf(String(guess_email)) >= 0;
+  Logger.log(isGuessAdmin);
+
+  return isGuessAdmin;
 }
 
 function getModules() {

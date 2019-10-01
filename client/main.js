@@ -1,15 +1,35 @@
+{/* <script> */}
 let modulesByGrades = null;
 $(document).ready(runApp);
 
 function runApp() {
   hideInitialData();
   subscribeEventHandlers();
+  AuthenticateCurrentUser();
   populateCountries("deptres", "ciudadres");
   google.script.run.withSuccessHandler(onSuccessGrades).getModulesByGrades();
 }
 
+function AuthenticateCurrentUser() {
+  google.script.run.withSuccessHandler(onSuccessAuth).isAdmin();
+  function onSuccessAuth(isAdmin) {
+    console.log("isAdmin", isAdmin);
+    if (!isAdmin) return hideAdminData();
+    return showSearchModule();
+  }
+}
+function hideAdminData() {
+  $("#modBusqueda").hide();
+  showForm();
+  hideInitialData();
+}
+
+function showSearchModule() {
+  $("#modBusqueda").fadeIn();
+  hideInitialData();
+}
+
 function hideInitialData() {
-  //$("#myForm #pdfDoc").hide();
   $("#myForm #pdfConstanciaEstu").hide();
   $("#myForm #pdfContanciaFun").hide();
   $("#myForm #pdfRecibos").hide();
@@ -24,7 +44,6 @@ function hideInitialData() {
   $("#myForm #modBiologia").hide();
   $("#myForm #modHumanidades").hide();
   $("#myForm #modArtes").hide();
-  $("#modBusqueda").hide();
   $("#myForm #modNas").hide();
 }
 
@@ -64,7 +83,7 @@ function enrollStudent(e) {
 
 function handleClickAgreement() {
   let val = $(this).val();
-  if (val == "RELACION_UNIVALLE") {
+  if (val === "RELACION_UNIVALLE") {
     $("#myForm #pdfContanciaFun").fadeIn();
     $("#myForm #constanciaFuncFile").prop("disabled", false);
     $("#myForm #pdfRecibo").fadeIn();
@@ -73,7 +92,7 @@ function handleClickAgreement() {
     $("#myForm #pdfCartaSolicitud").fadeOut();
     $("#myForm #recibosPublicos").prop("disabled", true);
     $("#myForm #cartaSolicitud").prop("disabled", true);
-  } else if (val == "BECADOS") {
+  } else if (val === "BECADOS") {
     $("#myForm #pdfRecibos").fadeIn();
     $("#myForm #pdfCartaSolicitud").fadeIn();
     $("#myForm #recibosPublicos").prop("disabled", false);
@@ -97,8 +116,8 @@ function handleClickAgreement() {
 function handleChangeEstate() {
   let val = $(this).val();
   let grado = $("#grado").val();
-  if (val == "PUBLICO" || val == "COBERTURA") {
-    if (grado == "EGRESADO") {
+  if (val === "PUBLICO" || val === "COBERTURA") {
+    if (grado === "EGRESADO") {
       $("#myForm #pdfActaGrado").fadeIn();
       $("#myForm #actaGrado").prop("disabled", false);
       $("#myForm #pdfConstanciaEstu").fadeOut();
@@ -109,8 +128,8 @@ function handleChangeEstate() {
       $("#myForm #pdfActaGrado").fadeOut();
       $("#myForm #actaGrado").prop("disabled", true);
     }
-  } else if (val == "PRIVADO") {
-    if (grado == "EGRESADO") {
+  } else if (val === "PRIVADO") {
+    if (grado === "EGRESADO") {
       $("#myForm #pdfActaGrado").fadeIn();
       $("#myForm #actaGrado").prop("disabled", false);
       $("#myForm #pdfConstanciaEstu").fadeOut();
@@ -281,17 +300,69 @@ function showFiles({ grade, state }) {
 }
 
 function showModules(grade) {
+  if (!(grade in modulesByGrades) || !modulesByGrades) return;
   Object.keys(modulesByGrades[grade]).map(module => {
-    $(`#myForm ${moduleSelector(module)}`).fadeIn();
+    const isMath = module === "matematicas";
+    const courses = modulesByGrades[grade][module];
+    console.log("{courses,module}", { courses, module });
+    if (isMath) return showMathCourses({ courses, module });
+    return showModuleCourses({ courses, module });
   });
 }
 
-function moduleSelector() {
+function showModuleCourses({ module, courses }) {
+  const selector = `${moduleSelector(module)}`;
+  $(`#myForm ${selector}`).fadeIn();
+  $(`#myForm ${selector} .input-div`)
+    .children()
+    .fadeIn();
+  if (!courses.length) return;
+  const coursesSelector = courses
+    .map(course => `#tema${course.codigo}`)
+    .join(", ");
+  // console.log("coursesSelector", coursesSelector);
+  // console.log("children", $(`#myForm ${selector} .input-div`).children());
+  // console.log(
+  //   "NOT ",
+  //   $(`#myForm ${selector} .input-div`)
+  //     .children()
+  //     .not(coursesSelector)
+  // );
+  $(`#myForm ${selector} .input-div`)
+    .children()
+    .not(coursesSelector)
+    .fadeOut();
+}
+
+function showMathCourses({ module, courses }) {
+  const selector = `${moduleSelector(module)} #checkboxMate`;
+  $(`#myForm ${moduleSelector(module)}`).fadeIn();
+  $(`#myForm ${selector}`)
+    .children()
+    .fadeIn();
+
+  if (!courses.length) return;
+  const coursesSelector = courses
+    .map(course => `#tema${course.codigo}`)
+    .join(", ");
+  $(`#myForm ${selector}`)
+    .children()
+    .not(coursesSelector)
+    .fadeOut();
+}
+function showCourse({ course, selector }) {
+  const courseSelector = `#myForm ${selector} #${course.codigo}`;
+  console.log("courseSelector", courseSelector);
+  $(courseSelector).fadeIn();
+}
+
+function moduleSelector(module) {
   const selector = `#mod${module.charAt(0).toUpperCase()}${module.slice(1)}`;
   return selector;
 }
 
 function hideModules() {
+  if (!modulesByGrades) return;
   Object.keys(modulesByGrades["11"]).map(module => {
     $(`#myForm ${moduleSelector(module)}`).fadeOut();
   });
@@ -303,13 +374,16 @@ function hideStudentRecord() {
   $("#modBusqueda").fadeOut();
 }
 
+function showForm() {
+  $("#myForm").css("display", "none");
+  $("#myForm").css("display", "block");
+  $("#myForm #save").css("display", "block");
+}
+
 function showStudentRecord() {
   $("#modBusqueda").fadeOut();
-  $("#myForm").css("display", "none");
   cleanForm();
-  $("#myForm").css("display", "block");
-
-  $("#myForm #save").css("display", "block");
+  showForm();
   $("#myForm #edit").css("display", "none");
 }
 
@@ -820,3 +894,4 @@ function fileUploaded(status) {
   $("#mySpan").fadeOut();
   setDefaultCursor();
 }
+// </script> 
