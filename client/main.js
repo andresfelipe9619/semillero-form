@@ -1,23 +1,36 @@
-{/* <script> */}
+//   <script>
+
 let modulesByGrades = null;
 $(document).ready(runApp);
 
 function runApp() {
-  hideInitialData();
   subscribeEventHandlers();
-  AuthenticateCurrentUser();
-  populateCountries("deptres", "ciudadres");
-  google.script.run.withSuccessHandler(onSuccessGrades).getModulesByGrades();
+  fetchModulesByGrades();
+  setTimeout(() => {
+    AuthenticateCurrentUser();
+    populateCountries("deptres", "ciudadres");
+  }, 1000);
+
+  // hideInitialData();
 }
 
-function AuthenticateCurrentUser() {
-  google.script.run.withSuccessHandler(onSuccessAuth).isAdmin();
-  function onSuccessAuth(isAdmin) {
-    console.log("isAdmin", isAdmin);
-    if (!isAdmin) return hideAdminData();
-    return showSearchModule();
-  }
+const fetchModulesByGrades = () =>
+  google.script.run
+    .withSuccessHandler(onSuccessGrades)
+    .withFailureHandler(errorHandler)
+    .getModulesByGrades();
+
+const AuthenticateCurrentUser = () =>
+  google.script.run
+    .withSuccessHandler(onSuccessAuth)
+    .withFailureHandler(errorHandler)
+    .isAdmin();
+
+function onSuccessAuth(isAdmin) {
+  if (!isAdmin) return hideAdminData();
+  return showSearchModule();
 }
+
 function hideAdminData() {
   $("#modBusqueda").hide();
   showForm();
@@ -145,11 +158,11 @@ function handleChangeEstate() {
     $("#myForm #constanciaEstudFile").prop("disabled", true);
   }
 }
-function createEmail() {
+const createEmail = () =>
   window.open(
     "https://accounts.google.com/SignUp?service=mail&hl=es&continue=http%3A%2F%2Fmail.google.com%2Fmail%2F%3Fpc%3Des-ha-latam-co-bk-xplatform1&utm_campaign=es&utm_source=es-ha-latam-co-bk-xplatform1&utm_medium=ha"
   );
-}
+
 function handleChangeEps() {
   let epsval = this.value;
   if (epsval.includes("OTRA")) return $("#otraeps").css("display", "block");
@@ -159,8 +172,8 @@ function handleChangeEps() {
 function hadleChangeGrade() {
   let anterior = $("#otrocurso").val();
   console.log("MI ANTERIOR: ", anterior);
-  console.log("modulesByGrades", modulesByGrades);
-  let grade = this.value;
+  let grade = String(this.value).toLocaleLowerCase();
+  console.log("grade", grade);
   let state = $("#estamento").val();
   hideModules();
   if (grade in modulesByGrades) {
@@ -181,7 +194,7 @@ function handleChangeAnotherGrade() {
     (grado == 6 || grado == 7)
   ) {
     $("#myForm #modMatematicas").fadeIn();
-    $("#myForm #modMatematicas #checkboxMate")
+    $("#myForm #modMatematicas .input-div")
       .children()
       .fadeIn();
     $("#myForm #modFisica").fadeOut();
@@ -191,19 +204,19 @@ function handleChangeAnotherGrade() {
     $("#myForm #modHumanidades").fadeOut();
   } else if ((grado == 6 || grado == 7) && (val == "" || val == " ")) {
     $("#myForm #modMatematicas").fadeIn();
-    $("#myForm #modMatematicas #checkboxMate")
+    $("#myForm #modMatematicas .input-div")
       .children()
       .fadeOut();
-    $("#myForm #modMatematicas #checkboxMate")
+    $("#myForm #modMatematicas .input-div")
       .children("#temaentrac")
       .fadeIn();
-    $("#myForm #modMatematicas #checkboxMate")
+    $("#myForm #modMatematicas .input-div")
       .children("#temalogcon")
       .fadeIn();
-    $("#myForm #modMatematicas #checkboxMate")
+    $("#myForm #modMatematicas .input-div")
       .children("#temaalgfun")
       .fadeOut();
-    $("#myForm #modMatematicas #checkboxMate")
+    $("#myForm #modMatematicas .input-div")
       .children("#temageopl")
       .fadeOut();
     $("#myForm #modFisica").fadeOut();
@@ -245,7 +258,10 @@ function editStudentData() {
     }
   }
 
-  google.script.run.withSuccessHandler(onSuccess).editStudent(dataToEdit);
+  google.script.run
+    .withSuccessHandler(onSuccess)
+    .withFailureHandler(errorHandler)
+    .editStudent(dataToEdit);
 }
 
 function cargarInfo() {
@@ -259,21 +275,22 @@ function cargarInfo() {
     });
   }
   setWaitCursor();
-  google.script.run.withSuccessHandler(loadStudent).buscarPersona(ced);
+  searchPerson(ced);
 }
 
-function allowOnlyNumbers(e) {
-  return (
-    e.metaKey || // cmd/ctrl
-    e.which <= 0 || // arrow keys
-    e.which == 8 || // delete key
-    /[0-9]/.test(String.fromCharCode(e.which))
-  ); // numbers
-}
+const searchPerson = id =>
+  google.script.run
+    .withSuccessHandler(loadStudent)
+    .withFailureHandler(errorHandler)
+    .buscarPersona(id);
 
-function DoNotCopyPaste(e) {
-  e.preventDefault();
-}
+const allowOnlyNumbers = e =>
+  e.metaKey || // cmd/ctrl
+  e.which <= 0 || // arrow keys
+  e.which == 8 || // delete key
+  /[0-9]/.test(String.fromCharCode(e.which)); // numbers
+
+const DoNotCopyPaste = e => () => e.preventDefault();
 
 function showFiles({ grade, state }) {
   if (grade == 11 || grade === "EGRESADO") {
@@ -302,10 +319,7 @@ function showFiles({ grade, state }) {
 function showModules(grade) {
   if (!(grade in modulesByGrades) || !modulesByGrades) return;
   Object.keys(modulesByGrades[grade]).map(module => {
-    const isMath = module === "matematicas";
     const courses = modulesByGrades[grade][module];
-    console.log("{courses,module}", { courses, module });
-    if (isMath) return showMathCourses({ courses, module });
     return showModuleCourses({ courses, module });
   });
 }
@@ -320,36 +334,12 @@ function showModuleCourses({ module, courses }) {
   const coursesSelector = courses
     .map(course => `#tema${course.codigo}`)
     .join(", ");
-  // console.log("coursesSelector", coursesSelector);
-  // console.log("children", $(`#myForm ${selector} .input-div`).children());
-  // console.log(
-  //   "NOT ",
-  //   $(`#myForm ${selector} .input-div`)
-  //     .children()
-  //     .not(coursesSelector)
-  // );
   $(`#myForm ${selector} .input-div`)
     .children()
     .not(coursesSelector)
-    .fadeOut();
+    .hide();
 }
 
-function showMathCourses({ module, courses }) {
-  const selector = `${moduleSelector(module)} #checkboxMate`;
-  $(`#myForm ${moduleSelector(module)}`).fadeIn();
-  $(`#myForm ${selector}`)
-    .children()
-    .fadeIn();
-
-  if (!courses.length) return;
-  const coursesSelector = courses
-    .map(course => `#tema${course.codigo}`)
-    .join(", ");
-  $(`#myForm ${selector}`)
-    .children()
-    .not(coursesSelector)
-    .fadeOut();
-}
 function showCourse({ course, selector }) {
   const courseSelector = `#myForm ${selector} #${course.codigo}`;
   console.log("courseSelector", courseSelector);
@@ -368,20 +358,25 @@ function hideModules() {
   });
 }
 
+function hideFiles() {
+  $("#myForm #pdfConstanciaEstu").hide();
+  $("#myForm #pdfContanciaFun").hide();
+  $("#myForm #pdfRecibos").hide();
+  $("#myForm #pdfCartaSolicitud").hide();
+  $("#myForm #pdfActaGrado").hide();
+}
+
 function hideStudentRecord() {
-  $("#myForm").css("display", "none");
   cleanForm();
-  $("#modBusqueda").fadeOut();
+  $("#myForm").css("display", "none");
 }
 
 function showForm() {
-  $("#myForm").css("display", "none");
   $("#myForm").css("display", "block");
   $("#myForm #save").css("display", "block");
 }
 
 function showStudentRecord() {
-  $("#modBusqueda").fadeOut();
   cleanForm();
   showForm();
   $("#myForm #edit").css("display", "none");
@@ -462,7 +457,10 @@ function fillInStudentData(person) {
     //CADA VEZ QUE SE AÑADA UN NUEVO CAMPO AL FORMULARIO, SE DEBE REVISAR ESTE CONDICIONAL.
     //AÑADIR SIEMPRE EL NUEVO CAMPO ANTES DE LA CARGA DE LA URL DE LOS ARCHIVOS EN LA HOJA DE
     //CALCULO.
-    google.script.run.withSuccessHandler(onSuccess).getModules();
+    google.script.run
+      .withSuccessHandler(onSuccess)
+      .withFailureHandler(errorHandler)
+      .getModules();
     function onSuccess(modules) {
       for (let x in modules) {
         if (modules[x][0] == person.data[person.data.length - 4]) {
@@ -800,18 +798,31 @@ function validateAndSave() {
         error.insertAfter(element);
       }
     },
-    submitHandler: function(form) {
+    submitHandler: function() {
       $("#mySpan").fadeIn();
       setWaitCursor();
-      //google.script.run.withSuccessHandler(fileUploaded).uploadFiles(form);
-      //let pag = location.href;
-      console.log("FORM-->", form);
-
-      google.script.run.withSuccessHandler(fileUploaded).uploadFiles(form);
+      let form = $("#myForm");
+      const formData = getFormData(form);
+      console.log("FORM-->", { form, formData });
+      google.script.run
+        .withSuccessHandler(fileUploaded)
+        .withFailureHandler(errorHandler)
+        .uploadFiles(JSON.stringify(formData));
     }
   });
 
   return isvalid;
+}
+
+function getFormData($form) {
+  var unindexed_array = $form.serializeArray();
+  var indexed_array = {};
+
+  $.map(unindexed_array, function(n, i) {
+    indexed_array[n["name"]] = n["value"];
+  });
+
+  return indexed_array;
 }
 
 function cleanForm(reload) {
@@ -875,6 +886,18 @@ function populateStates(countryElementId, stateElementId) {
   }
 }
 
+function errorHandler(error) {
+  console.log("Error Handler ==>", error);
+  setDefaultCursor();
+  swal({
+    title: "Error",
+    text: String(error),
+    type: "error",
+    confirmButtonText: "Ok",
+    closeOnConfirm: true
+  });
+}
+
 function fileUploaded(status) {
   console.log("Estatus", status);
   if (status === "exito") {
@@ -894,4 +917,4 @@ function fileUploaded(status) {
   $("#mySpan").fadeOut();
   setDefaultCursor();
 }
-// </script> 
+// </script>

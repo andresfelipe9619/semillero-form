@@ -320,6 +320,7 @@ function editEstudentGeneral(student) {
 function validatePerson(cedula) {
   Logger.log("=============Validando Persona===========");
   var inscritos = getStudents();
+  var sheet = getSheetFromSpreadSheet(GENERAL_DB, "INSCRITOS");
   // var res = ""
   var result = {
     state: "",
@@ -328,34 +329,28 @@ function validatePerson(cedula) {
     lastModules: null
   };
   var actualPeriod = getActualPeriod()[0];
-
-  for (var person in inscritos) {
-    if (String(inscritos[person][3]) === String(cedula)) {
-      result.index = person;
-      result.lastModules = inscritos[person].slice(
-        18,
-        inscritos[person].length - 1
-      );
-      Logger.log("lastmodules");
-      Logger.log(result.lastModules);
-      for (var col in inscritos[person]) {
-        if (String(inscritos[person][col]) === String(actualPeriod)) {
-          result.state = "actual";
-          break;
-        } else {
-          result.state = "antiguo";
-        }
+  var textFinder = sheet.createTextFinder(cedula);
+  var studentFound = textFinder.findNext();
+  var studentIndex = studentFound ? studentFound.getRow() - 1 : -1;
+  result.state = "no esta";
+  if (studentIndex <= -1) return result;
+  if (String(inscritos[studentIndex][3]) === String(cedula)) {
+    var student = inscritos[studentIndex];
+    result.index = studentIndex;
+    result.lastModules = student.slice(18, student.length - 1);
+    Logger.log("lastmodules");
+    Logger.log(result.lastModules);
+    for (var col in student) {
+      if (String(student[col]) === String(actualPeriod)) {
+        result.state = "actual";
+        break;
       }
-      result.data = inscritos[person];
+      result.state = "antiguo";
     }
+    result.data = student;
   }
   Logger.log("=============FIN Validando Persona===========");
-  if (result.index > -1) {
-    return result;
-  } else {
-    result.state = "no esta";
-    return result;
-  }
+  return result;
 }
 
 function buscarPersona(cedula) {
@@ -460,8 +455,19 @@ function createStudentFolder(numdoc, data, arrayFiles) {
   }
   return lastFiles;
 }
+function fakeUpload(formString) {
+  var form = JSON.parse(formString);
+  Logger.log("FORM");
+  Logger.log(form);
+  Logger.log(formString);
+}
 
-function uploadFiles(form) {
+function uploadFiles(formString) {
+  var form = JSON.parse(formString);
+  Logger.log("FORM");
+  Logger.log(form);
+  Logger.log("FORM STRING");
+  Logger.log(formString);
   var lock = LockService.getPublicLock();
   lock.waitLock(20000); //espera 20 segundos  para evitar colisiones en accesos concurrentes
   try {
@@ -520,12 +526,13 @@ function uploadFiles(form) {
       arrayFiles = validateFormFiles(form, data);
 
       //se crea la carpeta que va contener los arhivos actuales
-      lastFiles = createStudentFolder(form.numdoc, data, arrayFiles);
+      // lastFiles = createStudentFolder(form.numdoc, data, arrayFiles);
+      lastFiles = [];
 
       //se crea adifiona la informacion a la tabla
       res = registerStudent(data, form);
 
-      sendConfirmationEmail(form, lastFiles);
+      // sendConfirmationEmail(form, lastFiles);
     } else if (person.state == "antiguo") {
       for (x in modulosMatriculados) {
         if (!addToModule(modulosMatriculados[x], form))
@@ -534,8 +541,8 @@ function uploadFiles(form) {
       arrayFiles = validateFormFiles(form, data);
 
       //se crea la carpeta que va contener los arhivos actuales
-      lastFiles = createStudentFolder(form.numdoc, data, arrayFiles);
-
+      // lastFiles = createStudentFolder(form.numdoc, data, arrayFiles);
+      lastFiles = [];
       Logger.log(
         "Data before registerStudentActualPeriod when student exists "
       );
@@ -552,13 +559,15 @@ function uploadFiles(form) {
       Logger.log("Data after registerStudentGeneral when student exists ");
       Logger.log(data);
 
-      sendConfirmationEmail(form, lastFiles);
+      // sendConfirmationEmail(form, lastFiles);
     } else if (person.state == "actual") {
       throw "Ya esta inscrito en este periodo";
     }
 
     return res;
   } catch (error) {
+    Logger.log("Error uploadig files");
+    Logger.log(error);
     return error.toString();
   }
 }
