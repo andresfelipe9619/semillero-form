@@ -1,6 +1,7 @@
 //   <script>
 
 let modulesByGrades = null;
+let filesByname = {};
 $(document).ready(runApp);
 
 function runApp() {
@@ -64,6 +65,7 @@ function subscribeEventHandlers() {
   $("#eps").on("change", handleChangeEps);
   $("#myForm #save").on("click", enrollStudent);
   $(".numeric").on("keypress", allowOnlyNumbers);
+  $("input[type='file']").on("change", handleFileChange);
   $("#myForm #edit").on("click", editStudentData);
   $("#email").on("copy cut paste", DoNotCopyPaste);
   $("#myForm #createEmail").on("click", createEmail);
@@ -92,6 +94,12 @@ function enrollStudent(e) {
     confirmButtonText: "Ok",
     closeOnConfirm: true
   });
+}
+
+function handleFileChange(e) {
+  const { name } = e.target;
+  const file = this.files[0];
+  filesByname[name] = file;
 }
 
 function handleClickAgreement() {
@@ -815,15 +823,23 @@ function validateAndSave() {
 }
 
 function getFormData($form) {
-  var unindexed_array = $form.serializeArray();
-  var indexed_array = {};
+  var serializedForm = $form.serializeArray();
+  var formData = {};
 
-  $.map(unindexed_array, function(n, i) {
-    indexed_array[n["name"]] = n["value"];
+  $.map(serializedForm, function(input, i) {
+    formData[input["name"]] = input["value"];
   });
-
-  return indexed_array;
+  formData = Object.assign({}, formData, filesByname);
+  return formData;
 }
+
+const getFile = file => {
+  return new Promise(resolve => {
+    let reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.readAsDataURL(file);
+  });
+};
 
 function cleanForm(reload) {
   $(".numeric").val("");

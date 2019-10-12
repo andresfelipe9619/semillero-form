@@ -526,7 +526,7 @@ function uploadFiles(formString) {
       arrayFiles = validateFormFiles(form, data);
 
       //se crea la carpeta que va contener los arhivos actuales
-      // lastFiles = createStudentFolder(form.numdoc, data, arrayFiles);
+      lastFiles = createStudentFolder(form.numdoc, data, arrayFiles);
       lastFiles = [];
 
       //se crea adifiona la informacion a la tabla
@@ -541,7 +541,7 @@ function uploadFiles(formString) {
       arrayFiles = validateFormFiles(form, data);
 
       //se crea la carpeta que va contener los arhivos actuales
-      // lastFiles = createStudentFolder(form.numdoc, data, arrayFiles);
+      lastFiles = createStudentFolder(form.numdoc, data, arrayFiles);
       lastFiles = [];
       Logger.log(
         "Data before registerStudentActualPeriod when student exists "
@@ -570,38 +570,6 @@ function uploadFiles(formString) {
     Logger.log(error);
     return error.toString();
   }
-}
-
-function getCurrentFolder(name, mainFolder) {
-  //se crea la carpeta que va conener todos los docmuentos
-  var nameFolder = "Bodega de archivos";
-  var actualPeriod = getActualPeriod()[0];
-  var FolderFiles,
-    folders = mainFolder.getFoldersByName(nameFolder);
-  if (folders.hasNext()) {
-    FolderFiles = folders.next();
-  } else {
-    FolderFiles = mainFolder.createFolder(nameFolder);
-  }
-
-  // se crea la carpeta que va contener los documentos de cada inscrito
-  var currentFolder,
-    folders = FolderFiles.getFoldersByName(name);
-  if (folders.hasNext()) {
-    currentFolder = folders.next();
-  } else {
-    currentFolder = FolderFiles.createFolder(name);
-  }
-
-  var periodFolder,
-    pfolders = currentFolder.getFoldersByName(actualPeriod);
-  if (pfolders.hasNext()) {
-    periodFolder = pfolders.next();
-  } else {
-    periodFolder = currentFolder.createFolder(actualPeriod);
-  }
-
-  return periodFolder;
 }
 
 function sendConfirmationEmail(form, lastFiles) {
@@ -697,49 +665,49 @@ function validateFormFiles(form) {
 
   if (form.docFile) {
     var fileDoc = form.docFile;
-    fileDoc.setName(form.numdoc + "_DOCUMENTO");
+    fileDoc.name(form.numdoc + "_DOCUMENTO");
     arrayFiles.push(fileDoc);
     validatorFiles.docFile = true;
   }
 
   if (form.constanciaEstudFile) {
     var fileConstanciaEstud = form.constanciaEstudFile;
-    fileConstanciaEstud.setName(form.numdoc + "_COSNTANCIA_ESTUD");
+    fileConstanciaEstud.name(form.numdoc + "_COSNTANCIA_ESTUD");
     arrayFiles.push(fileConstanciaEstud);
     validatorFiles.constanciaEstudFile = true;
   }
 
   if (form.reciboFile) {
     var fileRecibo = form.reciboFile;
-    fileRecibo.setName(form.numdoc + "_RECIBO");
+    fileRecibo.name(form.numdoc + "_RECIBO");
     arrayFiles.push(fileRecibo);
     validatorFiles.reciboFile = true;
   }
 
   if (form.constanciaFuncFile) {
     var fileConstanciaFunc = form.constanciaFuncFile;
-    fileConstanciaFunc.setName(form.numdoc + "_CONSTANCIA_FUNC");
+    fileConstanciaFunc.name(form.numdoc + "_CONSTANCIA_FUNC");
     arrayFiles.push(fileConstanciaFunc);
     validatorFiles.constanciaFuncFile = true;
   }
 
   if (form.recibosPublicos) {
     var fileRecibosPublicos = form.recibosPublicos;
-    fileRecibosPublicos.setName(form.numdoc + "_REC_PUBLICOS");
+    fileRecibosPublicos.name(form.numdoc + "_REC_PUBLICOS");
     arrayFiles.push(fileRecibosPublicos);
     validatorFiles.recibosPublicos = true;
   }
 
   if (form.cartaSolicitud) {
     var fileCartaSolicitud = form.cartaSolicitud;
-    fileCartaSolicitud.setName(form.numdoc + "_CARTA_SOLIC");
+    fileCartaSolicitud.name(form.numdoc + "_CARTA_SOLIC");
     arrayFiles.push(fileCartaSolicitud);
     validatorFiles.cartaSolicitud = true;
   }
 
   if (form.actaGrado) {
     var fileActaGrado = form.actaGrado;
-    fileActaGrado.setName(form.numdoc + "_ACTA_GRADO");
+    fileActaGrado.name(form.numdoc + "_ACTA_GRADO");
     arrayFiles.push(fileActaGrado);
     validatorFiles.actaGrado = true;
   }
