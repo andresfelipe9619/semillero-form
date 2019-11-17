@@ -26,41 +26,28 @@ function isAdmin() {
   return isGuessAdmin;
 }
 
-function getModules() {
-  var rawModules = getRawDataFromSheet(GENERAL_DB, "MODULOS");
-  Logger.log("modules");
-  return rawModules;
+function doPost(request) {
+  Logger.log("request");
+  Logger.log(request);
+
+  if (typeof request != "undefined") {
+    Logger.log(request);
+    var params = request.parameter;
+    Logger.log("params");
+    Logger.log(params);
+    return ContentService.createTextOutput(JSON.stringify(request.parameter));
+  }
 }
 
-function getPeriods() {
-  var rawPeriods = getRawDataFromSheet(GENERAL_DB, "PERIODOS");
-  return rawPeriods;
-}
-
-function getStudents() {
-  var rawStudents = getRawDataFromSheet(GENERAL_DB, "INSCRITOS");
-  return rawStudents;
-}
-
-function getActualPeriodStudents() {
-  var rawStudents = getRawDataFromSheet(getActualPeriod()[2], "INSCRITOS");
-  return rawStudents;
-}
-
-function getSheetFromSpreadSheet(url, sheet) {
-  var Spreedsheet = SpreadsheetApp.openByUrl(url);
-  if (url && sheet) return Spreedsheet.getSheetByName(sheet);
-}
-
-function getRawDataFromSheet(url, sheet) {
-  var mSheet = getSheetFromSpreadSheet(url, sheet);
-  if (mSheet)
-    return mSheet.getSheetValues(
-      1,
-      1,
-      mSheet.getLastRow(),
-      mSheet.getLastColumn()
-    );
+function readRequestParameter(request) {
+  if (typeof request !== "undefined") {
+    var params = request.parameter;
+    Logger.log(params.test);
+    if (params.test) {
+      return true;
+    }
+    return false;
+  }
 }
 
 function registerStudentActualPeriod(data, form) {
@@ -321,7 +308,6 @@ function validatePerson(cedula) {
   Logger.log("=============Validando Persona===========");
   var inscritos = getStudents();
   var sheet = getSheetFromSpreadSheet(GENERAL_DB, "INSCRITOS");
-  // var res = ""
   var result = {
     state: "",
     index: -1,
@@ -334,6 +320,7 @@ function validatePerson(cedula) {
   var studentIndex = studentFound ? studentFound.getRow() - 1 : -1;
   result.state = "no esta";
   if (studentIndex <= -1) return result;
+  // var headers = getHeadersFromSheet(sheet);
   if (String(inscritos[studentIndex][3]) === String(cedula)) {
     var student = inscritos[studentIndex];
     result.index = studentIndex;
@@ -347,6 +334,7 @@ function validatePerson(cedula) {
       }
       result.state = "antiguo";
     }
+    // var studentData = sheetValuesToObject(student, headers);
     result.data = student;
   }
   Logger.log("=============FIN Validando Persona===========");
@@ -354,14 +342,13 @@ function validatePerson(cedula) {
 }
 
 function buscarPersona(cedula) {
-  var mainFolder = getMainFolder();
   var folder;
-  var person = validatePerson(cedula);
+  var person = validatePerson(cedula || "1144093949");
   Logger.log("THIS IS WHAT U ARE LOOKING FOR");
   Logger.log(person);
   if (person.state !== "no esta") {
     person.files = [];
-    folder = getCurrentFolder(cedula, mainFolder);
+    folder = getPersonFolder(cedula);
     var files = folder.getFiles();
     Logger.log("files: " + files);
     while (files.hasNext()) {
@@ -376,85 +363,6 @@ function buscarPersona(cedula) {
   return person;
 }
 
-function validateModule(modulos, data) {
-  var modulosMatriculados = [];
-  Logger.log("=============Validando modulos===========");
-
-  var miModulos = getModules();
-  Logger.log("modulos selected");
-  Logger.log(modulos);
-
-  var titulosModulos = [];
-
-  for (var x in miModulos) {
-    if (x > 0) {
-      titulosModulos.push(miModulos[x][1]);
-    }
-  }
-  Logger.log("Titulos modulos");
-  Logger.log(titulosModulos);
-
-  if (modulos) {
-    for (var i in titulosModulos) {
-      if (modulos.localeCompare(titulosModulos[i]) == 0) {
-        data.push("x");
-        modulosMatriculados.push(titulosModulos[i]);
-      } else {
-        data.push("");
-      }
-    }
-  } else {
-    for (var i in titulosModulos) {
-      data.push("");
-    }
-  }
-
-  Logger.log("modulo matriculado");
-  Logger.log(modulosMatriculados);
-  Logger.log("=============FIN Validando modulos===========");
-
-  return modulosMatriculados;
-}
-
-function getMainFolder() {
-  var dropbox = "SCRIPTS SEMILLEROS";
-  var mainFolder,
-    folders = DriveApp.getFoldersByName(dropbox);
-
-  if (folders.hasNext()) {
-    mainFolder = folders.next();
-  } else {
-    mainFolder = DriveApp.createFolder(dropbox);
-  }
-  return mainFolder;
-}
-
-function editModuleConditionals(module, conditions) {}
-
-function getActualPeriod() {
-  var periodos = getPeriods();
-  // Logger.log(periodos)
-
-  for (var x in periodos) {
-    if (periodos[x][1] == "x") {
-      return periodos[x];
-    }
-  }
-}
-
-function createStudentFolder(numdoc, data, arrayFiles) {
-  //se crea la carpeta que va contener los arhivos actuales
-  var mainFolder = getMainFolder();
-  var currentFolder = getCurrentFolder(numdoc, mainFolder);
-  var lastFiles = [];
-  data.push(currentFolder.getUrl());
-  for (var i in arrayFiles) {
-    var file = currentFolder.createFile(arrayFiles[i]);
-    lastFiles.push(file);
-    file.setDescription("Subido Por " + numdoc);
-  }
-  return lastFiles;
-}
 function fakeUpload(formString) {
   var form = JSON.parse(formString);
   Logger.log("FORM");
@@ -523,11 +431,12 @@ function uploadFiles(formString) {
           throw "No se reconoce el modulo seleccionado";
       }
       //VALIDATE FILES
-      arrayFiles = validateFormFiles(form, data);
+      // arrayFiles = validateFormFiles(form, data);
+      Logger.log("{arrayFiles, form, data}");
+      Logger.log({ files: arrayFiles, form: form, data: data });
 
       //se crea la carpeta que va contener los arhivos actuales
-      lastFiles = createStudentFolder(form.numdoc, data, arrayFiles);
-      lastFiles = [];
+      // lastFiles = uploadEstudentFiles(form.numdoc, data, arrayFiles[0]);
 
       //se crea adifiona la informacion a la tabla
       res = registerStudent(data, form);
@@ -538,11 +447,11 @@ function uploadFiles(formString) {
         if (!addToModule(modulosMatriculados[x], form))
           throw "No se reconoce el modulo seleccionado";
       }
-      arrayFiles = validateFormFiles(form, data);
-
+      // arrayFiles = validateFormFiles(form, data);
+      Logger.log("{arrayFiles, form, data}");
+      Logger.log({ files: arrayFiles, form: form, data: data });
       //se crea la carpeta que va contener los arhivos actuales
-      lastFiles = createStudentFolder(form.numdoc, data, arrayFiles);
-      lastFiles = [];
+      // lastFiles = uploadEstudentFiles(form.numdoc, data, arrayFiles[0]);
       Logger.log(
         "Data before registerStudentActualPeriod when student exists "
       );
@@ -572,82 +481,6 @@ function uploadFiles(formString) {
   }
 }
 
-function sendConfirmationEmail(form, lastFiles) {
-  // se envia el correo con el detalle de la informcación subministrada
-
-  var filetoSend = getPDFFile(form);
-  var subModule = "";
-  var modules = getModules();
-  var mainFolder = getMainFolder();
-
-  for (var module in modules) {
-    if (modules[module][1] == form.seleccion) {
-      subModule = modules[module][0];
-    }
-  }
-  var periodo = getActualPeriod();
-  Logger.log("Submodulo");
-  Logger.log(subModule);
-  MailApp.sendEmail({
-    to: form.email,
-    subject: "Inscripción " + periodo[0] + " " + subModule,
-    htmlBody: filetoSend,
-    name: "SEMILLEROS UNIVALLE",
-    attachments: lastFiles
-  });
-
-  var links = "";
-  var stFolder = getCurrentFolder(form.numdoc, mainFolder);
-  var stFiles = stFolder.getFiles();
-  Logger.log("last files: " + stFiles);
-
-  var urlFolder = stFolder.getUrl();
-
-  /*
-    while (stFiles.hasNext()) {
-        var mfile = stFiles.next();
-        //Logger.log('my name:' + typeof mfile.getName());
-        var myname = mfile.getName();
-
-        if (myname.indexOf('STUD') > -1) {
-            links += '<p> <strong>Enlace Constancia Estudio: </strong><a href="' + mfile.getUrl() + '">Constancia de Estudio</a></p>';
-
-        } else if (myname.indexOf('FUNC') > -1) {
-            links += '<p> <strong>Enlace Constancia Funcionario: </strong><a href="' + mfile.getUrl() + '">Constancia de Funcionario</a></p>';
-
-        } else if (myname.indexOf('DOC') > -1) {
-            links += '<p> <strong>Enlace Documento: </strong><a href="' + mfile.getUrl() + '">Documento Identidad</a></p>';
-
-        } else if (myname.indexOf('RECI') > -1) {
-            links += '<p> <strong>Enlace Recibo: </strong><a href="' + mfile.getUrl() + '">Recibo de Pago</a></p>';
-
-        }
-    } */
-
-  links +=
-    '<p> <strong> Enlace Documentos: </strong> <a href="' +
-    urlFolder +
-    '"> Carpeta con Documentos del Estudiante</a></p>';
-
-  //CORREO AL ADMIN
-  MailApp.sendEmail({
-    to:
-      /*"suarez.andres@correounivalle.edu.co" "moreno.juan@correounivalle.edu.co"*/ "semillero@correounivalle.edu.co",
-    subject:
-      "Inscripción " +
-      periodo[0] +
-      " " +
-      subModule +
-      " " +
-      form.name.toUpperCase() +
-      " " +
-      form.lastname.toUpperCase(),
-    htmlBody: filetoSend + links,
-    name: "SEMILLEROS UNIVALLE",
-    attachments: lastFiles
-  });
-}
-
 function validateFormFiles(form) {
   //arreglo que almacena temporalmente los archivos
   var arrayFiles = new Array();
@@ -662,45 +495,46 @@ function validateFormFiles(form) {
     cartaSolicitud: false,
     actaGrado: false
   };
-
+  Logger.log("form");
+  Logger.log(form);
   if (form.docFile) {
     var fileDoc = form.docFile;
-    fileDoc.name(form.numdoc + "_DOCUMENTO");
+    fileDoc.name = form.numdoc + "_DOCUMENTO";
     arrayFiles.push(fileDoc);
     validatorFiles.docFile = true;
   }
 
   if (form.constanciaEstudFile) {
     var fileConstanciaEstud = form.constanciaEstudFile;
-    fileConstanciaEstud.name(form.numdoc + "_COSNTANCIA_ESTUD");
+    fileConstanciaEstud.name = form.numdoc + "_COSNTANCIA_ESTUD";
     arrayFiles.push(fileConstanciaEstud);
     validatorFiles.constanciaEstudFile = true;
   }
 
   if (form.reciboFile) {
     var fileRecibo = form.reciboFile;
-    fileRecibo.name(form.numdoc + "_RECIBO");
+    fileRecibo.name = form.numdoc + "_RECIBO";
     arrayFiles.push(fileRecibo);
     validatorFiles.reciboFile = true;
   }
 
   if (form.constanciaFuncFile) {
     var fileConstanciaFunc = form.constanciaFuncFile;
-    fileConstanciaFunc.name(form.numdoc + "_CONSTANCIA_FUNC");
+    fileConstanciaFunc.name = form.numdoc + "_CONSTANCIA_FUNC";
     arrayFiles.push(fileConstanciaFunc);
     validatorFiles.constanciaFuncFile = true;
   }
 
   if (form.recibosPublicos) {
     var fileRecibosPublicos = form.recibosPublicos;
-    fileRecibosPublicos.name(form.numdoc + "_REC_PUBLICOS");
+    fileRecibosPublicos.name = form.numdoc + "_REC_PUBLICOS";
     arrayFiles.push(fileRecibosPublicos);
     validatorFiles.recibosPublicos = true;
   }
 
   if (form.cartaSolicitud) {
     var fileCartaSolicitud = form.cartaSolicitud;
-    fileCartaSolicitud.name(form.numdoc + "_CARTA_SOLIC");
+    fileCartaSolicitud.name = form.numdoc + "_CARTA_SOLIC";
     arrayFiles.push(fileCartaSolicitud);
     validatorFiles.cartaSolicitud = true;
   }
@@ -713,240 +547,4 @@ function validateFormFiles(form) {
   }
 
   return arrayFiles;
-}
-
-function getPDFFile(data) {
-  var modulos = getModules();
-
-  var contenthtml = "";
-
-  var moduleName = "";
-  var moduleUrl = "";
-  var modulo = data.seleccion;
-  for (var y in modulos) {
-    if (modulos[y][1] == modulo) {
-      moduleName = modulos[y][0];
-      moduleUrl = modulos[y][4];
-    }
-  }
-  contenthtml += '<div style="text-align:center">';
-  contenthtml += "<h3>UNIVERSIDAD DEL VALLE</h3>";
-  contenthtml += "<h3>CONFIRMACION INSCRIPCION SEMILLERO DE CIENCIAS</h3>";
-  contenthtml +=
-    "<h3>Actualmente se encuentra inscrito en el semillero de ciencias, periodo académico Febrero - Junio de 2019.</h3></div>";
-  contenthtml +=
-    '<p><strong>NOTA: No olvide consultar su salón de clase en nuestra pagina <a href="http://semillerociencias.univalle.edu.co/">Semillero</a> o revisar el correo electrónico donde también serán enviados los listados.</p></strong>';
-  contenthtml +=
-    "<p><strong>Importante:</strong>Conserve el original del recibo de pago, la cual debe de ser entregado el primer dia de clases a los monitores.</p><hr>";
-
-  contenthtml += "<h3> Modulo: " + moduleName + "</h3>";
-  contenthtml +=
-    "<p> <strong>Fecha de inscripcion:</strong>	" + new Date() + "</p>";
-  contenthtml +=
-    "<p> <strong>Nombre completo: </strong>" +
-    data.name.toUpperCase() +
-    " " +
-    data.lastname.toUpperCase() +
-    "</p>";
-  contenthtml +=
-    "<p> <strong>Documento de identidad:	</strong>" +
-    data.tipo +
-    " " +
-    data.numdoc +
-    "</p>";
-  contenthtml +=
-    "<p> <strong>Ciudad expedición: </strong>" +
-    data.ciudadDoc.toUpperCase() +
-    "</p>";
-  contenthtml += "<p> <strong>Email:	</strong>" + data.email + "</p>";
-  contenthtml += "<p> <strong>Telefono: </strong>" + data.telfijo + "</p>";
-  contenthtml += "<p> <strong>Celular: 	</strong>" + data.telcelular + "</p>";
-  contenthtml +=
-    "<p> <strong>Ciudad residencia:	 </strong>" +
-    data.ciudadres.toUpperCase() +
-    "</p>";
-
-  if (data.otraeps === null || data.otraeps === " " || data.otraeps === "") {
-    Logger.log("yes it is");
-    contenthtml += "<p> <strong>Eps: </strong>" + data.eps + "</p>";
-  } else {
-    contenthtml += "<p> <strong>Eps: </strong>" + data.otraeps + "</p>";
-
-    Logger.log("no it isnt");
-  }
-  contenthtml +=
-    "<p> <strong>Institucion educativa: </strong>" + data.colegio + "</p>";
-  contenthtml += "<p> <strong>Modalidad:  </strong>" + data.estamento + "</p>";
-  contenthtml += "<p> <strong>Grado:	</strong>" + data.grado + "</p>";
-  contenthtml +=
-    "<p> <strong>Acudiente:  </strong>" + data.acudiente.toUpperCase() + "</p>";
-  contenthtml +=
-    "<p> <strong>Telefono acudiente: </strong>" + data.telacudiente + "</p>";
-
-  if (
-    data.otrocurso === null ||
-    data.otrocurso === " " ||
-    data.otrocurso === ""
-  ) {
-    contenthtml +=
-      "<p> <strong>Inscrito anteriormente: </strong>" +
-      data.inscritoanterior +
-      "</p>";
-  } else {
-    contenthtml +=
-      "<p> <strong>Inscrito anteriormente: </strong>" + data.otrocurso + "</p>";
-  }
-
-  contenthtml += "<p> <strong>Convenio: </strong>" + data.convenio + "</p>";
-
-  return contenthtml;
-}
-
-function getModulesByGrades() {
-  var rawModules = getModules();
-  var modules = sheetValuesToObject(rawModules);
-  var allowedColumns = ["nombre", "codigo", "area", "prueba"];
-  modules = modules.map(function(newModule) {
-    newModule.grades = Object.keys(newModule).reduce(function(prevArray, key) {
-      if (allowedColumns.indexOf(key) >= 0) return prevArray;
-      var currentValue = newModule[key];
-      delete newModule[key];
-      if (currentValue === "x") {
-        prevArray.push(key);
-      }
-      return prevArray;
-    }, []);
-    return newModule;
-  });
-  var modulesByGrades = modules.reduce(function(prevModules, module) {
-    module.grades.map(function(grade) {
-      if (!(grade in prevModules)) {
-        prevModules[grade] = {};
-      }
-      if (!(module.area in prevModules[grade])) {
-        prevModules[grade][module.area] = [];
-      }
-      prevModules[grade][module.area].push({
-        nombre: module.nombre,
-        codigo: module.codigo,
-        prueba: module.prueba
-      });
-    });
-    return prevModules;
-  }, {});
-  Logger.log(modulesByGrades);
-  return modulesByGrades;
-}
-
-function addToModule(module, data) {
-  Logger.log("addtomodule");
-  Logger.log(module);
-  Logger.log(data);
-  // data.push(module)
-  createModulesSheets();
-  var actualPeriod = getActualPeriod()[2];
-  var modulos = getModules();
-  for (var x in modulos) {
-    if (module == modulos[x][1]) {
-      var moduleSheet = getSheetFromSpreadSheet(actualPeriod, modulos[x][0]);
-      var lastRow = moduleSheet.getLastRow();
-      moduleSheet.appendRow([
-        data.name.toUpperCase(),
-        data.lastname.toUpperCase(),
-        data.tipo,
-        data.numdoc,
-        data.telfijo,
-        data.email.toLowerCase(),
-        data.grado,
-        data.colegio,
-        data.convenio
-      ]);
-      var lastRowRes = moduleSheet.getLastRow();
-      var res = false;
-
-      if (lastRowRes > lastRow) {
-        res = true;
-      }
-      return res;
-    }
-  }
-  return true;
-}
-
-function createModulesSheets() {
-  var actualPeriod = getActualPeriod()[2];
-  var periodSpreadSheet = SpreadsheetApp.openByUrl(actualPeriod);
-
-  var modules = getModules();
-
-  Logger.log("creating modules");
-  Logger.log(actualPeriod);
-  Logger.log(modules[1][0]);
-  Logger.log("--------------------------");
-  var headers = [
-    "nombre",
-    "apellido",
-    "tipo de documento",
-    "número de documento",
-    "telefono",
-    "email",
-    "grado",
-    "colegio",
-    "convenio_colegio"
-  ];
-  for (var x in modules) {
-    var moduleSheet;
-    if (x > 0) {
-      if (!getSheetFromSpreadSheet(actualPeriod, modules[x][0])) {
-        periodSpreadSheet.insertSheet(modules[x][0]);
-        moduleSheet = getSheetFromSpreadSheet(actualPeriod, modules[x][0]);
-        if (moduleSheet.getLastRow() == 0) {
-          moduleSheet.appendRow(headers);
-        }
-      }
-    }
-  }
-  return true;
-}
-
-function jsonToSheetValues(json, headers) {
-  var arrayValues = new Array(headers.length);
-  var lowerHeaders = headers.map(function(item) {
-    item.toLowerCase();
-  });
-
-  for (var key in json) {
-    for (var header in lowerHeaders) {
-      if (key == String(lowerHeaders[header])) {
-        if (key == "nombre" || key == "apellidos") {
-          arrayValues[header] = json[key].toUpperCase();
-        } else {
-          arrayValues[header] = json[key];
-        }
-      }
-    }
-  }
-  // logFunctionOutput(jsonToSheetValues.name, arrayValues)
-  return arrayValues;
-}
-
-function sheetValuesToObject(sheetValues, headers) {
-  var headings = headers || sheetValues[0].map(String.toLowerCase);
-  var people = null;
-  if (sheetValues) people = sheetValues.slice(1);
-  var peopleWithHeadings = addHeadings(people, headings);
-
-  function addHeadings(people, headings) {
-    return people.map(function(personAsArray) {
-      var personAsObj = {};
-
-      headings.forEach(function(heading, i) {
-        personAsObj[heading] = personAsArray[i];
-      });
-
-      return personAsObj;
-    });
-  }
-  // logFunctionOutput(sheetValuesToObject.name, peopleWithHeadings)
-  return peopleWithHeadings;
 }

@@ -1,41 +1,50 @@
 var ROOT_FOLDER = "SCRIPTS SEMILLEROS";
+var FILES_FOLDER = "Bodega de archivos";
 
-function getPersonFolder(name, mainFolder) {
-  // se crea la carpeta que va conener todos los docmuentos
-  var nameFolder = "Bodega de archivos";
-  var FolderFiles;
-  var folders = mainFolder.getFoldersByName(nameFolder);
-  if (folders.hasNext()) {
-    FolderFiles = folders.next();
-  } else {
-    FolderFiles = mainFolder.createFolder(nameFolder);
+function getPersonFolder(name, folder) {
+  var filesFolder = getFilesFolder(folder);
+  var personFolder = createPersonFolder(name, filesFolder);
+  return personFolder;
+}
+
+function getFilesFolder(folder) {
+  var mainFolder = folder;
+  if (!folder) {
+    mainFolder = getMainFolder();
   }
+  var filesFolder;
+  var folders = mainFolder.getFoldersByName(FILES_FOLDER);
+  if (folders.hasNext()) {
+    filesFolder = folders.next();
+  } else {
+    filesFolder = mainFolder.createFolder(FILES_FOLDER);
+  }
+  return filesFolder;
+}
 
-  // se crea la carpeta que va contener los documentos de cada inscrito
+function createPersonFolder(name, filesFolder) {
   var currentFolder;
-  var mFolders = FolderFiles.getFoldersByName(name);
+  var mFolders = filesFolder.getFoldersByName(name);
   if (mFolders.hasNext()) {
     currentFolder = mFolders.next();
   } else {
-    currentFolder = FolderFiles.createFolder(name);
+    currentFolder = filesFolder.createFolder(name);
   }
-
   return currentFolder;
 }
 
 function getMainFolder() {
-  var dropbox = ROOT_FOLDER;
   var mainFolder;
-  var folders = DriveApp.getFoldersByName(dropbox);
-
+  var folders = DriveApp.getFoldersByName(ROOT_FOLDER);
   if (folders.hasNext()) {
     mainFolder = folders.next();
   } else {
-    mainFolder = DriveApp.createFolder(dropbox);
+    mainFolder = DriveApp.createFolder(ROOT_FOLDER);
   }
   return mainFolder;
 }
-function createPersonFile(name, numdoc, data) {
+
+function createPersonFile(fileName, numdoc, fileData) {
   var result = {
     url: "",
     file: ""
@@ -43,19 +52,31 @@ function createPersonFile(name, numdoc, data) {
   var mainFolder = getMainFolder();
   var currentFolder = getPersonFolder(numdoc, mainFolder);
 
-  var contentType = data.substring(5, data.indexOf(";"));
-  var bytes = Utilities.base64Decode(data.substr(data.indexOf("base64,") + 7));
+  var contentType = fileData.substring(5, fileData.indexOf(";"));
+  var bytes = Utilities.base64Decode(
+    fileData.substr(fileData.indexOf("base64,") + 7)
+  );
   var blob = Utilities.newBlob(bytes, contentType, file);
 
   var file = currentFolder.createFile(blob);
   file.setDescription("Subido Por " + numdoc);
-  file.setName(numdoc + "_" + name);
+  file.setName(numdoc + "_" + fileName);
   result.url = file.getUrl();
   result.file = file.getName();
   return result;
 }
 
-function createPonenciaFile(numdoc, data) {
-  var res = createPersonFile("PONENCIA", numdoc, data);
-  return res;
+function uploadEstudentFiles(numdoc, files) {
+  Logger.log("=============UPLOADING STUDENT "+numdoc+ " FILES===========");
+
+  if (!files.length) return;
+  Logger.log("FILES:")
+  Logger.log(files)
+  var response = files.map(function(file) {
+    var name = file.name || "";
+    var base64 = file.base64 || "";
+    return createPersonFile(name, numdoc, base64);
+  })
+  Logger.log("=============END UPLOADING STUDENT "+numdoc+ " FILES===========");
+  return response;
 }

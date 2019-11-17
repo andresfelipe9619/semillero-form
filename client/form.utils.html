@@ -1,0 +1,208 @@
+<script>
+  function hideAdminData() {
+    $("#modBusqueda").hide();
+    showForm();
+    hideInitialData();
+  }
+
+  function showSearchModule() {
+    $("#modBusqueda").fadeIn();
+    hideInitialData();
+  }
+
+  function hideInitialData() {
+    $("#myForm #pdfConstanciaEstu").hide();
+    $("#myForm #pdfContanciaFun").hide();
+    $("#myForm #pdfRecibos").hide();
+    $("#myForm #pdfCartaSolicitud").hide();
+    $("#myForm #pdfActaGrado").hide();
+    $("#myForm #modMatematicas").hide();
+    $("#myForm #modMatematicas #checkboxMate")
+      .children()
+      .hide();
+    $("#myForm #modFisica").hide();
+    $("#myForm #modQuimica").hide();
+    $("#myForm #modBiologia").hide();
+    $("#myForm #modHumanidades").hide();
+    $("#myForm #modArtes").hide();
+    $("#myForm #modNas").hide();
+  }
+  const allowOnlyNumbers = e =>
+    e.metaKey || // cmd/ctrl
+    e.which <= 0 || // arrow keys
+    e.which == 8 || // delete key
+    /[0-9]/.test(String.fromCharCode(e.which)); // numbers
+
+  const DoNotCopyPaste = e => () => e.preventDefault();
+
+  function showFiles({ grade, state }) {
+    if (grade == 11 || grade === "EGRESADO") {
+      $("#myForm #modNas").fadeIn();
+      $("#myForm #pdfActaGrado").fadeOut();
+    }
+
+    if (grade === "EGRESADO") {
+      $("#myForm #pdfActaGrado").fadeIn();
+      $("#myForm #actaGrado").prop("disabled", false);
+      $("#myForm #pdfConstanciaEstu").fadeOut();
+      $("#myForm #constanciaEstudFile").prop("disabled", true);
+    }
+    if (grade !== "EGRESADO") {
+      $("#myForm #pdfActaGrado").fadeOut();
+      $("#myForm #actaGrado").prop("disabled", true);
+      $("#myForm #pdfConstanciaEstu").fadeIn();
+      $("#myForm #constanciaEstudFile").prop("disabled", false);
+    }
+    if (state === "PRIVADO") {
+      $("#myForm #pdfConstanciaEstu").fadeOut();
+      $("#myForm #constanciaEstudFile").prop("disabled", true);
+    }
+  }
+
+  function showModules(grade) {
+    if (!(grade in modulesByGrades) || !modulesByGrades) return;
+    Object.keys(modulesByGrades[grade]).map(module => {
+      const courses = modulesByGrades[grade][module];
+      return showModuleCourses({ courses, module });
+    });
+  }
+
+  function showModuleCourses({ module, courses }) {
+    const selector = `${moduleSelector(module)}`;
+    $(`#myForm ${selector}`).fadeIn();
+    $(`#myForm ${selector} .input-div`)
+      .children()
+      .fadeIn();
+    if (!courses.length) return;
+    const coursesSelector = courses
+      .map(course => `#tema${course.codigo}`)
+      .join(", ");
+    $(`#myForm ${selector} .input-div`)
+      .children()
+      .not(coursesSelector)
+      .hide();
+  }
+
+  function showCourse({ course, selector }) {
+    const courseSelector = `#myForm ${selector} #${course.codigo}`;
+    console.log("courseSelector", courseSelector);
+    $(courseSelector).fadeIn();
+  }
+
+  function moduleSelector(module) {
+    const selector = `#mod${module.charAt(0).toUpperCase()}${module.slice(1)}`;
+    return selector;
+  }
+
+  function hideModules() {
+    if (!modulesByGrades) return;
+    Object.keys(modulesByGrades["11"]).map(module => {
+      $(`#myForm ${moduleSelector(module)}`).fadeOut();
+    });
+  }
+
+  function hideFiles() {
+    $("#myForm #pdfConstanciaEstu").hide();
+    $("#myForm #pdfContanciaFun").hide();
+    $("#myForm #pdfRecibos").hide();
+    $("#myForm #pdfCartaSolicitud").hide();
+    $("#myForm #pdfActaGrado").hide();
+  }
+
+  function hideStudentRecord() {
+    cleanForm();
+    $("#myForm").css("display", "none");
+  }
+
+  function showForm() {
+    $("#myForm").css("display", "block");
+    $("#myForm #save").css("display", "block");
+  }
+
+  function showStudentRecord() {
+    cleanForm();
+    showForm();
+    $("#myForm #edit").css("display", "none");
+  }
+
+  function cleanForm(reload) {
+    $(".numeric").val("");
+    $(".text-uppercase").val("");
+    $(".text-lowercase").val("");
+
+    $(".file").val("");
+    $("input:checkbox").removeAttr("checked");
+    // $('#otrocurso').empty('');
+    if (reload) window.location.reload(true);
+  }
+
+  let country_arr = new Array("CAUCA", "VALLE DEL CAUCA");
+  let s_a = new Array();
+  s_a[0] = "";
+  s_a[1] =
+    "Popayán|Cajibío|El tambo|La Sierra|Morales|Piendamó|Rosas|Soatá|Timbío|Buenos aires|Caloto|Corintio|Guachené|Miranda|Padilla|Puerto Tejada|Santander de Quilichao|Suárez|Villa rica|Almaguer|Argelia|Balboa|Bolílet|Florencia|La vega|Mercaderes|Patía|Piamonte|San Sebastián|Santa Rosa|Sucre|Guapí|López de micay|Timbiquí|Caldono|Inzá|Jambaló|Páez|Puracé|Silvia|Toribío|Torotó";
+  s_a[2] =
+    "|Cali|Candelaria|Dagua|Florida|Jamundí|La Cumbre|Palmira|Pradera|Vijes|Yumbo|Andalucía|Buga|Bugalagrande|Calima-El Darién|El Cerrito|Ginebra|Guacarí|Restrepo|Riofrío|San Pedro|Trujillo|Tuluá|Yotoco|Buenaventura|Caicedonia|Sevilla|Cartago|El águila|El Cairo|El Dovio|La Unión|La Victoria|Obando|Restrepo|Rodalnillo|Toro|Ulloa|Versalles|Zarzal|Alcalá";
+
+  function populateCountries(countryElementId, stateElementId) {
+    // given the id of the <select> tag as function argument, it inserts <option> tags
+    let countryElement = document.getElementById(countryElementId);
+    countryElement.length = 0;
+    countryElement.options[0] = new Option("Seleccione Departamento", "-1");
+    countryElement.selectedIndex = 0;
+    for (let i = 0; i < country_arr.length; i++) {
+      countryElement.options[countryElement.length] = new Option(
+        country_arr[i],
+        country_arr[i]
+      );
+    }
+
+    // Assigned all countries. Now assign event listener for the states.
+
+    if (stateElementId) {
+      countryElement.onchange = function() {
+        populateStates(countryElementId, stateElementId);
+      };
+    }
+  }
+
+  function populateStates(countryElementId, stateElementId) {
+    let selectedCountryIndex = document.getElementById(countryElementId)
+      .selectedIndex;
+
+    let stateElement = document.getElementById(stateElementId);
+
+    stateElement.length = 0;
+    stateElement.options[0] = new Option("Seleccione Ciudad", "");
+    stateElement.selectedIndex = 0;
+
+    let state_arr = s_a[selectedCountryIndex].split("|");
+
+    for (let i = 0; i < state_arr.length; i++) {
+      stateElement.options[stateElement.length] = new Option(
+        state_arr[i],
+        state_arr[i].toUpperCase()
+      );
+    }
+  }
+
+  function setWaitCursor() {
+    $("#btn-buscar").css("cursor", "wait");
+    $("body").css("cursor", "wait");
+  }
+
+  function setDefaultCursor() {
+    $("#btn-buscar").css("cursor", "");
+    $("body").css("cursor", "");
+  }
+
+  function cleanArray(actual) {
+    let newArray = [];
+    for (let i = 0, j = actual.length; i < j; i++) {
+      if (actual[i] != "") {
+        newArray.push(actual[i]);
+      }
+    }
+    return newArray;
+  }
+</script>

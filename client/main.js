@@ -1,17 +1,18 @@
-//   <script>
-
+//<script>
 let modulesByGrades = null;
 let filesByname = {};
 $(document).ready(runApp);
 
 function runApp() {
+  const urlParams = window.location.search;
   subscribeEventHandlers();
   fetchModulesByGrades();
+  console.log("urlParams", urlParams);
   setTimeout(() => {
     AuthenticateCurrentUser();
     populateCountries("deptres", "ciudadres");
+    setTimeout(getRequestPayload, 500);
   }, 1000);
-
   // hideInitialData();
 }
 
@@ -30,35 +31,6 @@ const AuthenticateCurrentUser = () =>
 function onSuccessAuth(isAdmin) {
   if (!isAdmin) return hideAdminData();
   return showSearchModule();
-}
-
-function hideAdminData() {
-  $("#modBusqueda").hide();
-  showForm();
-  hideInitialData();
-}
-
-function showSearchModule() {
-  $("#modBusqueda").fadeIn();
-  hideInitialData();
-}
-
-function hideInitialData() {
-  $("#myForm #pdfConstanciaEstu").hide();
-  $("#myForm #pdfContanciaFun").hide();
-  $("#myForm #pdfRecibos").hide();
-  $("#myForm #pdfCartaSolicitud").hide();
-  $("#myForm #pdfActaGrado").hide();
-  $("#myForm #modMatematicas").hide();
-  $("#myForm #modMatematicas #checkboxMate")
-    .children()
-    .hide();
-  $("#myForm #modFisica").hide();
-  $("#myForm #modQuimica").hide();
-  $("#myForm #modBiologia").hide();
-  $("#myForm #modHumanidades").hide();
-  $("#myForm #modArtes").hide();
-  $("#myForm #modNas").hide();
 }
 
 function subscribeEventHandlers() {
@@ -100,6 +72,7 @@ function handleFileChange(e) {
   const { name } = e.target;
   const file = this.files[0];
   filesByname[name] = file;
+  console.log("filesByname", filesByname);
 }
 
 function handleClickAgreement() {
@@ -238,7 +211,7 @@ function handleChangeAnotherGrade() {
 function editStudentData() {
   let valid = validateAndSave();
 
-  let onSuccess = function(person) {
+  let onSuccess = function (person) {
     swal({
       title: "Exito!",
       text: "Se edito el estudiante satisfactoriamente!",
@@ -258,9 +231,9 @@ function editStudentData() {
     } else if (
       x != 6 &&
       x != 8 &&
-      (serialized[x].value != "" &&
-        serialized[x].value != "OTRA" &&
-        serialized[x].value != "SI")
+      serialized[x].value != "" &&
+      serialized[x].value != "OTRA" &&
+      serialized[x].value != "SI"
     ) {
       dataToEdit.push(serialized[x].value);
     }
@@ -291,104 +264,6 @@ const searchPerson = id =>
     .withSuccessHandler(loadStudent)
     .withFailureHandler(errorHandler)
     .buscarPersona(id);
-
-const allowOnlyNumbers = e =>
-  e.metaKey || // cmd/ctrl
-  e.which <= 0 || // arrow keys
-  e.which == 8 || // delete key
-  /[0-9]/.test(String.fromCharCode(e.which)); // numbers
-
-const DoNotCopyPaste = e => () => e.preventDefault();
-
-function showFiles({ grade, state }) {
-  if (grade == 11 || grade === "EGRESADO") {
-    $("#myForm #modNas").fadeIn();
-    $("#myForm #pdfActaGrado").fadeOut();
-  }
-
-  if (grade === "EGRESADO") {
-    $("#myForm #pdfActaGrado").fadeIn();
-    $("#myForm #actaGrado").prop("disabled", false);
-    $("#myForm #pdfConstanciaEstu").fadeOut();
-    $("#myForm #constanciaEstudFile").prop("disabled", true);
-  }
-  if (grade !== "EGRESADO") {
-    $("#myForm #pdfActaGrado").fadeOut();
-    $("#myForm #actaGrado").prop("disabled", true);
-    $("#myForm #pdfConstanciaEstu").fadeIn();
-    $("#myForm #constanciaEstudFile").prop("disabled", false);
-  }
-  if (state === "PRIVADO") {
-    $("#myForm #pdfConstanciaEstu").fadeOut();
-    $("#myForm #constanciaEstudFile").prop("disabled", true);
-  }
-}
-
-function showModules(grade) {
-  if (!(grade in modulesByGrades) || !modulesByGrades) return;
-  Object.keys(modulesByGrades[grade]).map(module => {
-    const courses = modulesByGrades[grade][module];
-    return showModuleCourses({ courses, module });
-  });
-}
-
-function showModuleCourses({ module, courses }) {
-  const selector = `${moduleSelector(module)}`;
-  $(`#myForm ${selector}`).fadeIn();
-  $(`#myForm ${selector} .input-div`)
-    .children()
-    .fadeIn();
-  if (!courses.length) return;
-  const coursesSelector = courses
-    .map(course => `#tema${course.codigo}`)
-    .join(", ");
-  $(`#myForm ${selector} .input-div`)
-    .children()
-    .not(coursesSelector)
-    .hide();
-}
-
-function showCourse({ course, selector }) {
-  const courseSelector = `#myForm ${selector} #${course.codigo}`;
-  console.log("courseSelector", courseSelector);
-  $(courseSelector).fadeIn();
-}
-
-function moduleSelector(module) {
-  const selector = `#mod${module.charAt(0).toUpperCase()}${module.slice(1)}`;
-  return selector;
-}
-
-function hideModules() {
-  if (!modulesByGrades) return;
-  Object.keys(modulesByGrades["11"]).map(module => {
-    $(`#myForm ${moduleSelector(module)}`).fadeOut();
-  });
-}
-
-function hideFiles() {
-  $("#myForm #pdfConstanciaEstu").hide();
-  $("#myForm #pdfContanciaFun").hide();
-  $("#myForm #pdfRecibos").hide();
-  $("#myForm #pdfCartaSolicitud").hide();
-  $("#myForm #pdfActaGrado").hide();
-}
-
-function hideStudentRecord() {
-  cleanForm();
-  $("#myForm").css("display", "none");
-}
-
-function showForm() {
-  $("#myForm").css("display", "block");
-  $("#myForm #save").css("display", "block");
-}
-
-function showStudentRecord() {
-  cleanForm();
-  showForm();
-  $("#myForm #edit").css("display", "none");
-}
 
 function loadStudent(person) {
   console.log("Person", person);
@@ -481,425 +356,54 @@ function fillInStudentData(person) {
   setDefaultCursor();
 }
 
-function setWaitCursor() {
-  $("#btn-buscar").css("cursor", "wait");
-  $("body").css("cursor", "wait");
-}
-
-function setDefaultCursor() {
-  $("#btn-buscar").css("cursor", "");
-  $("body").css("cursor", "");
-}
-
-function cleanArray(actual) {
-  let newArray = [];
-  for (let i = 0, j = actual.length; i < j; i++) {
-    if (actual[i] != "") {
-      newArray.push(actual[i]);
-    }
-  }
-  return newArray;
-}
-
-function validateAndSave() {
-  jQuery.extend(jQuery.validator.messages, {
-    required: "Este campo es obligatorio.",
-    number: "Este campo es numérico"
-  });
-
-  jQuery.validator.addMethod(
-    "EqualToGroup",
-    function(value, element, param) {
-      let isequal = false;
-      for (x in param) {
-        if (param[x] == value) {
-          isequal = true;
-        }
-      }
-      return this.optional(element) || isequal;
-    },
-    "selecciona un valor valido"
-  );
-
-  $.validator.addMethod(
-    "filesize",
-    function(value, element, param) {
-      return this.optional(element) || element.files[0].size <= param * 1000000;
-    },
-    "File size must be less than {0}"
-  );
-
-  let isvalid = $("#myForm").validate({
-    debug: false,
-    rules: {
-      name: {
-        required: true
-      },
-      lastname: {
-        required: true
-      },
-      tipo: {
-        required: true,
-        EqualToGroup: ["T.I", "C.C"]
-      },
-      ciudadDoc: {
-        required: true
-      },
-      numdoc: {
-        required: true,
-        number: true
-      },
-      email: {
-        required: true,
-        email: true
-      },
-      confirmEmail: {
-        required: true,
-        email: true,
-        equalTo: "#email"
-      },
-      numdoc: {
-        required: true,
-        number: true
-      },
-      telfijo: {
-        required: {
-          depends: function(element) {
-            let valuecelular = $("#telcelular").val();
-            if (valuecelular == "") return true;
-            return false;
-          }
-        },
-        number: true
-      },
-      telcelular: {
-        required: true,
-        number: true
-      },
-      ciudadres: {
-        required: true
-      },
-      deptres: {
-        required: true
-      },
-      eps: {
-        required: true
-      },
-      otraeps: {
-        required: {
-          depends: function(element) {
-            let valeps = $("#eps").val();
-            if (valeps.includes("OTRA")) return true;
-            return false;
-          }
-        }
-      },
-      colegio: {
-        required: true
-      },
-      estamento: {
-        required: true,
-        EqualToGroup: ["PUBLICO", "PRIVADO", "COBERTURA"]
-      },
-      grado: {
-        required: true,
-        EqualToGroup: [
-          "1",
-          "2",
-          "3",
-          "4",
-          "5",
-          "6",
-          "7",
-          "8",
-          "9",
-          "10",
-          "11",
-          "EGRESADO"
-        ]
-      },
-      acudiente: {
-        required: true
-      },
-      telacudiente: {
-        required: true,
-        number: true
-      },
-      inscritoanterior: {
-        required: true,
-        EqualToGroup: ["SI", "NO"]
-      },
-      otrocurso: {
-        required: {
-          depends: function(element) {
-            let valcur = $("#inscritoanterior").val();
-            if (valcur.includes("SI")) return true;
-            return false;
-          }
-        }
-      },
-      seleccion: {
-        required: {
-          depends: function(element) {
-            if (!$("[name='seleccion']").is(":checked")) return true;
-            return false;
-          }
-        }
-      },
-      convenio: {
-        EqualToGroup: [
-          "CONVENIO_COLEGIO",
-          "PARTICULAR",
-          "RELACION_UNIVALLE",
-          "BECADOS"
-        ],
-        required: true
-      },
-      valconsignado: {
-        required: true,
-        number: true
-      },
-      terms: {
-        required: true
-      },
-      docFile: {
-        required: {
-          depends: function(element) {
-            if ($("#btn-registrar").is(":visible")) return false;
-            return true;
-          }
-        }
-      },
-      constanciaEstudFile: {
-        required: {
-          depends: function(element) {
-            if ($("#btn-registrar").is(":visible")) return false;
-            return $("#estamento").val() == "público";
-          }
-        }
-      },
-      constanciaFuncFile: {
-        required: {
-          depends: function(element) {
-            if ($("#btn-registrar").is(":visible")) return false;
-            return $("#relacion_univalle").is(":checked");
-          }
-        }
-      },
-      reciboFile: {
-        required: {
-          depends: function(element) {
-            if ($("#btn-registrar").is(":visible")) return false;
-            return true;
-          }
-        }
-      },
-      recibosPublicos: {
-        required: {
-          depends: function(element) {
-            if ($("#btn-registrar").is(":visible")) return false;
-            return $("#becado").is(":checked");
-          }
-        }
-      },
-      cartaSolicitud: {
-        required: {
-          depends: function(element) {
-            if ($("#btn-registrar").is(":visible")) return false;
-            return $("#becado").is(":checked");
-          }
-        }
-      },
-      actaGrado: {
-        required: {
-          depends: function(element) {
-            if ($("#btn-registrar").is(":visible")) return false;
-            return $("#grado").val() == "EGRESADO";
-          }
-        }
-      }
-    },
-    messages: {
-      tipo: {
-        EqualToGroup: "Por favor selecciona un tipo válido"
-      },
-      email: {
-        email: "Correo inválido"
-      },
-      confirmEmail: {
-        equalTo: "Los correos no son iguales",
-        email: "Correo inválido"
-      },
-      telfijo: {
-        required: "Por favor escribe por lo menos un número de contacto"
-      },
-      telcelular: {
-        required: "Por favor escribe por lo menos un número de contacto"
-      },
-      estamento: {
-        EqualToGroup: " Selecciona un estamento"
-      },
-      grado: {
-        EqualToGroup: "selecciona un grado"
-      },
-      seleccion: {
-        required: "selecciona por lo menos un modulo"
-      },
-      valconsignado: {
-        required: "Por favor digita el valor total consignado"
-      },
-      docFile: {
-        required:
-          "Seleeciona un archivo PDF correspondiente a la copia de su número de Identificación"
-      },
-      constanciaEstudFile: {
-        required:
-          "Seleeciona un archivo PDF correspondiente a la copia de su constancia estudiantil"
-      },
-      constanciaFuncFile: {
-        required:
-          "Seleeciona un archivo PDF correspondiente a la copia de la constancia del Funcionario"
-      },
-      reciboFile: {
-        required:
-          "Seleeciona un archivo PDF correspondiente a la copia de su recibo de pago"
-      },
-      actaGrado: {
-        required:
-          "Selecciona un archivo PDF correspondiente a la copia de su acta de grado"
-      }
-    },
-    highlight: function(element) {
-      let modules = $(element).closest(".modules_matricular");
-      let ismodule = $(element).closest(".modules_matricular").length;
-      if (ismodule) {
-        modules.addClass("has-error");
-      } else {
-        $(element)
-          .closest(".input-div")
-          .addClass("has-error");
-      }
-    },
-    unhighlight: function(element) {
-      let modules = $(element).closest(".modules_matricular");
-      let ismodule = $(element).closest(".modules_matricular").length;
-      if (ismodule) {
-        modules.removeClass("has-error");
-      } else {
-        $(element)
-          .closest(".input-div")
-          .removeClass("has-error");
-      }
-    },
-    errorElement: "span",
-    errorClass: "help-block",
-    errorPlacement: function(error, element) {
-      let modules = $(element).closest(".modules_matricular");
-      let ismodule = $(element).closest(".modules_matricular").length;
-
-      if (ismodule) {
-        error.insertAfter(modules);
-      } else if ($(element).attr("name") == "convenio") {
-        let parent = $(element).closest(".input-div");
-        error.insertAfter(parent);
-      } else {
-        error.insertAfter(element);
-      }
-    },
-    submitHandler: function() {
-      $("#mySpan").fadeIn();
-      setWaitCursor();
-      let form = $("#myForm");
-      const formData = getFormData(form);
-      console.log("FORM-->", { form, formData });
-      google.script.run
-        .withSuccessHandler(fileUploaded)
-        .withFailureHandler(errorHandler)
-        .uploadFiles(JSON.stringify(formData));
-    }
-  });
-
-  return isvalid;
-}
-
 function getFormData($form) {
   var serializedForm = $form.serializeArray();
   var formData = {};
 
-  $.map(serializedForm, function(input, i) {
+  $.map(serializedForm, function (input, i) {
     formData[input["name"]] = input["value"];
   });
-  formData = Object.assign({}, formData, filesByname);
+
+  const filesPromises = Object.keys(filesByname).map((fileKey) => {
+    return new Promise(async resolve => {
+      const fileString = await getFile(filesByname[fileKey]);
+      const file = { base64: fileString, name: fileKey };
+      resolve(file)
+    })
+  });
+
+  Promise.all(filesPromises).then((files) => {
+    console.log("files", files);
+    console.log("formData", formData);
+
+    google.script.run
+      .withSuccessHandler(onFilesUploadedSucces)
+      .withFailureHandler(errorHandler)
+      .uploadEstudentFiles(formData.numdoc, files)
+
+  })
+
+  formData = Object.assign({}, formData);
   return formData;
 }
 
-const getFile = file => {
+function onFilesUploadedSucces(result) {
+  console.log("result", result);
+}
+
+function getRequestPayload() {
+  google.script.url.getLocation(function (location) {
+    let payload = location.parameter.test || null;
+    if (payload) return fillInTestData();
+  });
+}
+
+function getFile(file) {
   return new Promise(resolve => {
     let reader = new FileReader();
     reader.onloadend = () => resolve(reader.result);
     reader.readAsDataURL(file);
   });
-};
-
-function cleanForm(reload) {
-  $(".numeric").val("");
-  $(".text-uppercase").val("");
-  $(".text-lowercase").val("");
-
-  $(".file").val("");
-  $("input:checkbox").removeAttr("checked");
-  // $('#otrocurso').empty('');
-  if (reload) window.location.reload(true);
-}
-
-let country_arr = new Array("CAUCA", "VALLE DEL CAUCA");
-let s_a = new Array();
-s_a[0] = "";
-s_a[1] =
-  "Popayán|Cajibío|El tambo|La Sierra|Morales|Piendamó|Rosas|Soatá|Timbío|Buenos aires|Caloto|Corintio|Guachené|Miranda|Padilla|Puerto Tejada|Santander de Quilichao|Suárez|Villa rica|Almaguer|Argelia|Balboa|Bolílet|Florencia|La vega|Mercaderes|Patía|Piamonte|San Sebastián|Santa Rosa|Sucre|Guapí|López de micay|Timbiquí|Caldono|Inzá|Jambaló|Páez|Puracé|Silvia|Toribío|Torotó";
-s_a[2] =
-  "|Cali|Candelaria|Dagua|Florida|Jamundí|La Cumbre|Palmira|Pradera|Vijes|Yumbo|Andalucía|Buga|Bugalagrande|Calima-El Darién|El Cerrito|Ginebra|Guacarí|Restrepo|Riofrío|San Pedro|Trujillo|Tuluá|Yotoco|Buenaventura|Caicedonia|Sevilla|Cartago|El águila|El Cairo|El Dovio|La Unión|La Victoria|Obando|Restrepo|Rodalnillo|Toro|Ulloa|Versalles|Zarzal|Alcalá";
-
-function populateCountries(countryElementId, stateElementId) {
-  // given the id of the <select> tag as function argument, it inserts <option> tags
-  let countryElement = document.getElementById(countryElementId);
-  countryElement.length = 0;
-  countryElement.options[0] = new Option("Seleccione Departamento", "-1");
-  countryElement.selectedIndex = 0;
-  for (let i = 0; i < country_arr.length; i++) {
-    countryElement.options[countryElement.length] = new Option(
-      country_arr[i],
-      country_arr[i]
-    );
-  }
-
-  // Assigned all countries. Now assign event listener for the states.
-
-  if (stateElementId) {
-    countryElement.onchange = function() {
-      populateStates(countryElementId, stateElementId);
-    };
-  }
-}
-
-function populateStates(countryElementId, stateElementId) {
-  let selectedCountryIndex = document.getElementById(countryElementId)
-    .selectedIndex;
-
-  let stateElement = document.getElementById(stateElementId);
-
-  stateElement.length = 0;
-  stateElement.options[0] = new Option("Seleccione Ciudad", "");
-  stateElement.selectedIndex = 0;
-
-  let state_arr = s_a[selectedCountryIndex].split("|");
-
-  for (let i = 0; i < state_arr.length; i++) {
-    stateElement.options[stateElement.length] = new Option(
-      state_arr[i],
-      state_arr[i].toUpperCase()
-    );
-  }
 }
 
 function errorHandler(error) {
@@ -933,4 +437,77 @@ function fileUploaded(status) {
   $("#mySpan").fadeOut();
   setDefaultCursor();
 }
-// </script>
+
+function fillInTestData() {
+  showStudentRecord();
+  const testPerson = [
+    "ANDRES",
+    "SUAREZ",
+    "C.C",
+    1144093949,
+    "CALI",
+    "andresfelipe9619@gmail.com",
+    2222,
+    11111,
+    "VALLE DEL CAUCA",
+    "CALI",
+    "EPS SURAMERICANA S.A.",
+    "CHINCA",
+    "PRIVADO",
+    3,
+    "JULI",
+    1111,
+    "NO",
+    "PARTICULAR",
+    500000,
+    "Acepto",
+    "2019B",
+    "Taller infantil de Teatro"
+  ];
+  $("#myForm #save").css("display", "block");
+  $("#myForm #edit").css("display", "none");
+  $("#name").val(String(testPerson[0]));
+  $("#lastname").val(String(testPerson[1]));
+  $("#tipo").val(String(testPerson[2]));
+  $("#numdoc").val(String(testPerson[3]));
+  $("#ciudadDoc").val(String(testPerson[4]));
+  $("#email").val(String(testPerson[5]));
+  $("#confirmEmail").val(String(testPerson[5]));
+  $("#telfijo").val(String(testPerson[6]));
+  $("#telcelular").val(String(testPerson[7]));
+  $("#deptres").val(String(testPerson[8]));
+  $("#deptres").trigger("change");
+  $("#ciudadres").val(String(testPerson[9]));
+  $("#eps").val(String(testPerson[10]));
+  $("#colegio").val(String(testPerson[11]));
+  $("#estamento").val(String(testPerson[12]));
+  $("#grado").val(String(testPerson[13]));
+  $("#grado").trigger("change");
+  $("#acudiente").val(String(testPerson[14]));
+  $("#telacudiente").val(String(testPerson[15]));
+  console.log("eps", $("#eps").val());
+  if (!$("#eps").val()) {
+    $("#eps").val("OTRA");
+    $("#eps").trigger("change");
+    $("#otraeps").val(String(testPerson[10]));
+  }
+  if (String(testPerson[16]) != "NO") {
+    console.log("atleast");
+    $("#inscritoanterior").val("SI");
+    $("#inscritoanterior").trigger("change");
+    $("#otrocurso").val(String(testPerson[16]));
+    $("#otrocurso").trigger("change");
+  }
+
+  if (String(testPerson[17])) {
+    //convenio
+    let convenio = testPerson[17].toLowerCase();
+    $("#" + convenio).prop("checked", true);
+    $("#" + convenio).trigger("change");
+  }
+
+  if (String(testPerson[18])) {
+    $("#valconsignado").val(String(testPerson[18]));
+  }
+}
+//</script>
