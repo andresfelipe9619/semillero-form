@@ -2,7 +2,8 @@ function getModulesByGrades() {
   var rawModules = getModules();
   var modules = sheetValuesToObject(rawModules);
   var allowedColumns = ["nombre", "codigo", "area", "prueba"];
-  modules = modules.map(function(newModule) {
+  modules = modules.reduce(function(acc, newModule) {
+    if (newModule.disabled === "x") return acc;
     newModule.grades = Object.keys(newModule).reduce(function(prevArray, key) {
       if (allowedColumns.indexOf(key) >= 0) return prevArray;
       var currentValue = newModule[key];
@@ -12,8 +13,9 @@ function getModulesByGrades() {
       }
       return prevArray;
     }, []);
-    return newModule;
-  });
+    acc.push(newModule);
+    return acc;
+  }, []);
   var modulesByGrades = modules.reduce(function(prevModules, module) {
     module.grades.map(function(grade) {
       if (!(grade in prevModules)) {
@@ -82,9 +84,9 @@ function createModulesSheets() {
   var headers = [
     "nombre",
     "apellido",
-    "tipo de documento",
-    "número de documento",
-    "telefono",
+    "tipo_doc",
+    "ciudad_doc",
+    "tel_fijo",
     "email",
     "grado",
     "colegio",
@@ -105,27 +107,25 @@ function createModulesSheets() {
   return true;
 }
 
-function validateModule(modulos, data) {
+function validateModule(moduleSelected, data) {
   var modulosMatriculados = [];
-  Logger.log("=============Validando modulos===========");
-
-  var miModulos = getModules();
-  Logger.log("modulos selected");
-  Logger.log(modulos);
-
+  Logger.log("=============VALIDATING MODULES===========");
+  Logger.log("module selected");
+  Logger.log(moduleSelected);
+  var modules = getModules();
   var titulosModulos = [];
 
-  for (var x in miModulos) {
+  for (var x in modules) {
     if (x > 0) {
-      titulosModulos.push(miModulos[x][1]);
+      titulosModulos.push(modules[x][1]);
     }
   }
-  Logger.log("Titulos modulos");
+  Logger.log("Titulos modules");
   Logger.log(titulosModulos);
 
-  if (modulos) {
+  if (moduleSelected) {
     for (var i in titulosModulos) {
-      if (modulos.localeCompare(titulosModulos[i]) == 0) {
+      if (moduleSelected.localeCompare(titulosModulos[i]) == 0) {
         data.push("x");
         modulosMatriculados.push(titulosModulos[i]);
       } else {
@@ -140,7 +140,7 @@ function validateModule(modulos, data) {
 
   Logger.log("modulo matriculado");
   Logger.log(modulosMatriculados);
-  Logger.log("=============FIN Validando modulos===========");
+  Logger.log("=============FIN VALIDATING MODULES===========");
 
   return modulosMatriculados;
 }

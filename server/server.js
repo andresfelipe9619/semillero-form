@@ -305,7 +305,7 @@ function editEstudentGeneral(student) {
 }
 
 function validatePerson(cedula) {
-  Logger.log("=============Validando Persona===========");
+  Logger.log("=============Validating Person===========");
   var inscritos = getStudents();
   var sheet = getSheetFromSpreadSheet(GENERAL_DB, "INSCRITOS");
   var result = {
@@ -318,6 +318,9 @@ function validatePerson(cedula) {
   var textFinder = sheet.createTextFinder(cedula);
   var studentFound = textFinder.findNext();
   var studentIndex = studentFound ? studentFound.getRow() - 1 : -1;
+  var values = studentFound.getValues();
+  Logger.log("range values");
+  Logger.log(values);
   result.state = "no esta";
   if (studentIndex <= -1) return result;
   // var headers = getHeadersFromSheet(sheet);
@@ -337,7 +340,7 @@ function validatePerson(cedula) {
     // var studentData = sheetValuesToObject(student, headers);
     result.data = student;
   }
-  Logger.log("=============FIN Validando Persona===========");
+  Logger.log("=============END Validating Person===========");
   return result;
 }
 
@@ -363,25 +366,18 @@ function buscarPersona(cedula) {
   return person;
 }
 
-function fakeUpload(formString) {
-  var form = JSON.parse(formString);
-  Logger.log("FORM");
-  Logger.log(form);
-  Logger.log(formString);
+function avoidCollisionsInConcurrentAccessess() {
+  var lock = LockService.getPublicLock();
+  lock.waitLock(20000);
 }
 
-function uploadFiles(formString) {
+function registerStudent(formString) {
   var form = JSON.parse(formString);
   Logger.log("FORM");
   Logger.log(form);
-  Logger.log("FORM STRING");
-  Logger.log(formString);
-  var lock = LockService.getPublicLock();
-  lock.waitLock(20000); //espera 20 segundos  para evitar colisiones en accesos concurrentes
+  if (!Object.keys(form).length) throw "No data sent";
+  avoidCollisionsInConcurrentAccessess();
   try {
-    //carpeta donde se almacenaran los archivos
-    // var mainFolder = getMainFolder();
-
     if (form.otraeps !== "") {
       form.eps = form.otraeps;
     }
@@ -390,7 +386,7 @@ function uploadFiles(formString) {
       form.inscritoanterior = form.otrocurso;
     }
 
-    var data = new Array(
+    var data = [
       form.name.toUpperCase(),
       form.lastname.toUpperCase(),
       form.tipo,
@@ -412,8 +408,8 @@ function uploadFiles(formString) {
       form.valconsignado,
       form.terms,
       getActualPeriod()[0]
-    );
-    Logger.log("Data uploadFiles before validateModule");
+    ];
+    Logger.log("Data registerStudent before validateModule");
     Logger.log(data);
 
     var modulosMatriculados = validateModule(form.seleccion, data);
@@ -475,76 +471,8 @@ function uploadFiles(formString) {
 
     return res;
   } catch (error) {
-    Logger.log("Error uploadig files");
+    Logger.log("Error registering student");
     Logger.log(error);
     return error.toString();
   }
-}
-
-function validateFormFiles(form) {
-  //arreglo que almacena temporalmente los archivos
-  var arrayFiles = new Array();
-
-  //validador de la existencia de archivos
-  var validatorFiles = {
-    docFile: false,
-    constanciaEstudFile: false,
-    reciboFile: false,
-    constanciaFuncFile: false,
-    recibosPublicos: false,
-    cartaSolicitud: false,
-    actaGrado: false
-  };
-  Logger.log("form");
-  Logger.log(form);
-  if (form.docFile) {
-    var fileDoc = form.docFile;
-    fileDoc.name = form.numdoc + "_DOCUMENTO";
-    arrayFiles.push(fileDoc);
-    validatorFiles.docFile = true;
-  }
-
-  if (form.constanciaEstudFile) {
-    var fileConstanciaEstud = form.constanciaEstudFile;
-    fileConstanciaEstud.name = form.numdoc + "_COSNTANCIA_ESTUD";
-    arrayFiles.push(fileConstanciaEstud);
-    validatorFiles.constanciaEstudFile = true;
-  }
-
-  if (form.reciboFile) {
-    var fileRecibo = form.reciboFile;
-    fileRecibo.name = form.numdoc + "_RECIBO";
-    arrayFiles.push(fileRecibo);
-    validatorFiles.reciboFile = true;
-  }
-
-  if (form.constanciaFuncFile) {
-    var fileConstanciaFunc = form.constanciaFuncFile;
-    fileConstanciaFunc.name = form.numdoc + "_CONSTANCIA_FUNC";
-    arrayFiles.push(fileConstanciaFunc);
-    validatorFiles.constanciaFuncFile = true;
-  }
-
-  if (form.recibosPublicos) {
-    var fileRecibosPublicos = form.recibosPublicos;
-    fileRecibosPublicos.name = form.numdoc + "_REC_PUBLICOS";
-    arrayFiles.push(fileRecibosPublicos);
-    validatorFiles.recibosPublicos = true;
-  }
-
-  if (form.cartaSolicitud) {
-    var fileCartaSolicitud = form.cartaSolicitud;
-    fileCartaSolicitud.name = form.numdoc + "_CARTA_SOLIC";
-    arrayFiles.push(fileCartaSolicitud);
-    validatorFiles.cartaSolicitud = true;
-  }
-
-  if (form.actaGrado) {
-    var fileActaGrado = form.actaGrado;
-    fileActaGrado.name(form.numdoc + "_ACTA_GRADO");
-    arrayFiles.push(fileActaGrado);
-    validatorFiles.actaGrado = true;
-  }
-
-  return arrayFiles;
 }

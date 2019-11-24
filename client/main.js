@@ -4,10 +4,8 @@ let filesByname = {};
 $(document).ready(runApp);
 
 function runApp() {
-  const urlParams = window.location.search;
   subscribeEventHandlers();
   fetchModulesByGrades();
-  console.log("urlParams", urlParams);
   setTimeout(() => {
     AuthenticateCurrentUser();
     populateCountries("deptres", "ciudadres");
@@ -211,7 +209,7 @@ function handleChangeAnotherGrade() {
 function editStudentData() {
   let valid = validateAndSave();
 
-  let onSuccess = function (person) {
+  let onSuccess = function(person) {
     swal({
       title: "Exito!",
       text: "Se edito el estudiante satisfactoriamente!",
@@ -356,44 +354,57 @@ function fillInStudentData(person) {
   setDefaultCursor();
 }
 
-function getFormData($form) {
+async function getFormData($form) {
   var serializedForm = $form.serializeArray();
   var formData = {};
 
-  $.map(serializedForm, function (input, i) {
+  $.map(serializedForm, function(input, i) {
     formData[input["name"]] = input["value"];
   });
 
-  const filesPromises = Object.keys(filesByname).map((fileKey) => {
+  const filesPromises = Object.keys(filesByname).map(fileKey => {
     return new Promise(async resolve => {
       const fileString = await getFile(filesByname[fileKey]);
-      const file = { base64: fileString, name: fileKey };
-      resolve(file)
-    })
+      const file = { base64: fileString, name: getFileName(fileKey) };
+      resolve(file);
+    });
   });
 
-  Promise.all(filesPromises).then((files) => {
-    console.log("files", files);
-    console.log("formData", formData);
-
-    google.script.run
-      .withSuccessHandler(onFilesUploadedSucces)
-      .withFailureHandler(errorHandler)
-      .uploadEstudentFiles(formData.numdoc, files)
-
-  })
-
-  formData = Object.assign({}, formData);
+  const files = await Promise.all(filesPromises);
+  console.log("files", files);
+  formData = Object.assign({}, formData, { files });
+  console.log("formData", formData);
   return formData;
 }
 
-function onFilesUploadedSucces(result) {
-  console.log("result", result);
-}
+const getFileName = (fileKey, numdoc) => {
+  if (fileKey === "docFile") {
+    return numdoc + "_DOCUMENTO";
+  }
+  if (fileKey === "constanciaEstudFile") {
+    return numdoc + "_COSNTANCIA_ESTUDIO";
+  }
+  if (fileKey === "reciboFile") {
+    return numdoc + "_RECIBO_PAGO";
+  }
+  if (fileKey === "constanciaFuncFile") {
+    return numdoc + "_CONSTANCIA_FUNCIONARIO";
+  }
+  if (fileKey === "recibosPublicos") {
+    return numdoc + "_RECIBO_PUBLICOS";
+  }
+  if (fileKey === "cartaSolicitud") {
+    return numdoc + "_CARTA_SOLICITUD";
+  }
+  if (fileKey === "actaGrado") {
+    return numdoc + "_ACTA_GRADO";
+  }
+};
 
 function getRequestPayload() {
-  google.script.url.getLocation(function (location) {
+  google.script.url.getLocation(function(location) {
     let payload = location.parameter.test || null;
+    console.log("payload", payload);
     if (payload) return fillInTestData();
   });
 }

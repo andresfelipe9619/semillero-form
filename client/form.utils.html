@@ -95,7 +95,7 @@
   }
 
   function hideModules() {
-    if (!modulesByGrades) return;
+    if (!modulesByGrades || !modulesByGrades["11"]) return;
     Object.keys(modulesByGrades["11"]).map(module => {
       $(`#myForm ${moduleSelector(module)}`).fadeOut();
     });

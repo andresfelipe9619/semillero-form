@@ -1,4 +1,244 @@
 <script>
+  const validationRules = {
+    name: {
+      required: true
+    },
+    lastname: {
+      required: true
+    },
+    tipo: {
+      required: true,
+      EqualToGroup: ["T.I", "C.C"]
+    },
+    ciudadDoc: {
+      required: true
+    },
+    numdoc: {
+      required: true,
+      number: true
+    },
+    email: {
+      required: true,
+      email: true
+    },
+    confirmEmail: {
+      required: true,
+      email: true,
+      equalTo: "#email"
+    },
+    numdoc: {
+      required: true,
+      number: true
+    },
+    telfijo: {
+      required: {
+        depends: function(element) {
+          let valuecelular = $("#telcelular").val();
+          if (valuecelular == "") return true;
+          return false;
+        }
+      },
+      number: true
+    },
+    telcelular: {
+      required: true,
+      number: true
+    },
+    ciudadres: {
+      required: true
+    },
+    deptres: {
+      required: true
+    },
+    eps: {
+      required: true
+    },
+    otraeps: {
+      required: {
+        depends: function(element) {
+          let valeps = $("#eps").val();
+          if (valeps.includes("OTRA")) return true;
+          return false;
+        }
+      }
+    },
+    colegio: {
+      required: true
+    },
+    estamento: {
+      required: true,
+      EqualToGroup: ["PUBLICO", "PRIVADO", "COBERTURA"]
+    },
+    grado: {
+      required: true,
+      EqualToGroup: [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "EGRESADO"
+      ]
+    },
+    acudiente: {
+      required: true
+    },
+    telacudiente: {
+      required: true,
+      number: true
+    },
+    inscritoanterior: {
+      required: true,
+      EqualToGroup: ["SI", "NO"]
+    },
+    otrocurso: {
+      required: {
+        depends: function(element) {
+          let valcur = $("#inscritoanterior").val();
+          if (valcur.includes("SI")) return true;
+          return false;
+        }
+      }
+    },
+    seleccion: {
+      required: {
+        depends: function(element) {
+          if (!$("[name='seleccion']").is(":checked")) return true;
+          return false;
+        }
+      }
+    },
+    convenio: {
+      EqualToGroup: [
+        "CONVENIO_COLEGIO",
+        "PARTICULAR",
+        "RELACION_UNIVALLE",
+        "BECADOS"
+      ],
+      required: true
+    },
+    valconsignado: {
+      required: true,
+      number: true
+    },
+    terms: {
+      required: true
+    },
+    docFile: {
+      required: {
+        depends: function(element) {
+          if ($("#btn-registrar").is(":visible")) return false;
+          return true;
+        }
+      }
+    },
+    constanciaEstudFile: {
+      required: {
+        depends: function(element) {
+          if ($("#btn-registrar").is(":visible")) return false;
+          return $("#estamento").val() == "público";
+        }
+      }
+    },
+    constanciaFuncFile: {
+      required: {
+        depends: function(element) {
+          if ($("#btn-registrar").is(":visible")) return false;
+          return $("#relacion_univalle").is(":checked");
+        }
+      }
+    },
+    reciboFile: {
+      required: {
+        depends: function(element) {
+          if ($("#btn-registrar").is(":visible")) return false;
+          return true;
+        }
+      }
+    },
+    recibosPublicos: {
+      required: {
+        depends: function(element) {
+          if ($("#btn-registrar").is(":visible")) return false;
+          return $("#becado").is(":checked");
+        }
+      }
+    },
+    cartaSolicitud: {
+      required: {
+        depends: function(element) {
+          if ($("#btn-registrar").is(":visible")) return false;
+          return $("#becado").is(":checked");
+        }
+      }
+    },
+    actaGrado: {
+      required: {
+        depends: function(element) {
+          if ($("#btn-registrar").is(":visible")) return false;
+          return $("#grado").val() == "EGRESADO";
+        }
+      }
+    }
+  };
+
+  const validationMessages = {
+    tipo: {
+      EqualToGroup: "Por favor selecciona un tipo válido"
+    },
+    email: {
+      email: "Correo inválido"
+    },
+    confirmEmail: {
+      equalTo: "Los correos no son iguales",
+      email: "Correo inválido"
+    },
+    telfijo: {
+      required: "Por favor escribe por lo menos un número de contacto"
+    },
+    telcelular: {
+      required: "Por favor escribe por lo menos un número de contacto"
+    },
+    estamento: {
+      EqualToGroup: " Selecciona un estamento"
+    },
+    grado: {
+      EqualToGroup: "selecciona un grado"
+    },
+    seleccion: {
+      required: "selecciona por lo menos un modulo"
+    },
+    valconsignado: {
+      required: "Por favor digita el valor total consignado"
+    },
+    docFile: {
+      required:
+        "Seleeciona un archivo PDF correspondiente a la copia de su número de Identificación"
+    },
+    constanciaEstudFile: {
+      required:
+        "Seleeciona un archivo PDF correspondiente a la copia de su constancia estudiantil"
+    },
+    constanciaFuncFile: {
+      required:
+        "Seleeciona un archivo PDF correspondiente a la copia de la constancia del Funcionario"
+    },
+    reciboFile: {
+      required:
+        "Seleeciona un archivo PDF correspondiente a la copia de su recibo de pago"
+    },
+    actaGrado: {
+      required:
+        "Selecciona un archivo PDF correspondiente a la copia de su acta de grado"
+    }
+  };
+
   function validateAndSave() {
     jQuery.extend(jQuery.validator.messages, {
       required: "Este campo es obligatorio.",
@@ -31,294 +271,66 @@
 
     let isvalid = $("#myForm").validate({
       debug: false,
-      rules: {
-        name: {
-          required: true
-        },
-        lastname: {
-          required: true
-        },
-        tipo: {
-          required: true,
-          EqualToGroup: ["T.I", "C.C"]
-        },
-        ciudadDoc: {
-          required: true
-        },
-        numdoc: {
-          required: true,
-          number: true
-        },
-        email: {
-          required: true,
-          email: true
-        },
-        confirmEmail: {
-          required: true,
-          email: true,
-          equalTo: "#email"
-        },
-        numdoc: {
-          required: true,
-          number: true
-        },
-        telfijo: {
-          required: {
-            depends: function(element) {
-              let valuecelular = $("#telcelular").val();
-              if (valuecelular == "") return true;
-              return false;
-            }
-          },
-          number: true
-        },
-        telcelular: {
-          required: true,
-          number: true
-        },
-        ciudadres: {
-          required: true
-        },
-        deptres: {
-          required: true
-        },
-        eps: {
-          required: true
-        },
-        otraeps: {
-          required: {
-            depends: function(element) {
-              let valeps = $("#eps").val();
-              if (valeps.includes("OTRA")) return true;
-              return false;
-            }
-          }
-        },
-        colegio: {
-          required: true
-        },
-        estamento: {
-          required: true,
-          EqualToGroup: ["PUBLICO", "PRIVADO", "COBERTURA"]
-        },
-        grado: {
-          required: true,
-          EqualToGroup: [
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "EGRESADO"
-          ]
-        },
-        acudiente: {
-          required: true
-        },
-        telacudiente: {
-          required: true,
-          number: true
-        },
-        inscritoanterior: {
-          required: true,
-          EqualToGroup: ["SI", "NO"]
-        },
-        otrocurso: {
-          required: {
-            depends: function(element) {
-              let valcur = $("#inscritoanterior").val();
-              if (valcur.includes("SI")) return true;
-              return false;
-            }
-          }
-        },
-        seleccion: {
-          required: {
-            depends: function(element) {
-              if (!$("[name='seleccion']").is(":checked")) return true;
-              return false;
-            }
-          }
-        },
-        convenio: {
-          EqualToGroup: [
-            "CONVENIO_COLEGIO",
-            "PARTICULAR",
-            "RELACION_UNIVALLE",
-            "BECADOS"
-          ],
-          required: true
-        },
-        valconsignado: {
-          required: true,
-          number: true
-        },
-        terms: {
-          required: true
-        },
-        docFile: {
-          required: {
-            depends: function(element) {
-              if ($("#btn-registrar").is(":visible")) return false;
-              return true;
-            }
-          }
-        },
-        constanciaEstudFile: {
-          required: {
-            depends: function(element) {
-              if ($("#btn-registrar").is(":visible")) return false;
-              return $("#estamento").val() == "público";
-            }
-          }
-        },
-        constanciaFuncFile: {
-          required: {
-            depends: function(element) {
-              if ($("#btn-registrar").is(":visible")) return false;
-              return $("#relacion_univalle").is(":checked");
-            }
-          }
-        },
-        reciboFile: {
-          required: {
-            depends: function(element) {
-              if ($("#btn-registrar").is(":visible")) return false;
-              return true;
-            }
-          }
-        },
-        recibosPublicos: {
-          required: {
-            depends: function(element) {
-              if ($("#btn-registrar").is(":visible")) return false;
-              return $("#becado").is(":checked");
-            }
-          }
-        },
-        cartaSolicitud: {
-          required: {
-            depends: function(element) {
-              if ($("#btn-registrar").is(":visible")) return false;
-              return $("#becado").is(":checked");
-            }
-          }
-        },
-        actaGrado: {
-          required: {
-            depends: function(element) {
-              if ($("#btn-registrar").is(":visible")) return false;
-              return $("#grado").val() == "EGRESADO";
-            }
-          }
-        }
-      },
-      messages: {
-        tipo: {
-          EqualToGroup: "Por favor selecciona un tipo válido"
-        },
-        email: {
-          email: "Correo inválido"
-        },
-        confirmEmail: {
-          equalTo: "Los correos no son iguales",
-          email: "Correo inválido"
-        },
-        telfijo: {
-          required: "Por favor escribe por lo menos un número de contacto"
-        },
-        telcelular: {
-          required: "Por favor escribe por lo menos un número de contacto"
-        },
-        estamento: {
-          EqualToGroup: " Selecciona un estamento"
-        },
-        grado: {
-          EqualToGroup: "selecciona un grado"
-        },
-        seleccion: {
-          required: "selecciona por lo menos un modulo"
-        },
-        valconsignado: {
-          required: "Por favor digita el valor total consignado"
-        },
-        docFile: {
-          required:
-            "Seleeciona un archivo PDF correspondiente a la copia de su número de Identificación"
-        },
-        constanciaEstudFile: {
-          required:
-            "Seleeciona un archivo PDF correspondiente a la copia de su constancia estudiantil"
-        },
-        constanciaFuncFile: {
-          required:
-            "Seleeciona un archivo PDF correspondiente a la copia de la constancia del Funcionario"
-        },
-        reciboFile: {
-          required:
-            "Seleeciona un archivo PDF correspondiente a la copia de su recibo de pago"
-        },
-        actaGrado: {
-          required:
-            "Selecciona un archivo PDF correspondiente a la copia de su acta de grado"
-        }
-      },
-      highlight: function(element) {
-        let modules = $(element).closest(".modules_matricular");
-        let ismodule = $(element).closest(".modules_matricular").length;
-        if (ismodule) {
-          modules.addClass("has-error");
-        } else {
-          $(element)
-            .closest(".input-div")
-            .addClass("has-error");
-        }
-      },
-      unhighlight: function(element) {
-        let modules = $(element).closest(".modules_matricular");
-        let ismodule = $(element).closest(".modules_matricular").length;
-        if (ismodule) {
-          modules.removeClass("has-error");
-        } else {
-          $(element)
-            .closest(".input-div")
-            .removeClass("has-error");
-        }
-      },
+      rules: validationRules,
+      messages: validationMessages,
+      highlight: highlight,
+      unhighlight: unhighlight,
       errorElement: "span",
       errorClass: "help-block",
-      errorPlacement: function(error, element) {
-        let modules = $(element).closest(".modules_matricular");
-        let ismodule = $(element).closest(".modules_matricular").length;
-
-        if (ismodule) {
-          error.insertAfter(modules);
-        } else if ($(element).attr("name") == "convenio") {
-          let parent = $(element).closest(".input-div");
-          error.insertAfter(parent);
-        } else {
-          error.insertAfter(element);
-        }
-      },
-      submitHandler: function() {
-        $("#mySpan").fadeIn();
-        setWaitCursor();
-        let form = $("#myForm");
-        const formData = getFormData(form);
-        console.log("FORM-->", { form, formData });
-        google.script.run
-          .withSuccessHandler(fileUploaded)
-          .withFailureHandler(errorHandler)
-          .uploadFiles(JSON.stringify(formData));
-      }
+      errorPlacement: errorPlacement,
+      submitHandler: submitHandler
     });
 
     return isvalid;
+  }
+
+  async function submitHandler() {
+    $("#mySpan").fadeIn();
+    setWaitCursor();
+    let form = $("#myForm");
+    const formData = await getFormData(form);
+    console.log("FORM-->", { form, formData });
+    google.script.run
+      .withSuccessHandler(fileUploaded)
+      .withFailureHandler(errorHandler)
+      .registerStudent(JSON.stringify(formData));
+  }
+  
+  function highlight(element) {
+    let modules = $(element).closest(".modules_matricular");
+    let ismodule = $(element).closest(".modules_matricular").length;
+    if (ismodule) {
+      modules.addClass("has-error");
+    } else {
+      $(element)
+        .closest(".input-div")
+        .addClass("has-error");
+    }
+  }
+
+  function unhighlight(element) {
+    let modules = $(element).closest(".modules_matricular");
+    let ismodule = $(element).closest(".modules_matricular").length;
+    if (ismodule) {
+      modules.removeClass("has-error");
+    } else {
+      $(element)
+        .closest(".input-div")
+        .removeClass("has-error");
+    }
+  }
+
+  function errorPlacement(error, element) {
+    let modules = $(element).closest(".modules_matricular");
+    let ismodule = $(element).closest(".modules_matricular").length;
+
+    if (ismodule) {
+      error.insertAfter(modules);
+    } else if ($(element).attr("name") == "convenio") {
+      let parent = $(element).closest(".input-div");
+      error.insertAfter(parent);
+    } else {
+      error.insertAfter(element);
+    }
   }
 </script>
