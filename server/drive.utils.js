@@ -44,13 +44,13 @@ function getMainFolder() {
   return mainFolder;
 }
 
-function createPersonFile(fileName, numdoc, fileData) {
+function createPersonFile(fileName, num_doc, fileData) {
   var result = {
     url: "",
-    file: ""
+    name: ""
   };
   var mainFolder = getMainFolder();
-  var currentFolder = getPersonFolder(numdoc, mainFolder);
+  var currentFolder = getPersonFolder(num_doc, mainFolder);
 
   var contentType = fileData.substring(5, fileData.indexOf(";"));
   var bytes = Utilities.base64Decode(
@@ -59,24 +59,33 @@ function createPersonFile(fileName, numdoc, fileData) {
   var blob = Utilities.newBlob(bytes, contentType, file);
 
   var file = currentFolder.createFile(blob);
-  file.setDescription("Subido Por " + numdoc);
-  file.setName(numdoc + "_" + fileName);
+  file.setDescription("Subido Por " + num_doc);
+  file.setName(num_doc + "_" + fileName);
   result.url = file.getUrl();
-  result.file = file.getName();
+  result.name = file.getName();
+  result.file = file;
   return result;
 }
 
-function uploadEstudentFiles(numdoc, files) {
-  Logger.log("=============UPLOADING STUDENT "+numdoc+ " FILES===========");
+function uploadEstudentFiles(num_doc, files) {
+  Logger.log("=============UPLOADING STUDENT " + num_doc + " FILES===========");
 
   if (!files.length) return;
-  Logger.log("FILES:")
-  Logger.log(files)
-  var response = files.map(function(file) {
+  Logger.log("FILES:");
+  Logger.log(files);
+  var savedFiles = files.map(function(file) {
     var name = file.name || "";
     var base64 = file.base64 || "";
-    return createPersonFile(name, numdoc, base64);
-  })
-  Logger.log("=============END UPLOADING STUDENT "+numdoc+ " FILES===========");
+    return createPersonFile(name, num_doc, base64);
+  });
+  var mainFolder = getMainFolder();
+  var currentFolder = getPersonFolder(num_doc, mainFolder);
+  var response = { files: savedFiles, folder: currentFolder.getUrl() };
+  Logger.log("RESPONSE:");
+  Logger.log(response);
+
+  Logger.log(
+    "=============END UPLOADING STUDENT " + num_doc + " FILES==========="
+  );
   return response;
 }

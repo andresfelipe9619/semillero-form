@@ -10,10 +10,10 @@
       required: true,
       EqualToGroup: ["T.I", "C.C"]
     },
-    ciudadDoc: {
+    ciudad_doc: {
       required: true
     },
-    numdoc: {
+    num_doc: {
       required: true,
       number: true
     },
@@ -26,25 +26,37 @@
       email: true,
       equalTo: "#email"
     },
-    numdoc: {
+    genero:{
+      required: {
+        depends: function(element) {
+          if (!$("[name='genero']").is(":checked")) return true;
+          return false;
+        }
+      }
+    },
+    nacimiento: {
+      required: true,
+      date: true
+    },
+    num_doc: {
       required: true,
       number: true
     },
-    telfijo: {
+    tel_fijo: {
       required: {
         depends: function(element) {
-          let valuecelular = $("#telcelular").val();
+          let valuecelular = $("#tel_celular").val();
           if (valuecelular == "") return true;
           return false;
         }
       },
       number: true
     },
-    telcelular: {
+    tel_celular: {
       required: true,
       number: true
     },
-    ciudadres: {
+    ciudad_res: {
       required: true
     },
     deptres: {
@@ -86,7 +98,7 @@
         "EGRESADO"
       ]
     },
-    acudiente: {
+    nombre_acudiente: {
       required: true
     },
     telacudiente: {
@@ -97,7 +109,7 @@
       required: true,
       EqualToGroup: ["SI", "NO"]
     },
-    otrocurso: {
+    inscrito_anterior: {
       required: {
         depends: function(element) {
           let valcur = $("#inscritoanterior").val();
@@ -123,7 +135,7 @@
       ],
       required: true
     },
-    valconsignado: {
+    val_consignado: {
       required: true,
       number: true
     },
@@ -199,10 +211,10 @@
       equalTo: "Los correos no son iguales",
       email: "Correo inválido"
     },
-    telfijo: {
+    tel_fijo: {
       required: "Por favor escribe por lo menos un número de contacto"
     },
-    telcelular: {
+    tel_celular: {
       required: "Por favor escribe por lo menos un número de contacto"
     },
     estamento: {
@@ -211,10 +223,16 @@
     grado: {
       EqualToGroup: "selecciona un grado"
     },
+    nacimiento:{
+      required: "selecciona tu fecha de nacimiento"
+    },
+    genero:{
+      required: "seleccionat tu genero"
+    },
     seleccion: {
       required: "selecciona por lo menos un modulo"
     },
-    valconsignado: {
+    val_consignado: {
       required: "Por favor digita el valor total consignado"
     },
     docFile: {
@@ -295,7 +313,7 @@
       .withFailureHandler(errorHandler)
       .registerStudent(JSON.stringify(formData));
   }
-  
+
   function highlight(element) {
     let modules = $(element).closest(".modules_matricular");
     let ismodule = $(element).closest(".modules_matricular").length;

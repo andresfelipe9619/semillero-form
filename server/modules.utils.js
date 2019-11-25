@@ -52,8 +52,8 @@ function addToModule(module, data) {
         data.name.toUpperCase(),
         data.lastname.toUpperCase(),
         data.tipo,
-        data.numdoc,
-        data.telfijo,
+        data.num_doc,
+        data.tel_fijo,
         data.email.toLowerCase(),
         data.grado,
         data.colegio,
@@ -107,40 +107,29 @@ function createModulesSheets() {
   return true;
 }
 
-function validateModule(moduleSelected, data) {
-  var modulosMatriculados = [];
+function validateModule(moduleSelected) {
+  var validModule = null;
   Logger.log("=============VALIDATING MODULES===========");
   Logger.log("module selected");
   Logger.log(moduleSelected);
   var modules = getModules();
-  var titulosModulos = [];
+  var modulesTitles = [];
 
   for (var x in modules) {
-    if (x > 0) {
-      titulosModulos.push(modules[x][1]);
-    }
+    if (x > 0) modulesTitles.push(modules[x][1]);
   }
   Logger.log("Titulos modules");
-  Logger.log(titulosModulos);
+  Logger.log(modulesTitles);
 
-  if (moduleSelected) {
-    for (var i in titulosModulos) {
-      if (moduleSelected.localeCompare(titulosModulos[i]) == 0) {
-        data.push("x");
-        modulosMatriculados.push(titulosModulos[i]);
-      } else {
-        data.push("");
-      }
-    }
-  } else {
-    for (var i in titulosModulos) {
-      data.push("");
+  if (!moduleSelected) throw "No se reconoce el modulo seleccionado"
+  for (var i in modulesTitles) {
+    if (moduleSelected.localeCompare(modulesTitles[i]) == 0) {
+      validModule = modulesTitles[i];
     }
   }
 
-  Logger.log("modulo matriculado");
-  Logger.log(modulosMatriculados);
-  Logger.log("=============FIN VALIDATING MODULES===========");
-
-  return modulosMatriculados;
+  Logger.log("Valid Module");
+  Logger.log(validModule);
+  Logger.log("=============END VALIDATING MODULES===========");
+  return validModule;
 }

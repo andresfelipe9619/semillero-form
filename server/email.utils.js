@@ -21,7 +21,7 @@ function sendConfirmationEmail(form, lastFiles) {
   });
 
   var links = "";
-  var stFolder = getCurrentFolder(form.numdoc, mainFolder);
+  var stFolder = getCurrentFolder(form.num_doc, mainFolder);
   var stFiles = stFolder.getFiles();
   Logger.log("last files: " + stFiles);
 
@@ -88,18 +88,18 @@ function getPDFFile(data) {
     "<p> <strong>Documento de identidad:	</strong>" +
     data.tipo +
     " " +
-    data.numdoc +
+    data.num_doc +
     "</p>";
   contenthtml +=
     "<p> <strong>Ciudad expedición: </strong>" +
-    data.ciudadDoc.toUpperCase() +
+    data.ciudad_doc.toUpperCase() +
     "</p>";
   contenthtml += "<p> <strong>Email:	</strong>" + data.email + "</p>";
-  contenthtml += "<p> <strong>Telefono: </strong>" + data.telfijo + "</p>";
-  contenthtml += "<p> <strong>Celular: 	</strong>" + data.telcelular + "</p>";
+  contenthtml += "<p> <strong>Telefono: </strong>" + data.tel_fijo + "</p>";
+  contenthtml += "<p> <strong>Celular: 	</strong>" + data.tel_celular + "</p>";
   contenthtml +=
     "<p> <strong>Ciudad residencia:	 </strong>" +
-    data.ciudadres.toUpperCase() +
+    data.ciudad_res.toUpperCase() +
     "</p>";
 
   if (data.otraeps === null || data.otraeps === " " || data.otraeps === "") {
@@ -115,14 +115,14 @@ function getPDFFile(data) {
   contenthtml += "<p> <strong>Modalidad:  </strong>" + data.estamento + "</p>";
   contenthtml += "<p> <strong>Grado:	</strong>" + data.grado + "</p>";
   contenthtml +=
-    "<p> <strong>Acudiente:  </strong>" + data.acudiente.toUpperCase() + "</p>";
+    "<p> <strong>Acudiente:  </strong>" + data.nombre_acudiente.toUpperCase() + "</p>";
   contenthtml +=
-    "<p> <strong>Telefono acudiente: </strong>" + data.telacudiente + "</p>";
+    "<p> <strong>Telefono nombre_acudiente: </strong>" + data.telacudiente + "</p>";
 
   if (
-    data.otrocurso === null ||
-    data.otrocurso === " " ||
-    data.otrocurso === ""
+    data.inscrito_anterior === null ||
+    data.inscrito_anterior === " " ||
+    data.inscrito_anterior === ""
   ) {
     contenthtml +=
       "<p> <strong>Inscrito anteriormente: </strong>" +
@@ -130,7 +130,7 @@ function getPDFFile(data) {
       "</p>";
   } else {
     contenthtml +=
-      "<p> <strong>Inscrito anteriormente: </strong>" + data.otrocurso + "</p>";
+      "<p> <strong>Inscrito anteriormente: </strong>" + data.inscrito_anterior + "</p>";
   }
 
   contenthtml += "<p> <strong>Convenio: </strong>" + data.convenio + "</p>";

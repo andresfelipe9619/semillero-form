@@ -21,6 +21,9 @@
         /* Recent browsers */
         text-transform: none;
       }
+      .row {
+        margin: 5px 0px;
+      }
 
       .oculto {
         display: none;
@@ -159,8 +162,8 @@
             <input
               type="number"
               class="form-control numeric"
-              name="numdoc"
-              id="numdoc"
+              name="num_doc"
+              id="num_doc"
               placeholder="Su No. de identificación..."
               patern="\d+"
             />
@@ -169,8 +172,8 @@
             <input
               type="text"
               class="form-control text-uppercase"
-              name="ciudadDoc"
-              id="ciudadDoc"
+              name="ciudad_doc"
+              id="ciudad_doc"
               placeholder="Ciudad de Expedición"
             />
           </div>
@@ -215,13 +218,13 @@
         </div>
 
         <div class="row">
-          <label class="control-label col-xs-2" for="telfijo">Teléfonos*</label>
+          <label class="control-label col-xs-2" for="tel_fijo">Teléfonos*</label>
           <div class="col-xs-3 input-div">
             <input
               type="tel"
               class="form-control numeric"
-              id="telcelular"
-              name="telcelular"
+              id="tel_celular"
+              name="tel_celular"
               placeholder="Teléfono Celular..."
             />
           </div>
@@ -229,12 +232,50 @@
             <input
               type="text"
               class="form-control numeric"
-              id="telfijo"
-              name="telfijo"
+              id="tel_fijo"
+              name="tel_fijo"
               placeholder="Teléfono fijo..."
             />
           </div>
-          <!-- <label class="control-label col-xs-1" for="telcelular">Teléfono Celular</label>-->
+        </div>
+
+        <div class="row">
+          <label class="control-label col-xs-2" for="genero">Genero*</label>
+          <label class="radio-inline lg">
+            <input
+              checked
+              type="radio"
+              id="masculino"
+              name="genero"
+              value="M"
+            />Maculino</label
+          >
+          <label class="radio-inline lg">
+            <input
+              type="radio"
+              id="femenino"
+              name="genero"
+              value="F"
+            />Femenino</label
+          >
+          <label class="radio-inline lg">
+            <input type="radio" id="no_definido" name="genero" value="N.D" />No
+            definido</label
+          >
+        </div>
+
+        <div class="row">
+          <label class="control-label col-xs-2" for="nacimiento"
+            >Fecha Nacimiento*</label
+          >
+          <div class="col-xs-3 input-div">
+            <input
+              type="date"
+              class="form-control"
+              id="nacimiento"
+              name="nacimiento"
+            />
+          </div>
         </div>
 
         <div class="row">
@@ -251,15 +292,15 @@
             >
             </select>
           </div>
-          <label class="control-label col-xs-2" for="ciudadres"
+          <label class="control-label col-xs-2" for="ciudad_res"
             >Ciudad de Residencia*</label
           >
           <div class="col-xs-3 input-div">
             <select
               type="text"
               class="form-control"
-              id="ciudadres"
-              name="ciudadres"
+              id="ciudad_res"
+              name="ciudad_res"
               placeholder="Ciudad"
             >
             </select>
@@ -405,15 +446,15 @@
         </div>
 
         <div class="row">
-          <label class="control-label col-xs-2" for="acudiente"
+          <label class="control-label col-xs-2" for="nombre_acudiente"
             >Nombre Acudiente*</label
           >
           <div class="col-xs-6 input-div">
             <input
               type="text"
               class="form-control text-uppercase"
-              id="acudiente"
-              name="acudiente"
+              id="nombre_acudiente"
+              name="nombre_acudiente"
               placeholder="Nombre completo del Acudiente..."
             />
           </div>
@@ -429,7 +470,7 @@
               class="form-control numeric"
               id="telacudiente"
               name="telacudiente"
-              placeholder="Telefono acudiente"
+              placeholder="Telefono nombre_acudiente"
             />
           </div>
         </div>
@@ -449,7 +490,7 @@
             </select>
           </div>
           <div class="col-xs-4 input-div">
-            <select id="otrocurso" class="form-control oculto" name="otrocurso">
+            <select id="inscrito_anterior" class="form-control oculto" name="inscrito_anterior">
               <option value=""> </option>
               <option value="De los Enteros A los racionales NUEVO!!"
                 >De los Enteros A los racionales NUEVO!!
@@ -493,9 +534,8 @@
             </select>
           </div>
         </div>
-
+        <br />
         <div class="row input-div">
-          <hr />
           <hr />
           <label class="radio-inline lg">
             <input
@@ -533,15 +573,15 @@
         <!-- Campo valor consignado -->
         <div class="row">
           <br />
-          <label class="control-label col-xs-2" for="valconsignado"
+          <label class="control-label col-xs-2" for="val_consignado"
             >Valor Consignado*</label
           >
           <div class="col-xs-4 input-div">
             <input
               type="text"
               class="form-control numeric"
-              id="valconsignado"
-              name="valconsignado"
+              id="val_consignado"
+              name="val_consignado"
               placeholder="Valor consignado"
             />
           </div>

@@ -8,7 +8,7 @@ function runApp() {
   fetchModulesByGrades();
   setTimeout(() => {
     AuthenticateCurrentUser();
-    populateCountries("deptres", "ciudadres");
+    populateCountries("deptres", "ciudad_res");
     setTimeout(getRequestPayload, 500);
   }, 1000);
   // hideInitialData();
@@ -40,7 +40,7 @@ function subscribeEventHandlers() {
   $("#email").on("copy cut paste", DoNotCopyPaste);
   $("#myForm #createEmail").on("click", createEmail);
   $("#myForm #grado").on("change", hadleChangeGrade);
-  $("#otrocurso").on("change", handleChangeAnotherGrade);
+  $("#inscrito_anterior").on("change", handleChangeAnotherGrade);
   $("#confirmEmail").on("copy cut paste", DoNotCopyPaste);
   $("#myForm #estamento").on("change", handleChangeEstate);
   $("#inscritoanterior").on("change", handleChangePreviousRegister);
@@ -149,7 +149,7 @@ function handleChangeEps() {
 }
 
 function hadleChangeGrade() {
-  let anterior = $("#otrocurso").val();
+  let anterior = $("#inscrito_anterior").val();
   console.log("MI ANTERIOR: ", anterior);
   let grade = String(this.value).toLocaleLowerCase();
   console.log("grade", grade);
@@ -162,8 +162,8 @@ function hadleChangeGrade() {
 }
 function handleChangePreviousRegister() {
   let myres = this.value;
-  if (myres.includes("SI")) return $("#otrocurso").css("display", "block");
-  $("#otrocurso").css("display", "none");
+  if (myres.includes("SI")) return $("#inscrito_anterior").css("display", "block");
+  $("#inscrito_anterior").css("display", "none");
 }
 function handleChangeAnotherGrade() {
   let grado = $("#myForm #grado").val();
@@ -292,21 +292,21 @@ function fillInStudentData(person) {
   $("#name").val(String(person.data[0]));
   $("#lastname").val(String(person.data[1]));
   $("#tipo").val(String(person.data[2]));
-  $("#numdoc").val(String(person.data[3]));
-  $("#ciudadDoc").val(String(person.data[4]));
+  $("#num_doc").val(String(person.data[3]));
+  $("#ciudad_doc").val(String(person.data[4]));
   $("#email").val(String(person.data[5]));
   $("#confirmEmail").val(String(person.data[5]));
-  $("#telfijo").val(String(person.data[6]));
-  $("#telcelular").val(String(person.data[7]));
+  $("#tel_fijo").val(String(person.data[6]));
+  $("#tel_celular").val(String(person.data[7]));
   $("#deptres").val(String(person.data[8]));
   $("#deptres").trigger("change");
-  $("#ciudadres").val(String(person.data[9]));
+  $("#ciudad_res").val(String(person.data[9]));
   $("#eps").val(String(person.data[10]));
   $("#colegio").val(String(person.data[11]));
   $("#estamento").val(String(person.data[12]));
   $("#grado").val(String(person.data[13]));
   $("#grado").trigger("change");
-  $("#acudiente").val(String(person.data[14]));
+  $("#nombre_acudiente").val(String(person.data[14]));
   $("#telacudiente").val(String(person.data[15]));
   console.log("eps", $("#eps").val());
   if (!$("#eps").val()) {
@@ -318,8 +318,8 @@ function fillInStudentData(person) {
     console.log("atleast");
     $("#inscritoanterior").val("SI");
     $("#inscritoanterior").trigger("change");
-    $("#otrocurso").val(String(person.data[16]));
-    $("#otrocurso").trigger("change");
+    $("#inscrito_anterior").val(String(person.data[16]));
+    $("#inscrito_anterior").trigger("change");
   }
 
   if (String(person.data[17])) {
@@ -330,7 +330,7 @@ function fillInStudentData(person) {
   }
 
   if (String(person.data[18])) {
-    $("#valconsignado").val(String(person.data[18]));
+    $("#val_consignado").val(String(person.data[18]));
   }
   if (String(person.data[person.data.length - 4])) {
     //modulos.
@@ -377,27 +377,27 @@ async function getFormData($form) {
   return formData;
 }
 
-const getFileName = (fileKey, numdoc) => {
+const getFileName = (fileKey, num_doc) => {
   if (fileKey === "docFile") {
-    return numdoc + "_DOCUMENTO";
+    return num_doc + "_DOCUMENTO";
   }
   if (fileKey === "constanciaEstudFile") {
-    return numdoc + "_COSNTANCIA_ESTUDIO";
+    return num_doc + "_COSNTANCIA_ESTUDIO";
   }
   if (fileKey === "reciboFile") {
-    return numdoc + "_RECIBO_PAGO";
+    return num_doc + "_RECIBO_PAGO";
   }
   if (fileKey === "constanciaFuncFile") {
-    return numdoc + "_CONSTANCIA_FUNCIONARIO";
+    return num_doc + "_CONSTANCIA_FUNCIONARIO";
   }
   if (fileKey === "recibosPublicos") {
-    return numdoc + "_RECIBO_PUBLICOS";
+    return num_doc + "_RECIBO_PUBLICOS";
   }
   if (fileKey === "cartaSolicitud") {
-    return numdoc + "_CARTA_SOLICITUD";
+    return num_doc + "_CARTA_SOLICITUD";
   }
   if (fileKey === "actaGrado") {
-    return numdoc + "_ACTA_GRADO";
+    return num_doc + "_ACTA_GRADO";
   }
 };
 
@@ -480,21 +480,21 @@ function fillInTestData() {
   $("#name").val(String(testPerson[0]));
   $("#lastname").val(String(testPerson[1]));
   $("#tipo").val(String(testPerson[2]));
-  $("#numdoc").val(String(testPerson[3]));
-  $("#ciudadDoc").val(String(testPerson[4]));
+  $("#num_doc").val(String(testPerson[3]));
+  $("#ciudad_doc").val(String(testPerson[4]));
   $("#email").val(String(testPerson[5]));
   $("#confirmEmail").val(String(testPerson[5]));
-  $("#telfijo").val(String(testPerson[6]));
-  $("#telcelular").val(String(testPerson[7]));
+  $("#tel_fijo").val(String(testPerson[6]));
+  $("#tel_celular").val(String(testPerson[7]));
   $("#deptres").val(String(testPerson[8]));
   $("#deptres").trigger("change");
-  $("#ciudadres").val(String(testPerson[9]));
+  $("#ciudad_res").val(String(testPerson[9]));
   $("#eps").val(String(testPerson[10]));
   $("#colegio").val(String(testPerson[11]));
   $("#estamento").val(String(testPerson[12]));
   $("#grado").val(String(testPerson[13]));
   $("#grado").trigger("change");
-  $("#acudiente").val(String(testPerson[14]));
+  $("#nombre_acudiente").val(String(testPerson[14]));
   $("#telacudiente").val(String(testPerson[15]));
   console.log("eps", $("#eps").val());
   if (!$("#eps").val()) {
@@ -506,8 +506,8 @@ function fillInTestData() {
     console.log("atleast");
     $("#inscritoanterior").val("SI");
     $("#inscritoanterior").trigger("change");
-    $("#otrocurso").val(String(testPerson[16]));
-    $("#otrocurso").trigger("change");
+    $("#inscrito_anterior").val(String(testPerson[16]));
+    $("#inscrito_anterior").trigger("change");
   }
 
   if (String(testPerson[17])) {
@@ -518,7 +518,7 @@ function fillInTestData() {
   }
 
   if (String(testPerson[18])) {
-    $("#valconsignado").val(String(testPerson[18]));
+    $("#val_consignado").val(String(testPerson[18]));
   }
 }
 //</script>
