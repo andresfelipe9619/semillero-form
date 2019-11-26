@@ -14,8 +14,8 @@ function getStudents() {
   return rawStudents;
 }
 
-function getActualPeriodStudents() {
-  var rawStudents = getRawDataFromSheet(getActualPeriod()[2], "INSCRITOS");
+function getCurrentPeriodStudents() {
+  var rawStudents = getRawDataFromSheet(getCurrentPeriod()[2], "INSCRITOS");
   return rawStudents;
 }
 
@@ -42,7 +42,7 @@ function getHeadersFromSheet(sheet) {
   return headers;
 }
 
-function getActualPeriod() {
+function getCurrentPeriod() {
   var periodos = getPeriods();
   for (var x in periodos) {
     if (periodos[x][1] == "x") {

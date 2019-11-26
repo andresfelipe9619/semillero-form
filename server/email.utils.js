@@ -1,27 +1,27 @@
-function sendConfirmationEmail(form, lastFiles) {
-  var filetoSend = getPDFFile(form);
+function sendConfirmationEmail(data, files) {
+  var filetoSend = getPDFFile(data);
   var subModule = "";
   var modules = getModules();
   var mainFolder = getMainFolder();
 
   for (var module in modules) {
-    if (modules[module][1] == form.seleccion) {
+    if (modules[module][1] == data.seleccion) {
       subModule = modules[module][0];
     }
   }
-  var periodo = getActualPeriod();
+  var periodo = getCurrentPeriod();
   Logger.log("Submodulo");
   Logger.log(subModule);
   MailApp.sendEmail({
-    to: form.email,
+    to: data.email,
     subject: "Inscripción " + periodo[0] + " " + subModule,
     htmlBody: filetoSend,
     name: "SEMILLEROS UNIVALLE",
-    attachments: lastFiles
+    attachments: files
   });
 
   var links = "";
-  var stFolder = getCurrentFolder(form.num_doc, mainFolder);
+  var stFolder = getCurrentFolder(data.num_doc, mainFolder);
   var stFiles = stFolder.getFiles();
   Logger.log("last files: " + stFiles);
 
@@ -42,9 +42,9 @@ function sendConfirmationEmail(form, lastFiles) {
       " " +
       subModule +
       " " +
-      form.name.toUpperCase() +
+      data.name.toUpperCase() +
       " " +
-      form.lastname.toUpperCase(),
+      data.lastname.toUpperCase(),
     htmlBody: filetoSend + links,
     name: "SEMILLEROS UNIVALLE",
     attachments: lastFiles

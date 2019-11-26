@@ -42,7 +42,7 @@ function addToModule(module, data) {
   Logger.log(data);
   // data.push(module)
   createModulesSheets();
-  var actualPeriod = getActualPeriod()[2];
+  var actualPeriod = getCurrentPeriod()[2];
   var modulos = getModules();
   for (var x in modulos) {
     if (module == modulos[x][1]) {
@@ -72,7 +72,7 @@ function addToModule(module, data) {
 }
 
 function createModulesSheets() {
-  var actualPeriod = getActualPeriod()[2];
+  var actualPeriod = getCurrentPeriod()[2];
   var periodSpreadSheet = SpreadsheetApp.openByUrl(actualPeriod);
 
   var modules = getModules();

@@ -8,7 +8,7 @@ function runApp() {
   fetchModulesByGrades();
   setTimeout(() => {
     AuthenticateCurrentUser();
-    populateCountries("deptres", "ciudad_res");
+    populateCountries("depto_res", "ciudad_res");
     setTimeout(getRequestPayload, 500);
   }, 1000);
   // hideInitialData();
@@ -298,8 +298,8 @@ function fillInStudentData(person) {
   $("#confirmEmail").val(String(person.data[5]));
   $("#tel_fijo").val(String(person.data[6]));
   $("#tel_celular").val(String(person.data[7]));
-  $("#deptres").val(String(person.data[8]));
-  $("#deptres").trigger("change");
+  $("#depto_res").val(String(person.data[8]));
+  $("#depto_res").trigger("change");
   $("#ciudad_res").val(String(person.data[9]));
   $("#eps").val(String(person.data[10]));
   $("#colegio").val(String(person.data[11]));
@@ -486,8 +486,8 @@ function fillInTestData() {
   $("#confirmEmail").val(String(testPerson[5]));
   $("#tel_fijo").val(String(testPerson[6]));
   $("#tel_celular").val(String(testPerson[7]));
-  $("#deptres").val(String(testPerson[8]));
-  $("#deptres").trigger("change");
+  $("#depto_res").val(String(testPerson[8]));
+  $("#depto_res").trigger("change");
   $("#ciudad_res").val(String(testPerson[9]));
   $("#eps").val(String(testPerson[10]));
   $("#colegio").val(String(testPerson[11]));

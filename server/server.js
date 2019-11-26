@@ -54,38 +54,40 @@ function registerStudentActualPeriod(data) {
   Logger.log("=============Registrando Periodo actual===========");
   Logger.log("Datos en registerStudentActualPeriod: ");
   Logger.log(data);
-  var inscritosSheet = getSheetFromSpreadSheet(getActualPeriod()[2], "INSCRITOS");
-  var headers = getHeadersFromSheet(inscritosSheet);
-  var personValues = jsonToSheetValues(person, headers);
+  var inscritossheet = getSheetFromSpreadSheet(
+    getCurrentPeriod()[2],
+    "INSCRITOS"
+  );
+  var headers = getHeadersFromSheet(inscritossheet);
+  var personValues = jsonToSheetValues(data, headers);
   var finalValues = personValues.map(function(value) {
     return String(value);
   });
 
-  inscritosSheet.appendRow(finalValues);
+  inscritossheet.appendRow(finalValues);
   var lastRowRes = inscritossheet.getLastRow();
-  var res = "Error!";
+  var response = "Error!";
   if (lastRowRes > lastRow) {
-    res = "exito";
+    response = "exito";
   }
-  
+
   Logger.log("=============FIN Registrando Periodo actual===========");
-  return res;
+  return response;
 }
 
 function registerStudentGeneral(data, person) {
   var inscritossheet = getSheetFromSpreadSheet(GENERAL_DB, "INSCRITOS");
-  var modules = getModules();
+  var headers = getHeadersFromSheet(inscritosSheet);
+  var personValues = jsonToSheetValues(data, headers);
+  var finalValues = personValues.map(function(value) {
+    return String(value);
+  });
 
   var lastRow = inscritossheet.getLastRow();
-  var url = data.pop();
-  var newData = [];
 
   Logger.log("data before clean up");
   Logger.log(data);
-  Logger.log("Super data length: ");
-  Logger.log(data.length);
 
-  var actualPeriod = newData.pop();
   var spaces = 0;
   //si viene con index, revisamos la fila y cojemos los modulos ya inscritos
   if (person && person.data.length) {
@@ -97,17 +99,17 @@ function registerStudentGeneral(data, person) {
     Logger.log(person.lastModules);
     Logger.log("Last modudules length");
     Logger.log(person.lastModules.length);
-    for (var i = 0; i <= person.lastModules.length - 1; i += 2) {
-      if (
-        (person.lastModules[i] && person.lastModules[i] != "") ||
-        (person.lastModules[i + 1] && person.lastModules[i + 1] != "")
-      ) {
-        newData.push(person.lastModules[i]);
-        newData.push(person.lastModules[i + 1]);
-      } else {
-        spaces++;
-      }
-    }
+    // for (var i = 0; i <= person.lastModules.length - 1; i += 2) {
+    //   if (
+    //     (person.lastModules[i] && person.lastModules[i] != "") ||
+    //     (person.lastModules[i + 1] && person.lastModules[i + 1] != "")
+    //   ) {
+    //     newData.push(person.lastModules[i]);
+    //     newData.push(person.lastModules[i + 1]);
+    //   } else {
+    //     spaces++;
+    //   }
+    // }
 
     if (spaces == 0) {
       inscritossheet.insertColumnsAfter(person.data.length - 1, 2);
@@ -116,32 +118,15 @@ function registerStudentGeneral(data, person) {
     }
   }
 
-  Logger.log(newData);
-  for (var x in modules) {
-    if (modules[x][1] == form.seleccion) {
-      newData.push(actualPeriod);
-      newData.push(modules[x][0]);
-    }
-  }
-
   Logger.log("NEW DATA");
-  Logger.log(newData);
+  Logger.log(finalValues);
   Logger.log("-----------------");
   Logger.log("Last column");
   Logger.log(inscritossheet.getLastColumn());
   Logger.log("New data length: ");
-  Logger.log(newData.length);
+  Logger.log(finalValues.length);
 
-  if (inscritossheet.getLastColumn() > newData.length + 1) {
-    var diff = inscritossheet.getLastColumn() - newData.length;
-    while (diff > 1) {
-      newData.push("");
-      diff--;
-    }
-  }
-
-  newData.push(url);
-  var res = "Error!";
+  var response = "Error!";
 
   if (person && person.index) {
     var inscritoRange = inscritossheet.getRange(
@@ -151,17 +136,17 @@ function registerStudentGeneral(data, person) {
       inscritossheet.getLastColumn()
     );
     inscritoRange.setValues([newData]);
-    res = "exito";
+    response = "exito";
   } else {
     inscritossheet.appendRow(newData);
     var lastRowRes = inscritossheet.getLastRow();
 
     if (lastRowRes > lastRow) {
-      res = "exito";
+      response = "exito";
     }
   }
 
-  return res;
+  return response;
 }
 
 function registerStudentInSheets(data) {
@@ -176,7 +161,7 @@ function editStudent(student) {
   var newData = student.slice();
   newData.pop();
   var general = newData.slice();
-  newData.push(getActualPeriod()[0]);
+  newData.push(getCurrentPeriod()[0]);
 
   var selectedModule = validateModule(student[student.length - 1]);
 
@@ -211,8 +196,11 @@ function editStudentActualPeriod(student) {
   Logger.log("ACTUAL PERIOD");
   Logger.log(student);
 
-  var students = getActualPeriodStudents();
-  var studentSheet = getSheetFromSpreadSheet(getActualPeriod()[2], "INSCRITOS");
+  var students = getCurrentPeriodStudents();
+  var studentSheet = getSheetFromSpreadSheet(
+    getCurrentPeriod()[2],
+    "INSCRITOS"
+  );
   var esta = false;
   var indice = -1;
   for (var x in students) {
@@ -241,11 +229,11 @@ function editStudentActualPeriod(student) {
   }
   if (student.module) {
     var studentsModule = getRawDataFromSheet(
-      getActualPeriod()[2],
+      getCurrentPeriod()[2],
       student.module
     );
     var moduleSheet = getSheetFromSpreadSheet(
-      getActualPeriod()[2],
+      getCurrentPeriod()[2],
       student.module
     );
     var estais = false;
@@ -297,11 +285,11 @@ function validatePerson(cedula) {
     data: null,
     lastModules: null
   };
-  var actualPeriod = getActualPeriod()[0];
+  var currentPeriod = getCurrentPeriod()[0];
   var textFinder = sheet.createTextFinder(cedula);
   var studentFound = textFinder.findNext();
   var studentIndex = studentFound ? studentFound.getRow() - 1 : -1;
-  var values = studentFound.getValues();
+  var values = studentFound && studentFound.getValues();
   Logger.log("range values");
   Logger.log(values);
   result.state = "no esta";
@@ -314,7 +302,7 @@ function validatePerson(cedula) {
     Logger.log("lastmodules");
     Logger.log(result.lastModules);
     for (var col in student) {
-      if (String(student[col]) === String(actualPeriod)) {
+      if (String(student[col]) === String(currentPeriod)) {
         result.state = "actual";
         break;
       }
@@ -358,55 +346,54 @@ function registerStudent(formString) {
   var form = JSON.parse(formString);
   Logger.log("FORM");
   Logger.log(form);
-  if (!Object.keys(form).length) throw "No data sent";
+  if (!form || !Object.keys(form).length) throw "No data sent";
   avoidCollisionsInConcurrentAccessess();
   try {
-    if (form.otraeps !== "") {
-      form.eps = form.otraeps;
-    }
+    if (form.otraeps) form.eps = form.otraeps;
+
     Logger.log("anterior: " + form.inscritoanterior);
     if (form.inscritoanterior === "SI") {
       form.inscritoanterior = form.inscrito_anterior;
     }
     var selectedModule = validateModule(form.seleccion);
+    var currentPeriod = getCurrentPeriod()[0];
 
-    var data = Object.assign({}, form, {
+    var data = mergeObjects(form, {
       nombre: form.name.toUpperCase(),
       apellido: form.lastname.toUpperCase(),
       ciudad_doc: form.ciudad_doc.toUpperCase(),
       email: form.email.toLowerCase(),
       colegio: form.colegio.toUpperCase(),
       estamento: form.estamento.toUpperCase(),
-      deptres: form.deptres.toUpperCase(),
+      depto_res: form.depto_res.toUpperCase(),
       nombre_acudiente: form.nombre_acudiente.toUpperCase(),
       ciudad_res: form.ciudad_res.toUpperCase(),
-      [getActualPeriod()[0]]: selectedModule,
       modulo: selectedModule
     });
+    data[currentPeriod] = selectedModule;
 
-    var response, url_documentos;
-    var person = validatePerson(form.num_doc);
-    Logger.log("Validated person", person);
+    var response, folderUrl;
+    var person = validatePerson(data.num_doc);
+    Logger.log("person");
     Logger.log(person);
-    Logger.log("{arrayFiles, form, data}");
-    Logger.log({ files: arrayFiles, form: form, data: data });
+
     if (person.state === "no esta") {
-      var filesResult = uploadEstudentFiles(form.num_doc, data, form.files);
-      folderUrl = filesResult.folder;
-      //se crea adifiona la informacion a la tabla
-      data.url_documentos = url_documentos
+      var filesResult = uploadEstudentFiles(data.num_doc, data, data.files);
+      Logger.log("filesResult");
+      Logger.log(filesResult);
+      folderUrl = (filesResult || {}).folder;
+      data.url_documentos = folderUrl;
       response = registerStudentInSheets(data);
 
-      // sendConfirmationEmail(form, lastFiles);
+      sendConfirmationEmail(data, filesResult.files);
     } else if (person.state === "antiguo") {
-      //se crea la carpeta que va contener los arhivos actuales
-      // lastFiles = uploadEstudentFiles(form.num_doc, data, arrayFiles[0]);
+      var filesResult = uploadEstudentFiles(data.num_doc, data, data.files);
+      folderUrl = filesResult.folder;
       Logger.log(
         "Data before registerStudentActualPeriod when student exists "
       );
       Logger.log(data);
 
-      //se crea adifiona la informacion a la tabla
       response = registerStudentActualPeriod(data);
 
       Logger.log("Data after registerStudentActualPeriod when student exists ");
@@ -428,4 +415,16 @@ function registerStudent(formString) {
     Logger.log(error);
     return error.toString();
   }
+}
+
+function mergeObjects() {
+  var resObj = {};
+  for(var i=0; i < arguments.length; i += 1) {
+       var obj = arguments[i],
+           keys = Object.keys(obj);
+       for(var j=0; j < keys.length; j += 1) {
+           resObj[keys[j]] = obj[keys[j]];
+       }
+  }
+  return resObj;
 }

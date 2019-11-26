@@ -68,7 +68,7 @@ function createPersonFile(fileName, num_doc, fileData) {
 }
 
 function uploadEstudentFiles(num_doc, files) {
-  Logger.log("=============UPLOADING STUDENT " + num_doc + " FILES===========");
+  Logger.log("=======UPLOADING STUDENT " + num_doc + " FILES======");
 
   if (!files.length) return;
   Logger.log("FILES:");
@@ -76,7 +76,8 @@ function uploadEstudentFiles(num_doc, files) {
   var savedFiles = files.map(function(file) {
     var name = file.name || "";
     var base64 = file.base64 || "";
-    return createPersonFile(name, num_doc, base64);
+    var savedFile = createPersonFile(name, num_doc, base64);
+    return savedFile.file;
   });
   var mainFolder = getMainFolder();
   var currentFolder = getPersonFolder(num_doc, mainFolder);
@@ -84,8 +85,6 @@ function uploadEstudentFiles(num_doc, files) {
   Logger.log("RESPONSE:");
   Logger.log(response);
 
-  Logger.log(
-    "=============END UPLOADING STUDENT " + num_doc + " FILES==========="
-  );
+  Logger.log("=======END UPLOADING STUDENT " + num_doc + " FILES========");
   return response;
 }
