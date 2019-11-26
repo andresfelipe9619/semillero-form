@@ -54,12 +54,20 @@ function registerStudentActualPeriod(data) {
   Logger.log("=============Registrando Periodo actual===========");
   Logger.log("Datos en registerStudentActualPeriod: ");
   Logger.log(data);
+
   var inscritossheet = getSheetFromSpreadSheet(
     getCurrentPeriod()[2],
     "INSCRITOS"
   );
+  var lastRow = inscritossheet.getLastRow();
   var headers = getHeadersFromSheet(inscritossheet);
+  Logger.log("headers");
+  Logger.log(headers);
+
   var personValues = jsonToSheetValues(data, headers);
+  Logger.log("personValues");
+  Logger.log(personValues);
+
   var finalValues = personValues.map(function(value) {
     return String(value);
   });
@@ -77,7 +85,7 @@ function registerStudentActualPeriod(data) {
 
 function registerStudentGeneral(data, person) {
   var inscritossheet = getSheetFromSpreadSheet(GENERAL_DB, "INSCRITOS");
-  var headers = getHeadersFromSheet(inscritosSheet);
+  var headers = getHeadersFromSheet(inscritossheet);
   var personValues = jsonToSheetValues(data, headers);
   var finalValues = personValues.map(function(value) {
     return String(value);
@@ -151,7 +159,7 @@ function registerStudentGeneral(data, person) {
 
 function registerStudentInSheets(data) {
   registerStudentActualPeriod(data);
-  return registerStudentGeneral(data);
+  // return registerStudentGeneral(data);
 }
 
 function editStudent(student) {
@@ -419,12 +427,12 @@ function registerStudent(formString) {
 
 function mergeObjects() {
   var resObj = {};
-  for(var i=0; i < arguments.length; i += 1) {
-       var obj = arguments[i],
-           keys = Object.keys(obj);
-       for(var j=0; j < keys.length; j += 1) {
-           resObj[keys[j]] = obj[keys[j]];
-       }
+  for (var i = 0; i < arguments.length; i += 1) {
+    var obj = arguments[i],
+      keys = Object.keys(obj);
+    for (var j = 0; j < keys.length; j += 1) {
+      resObj[keys[j]] = obj[keys[j]];
+    }
   }
   return resObj;
 }

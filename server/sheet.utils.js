@@ -54,19 +54,17 @@ function getCurrentPeriod() {
 function jsonToSheetValues(json, headers) {
   var arrayValues = new Array(headers.length);
   var lowerHeaders = headers.map(function(item) {
-    item.toLowerCase();
+    return String(item).toLowerCase();
   });
-
   for (var key in json) {
-    for (var header in lowerHeaders) {
-      if (key == String(lowerHeaders[header])) {
-        if (key == "nombre" || key == "apellidos") {
-          arrayValues[header] = json[key].toUpperCase();
-        } else {
-          arrayValues[header] = json[key];
-        }
-      }
-    }
+    lowerHeaders.forEach(function(header, index) {
+      Logger.log("key");
+      Logger.log({ key: key, header: header });
+      if (String(key) == String(header)) {
+        Logger.log("IS EQUAL");
+        arrayValues[index] = json[key];
+      } 
+    });
   }
   // logFunctionOutput(jsonToSheetValues.name, arrayValues)
   return arrayValues;

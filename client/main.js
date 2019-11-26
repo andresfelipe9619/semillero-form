@@ -9,7 +9,7 @@ function runApp() {
   setTimeout(() => {
     AuthenticateCurrentUser();
     populateCountries("depto_res", "ciudad_res");
-    setTimeout(getRequestPayload, 500);
+    setTimeout(getRequestPayload, 1000);
   }, 1000);
   // hideInitialData();
 }
@@ -162,7 +162,8 @@ function hadleChangeGrade() {
 }
 function handleChangePreviousRegister() {
   let myres = this.value;
-  if (myres.includes("SI")) return $("#inscrito_anterior").css("display", "block");
+  if (myres.includes("SI"))
+    return $("#inscrito_anterior").css("display", "block");
   $("#inscrito_anterior").css("display", "none");
 }
 function handleChangeAnotherGrade() {
@@ -244,17 +245,21 @@ function editStudentData() {
 }
 
 function cargarInfo() {
-  let ced = $("#cedula_buscada").val();
-  hideStudentRecord();
-  if (!ced) {
-    return swal({
-      title: "Advertencia ...",
-      text: "Ingrese una cedula para consultar",
-      type: "warning"
-    });
+  try {
+    let ced = $("#cedula_buscada").val();
+    hideStudentRecord();
+    if (!ced) {
+      return swal({
+        title: "Advertencia ...",
+        text: "Ingrese una cedula para consultar",
+        type: "warning"
+      });
+    }
+    setWaitCursor();
+    searchPerson(ced);
+  } catch (error) {
+    errorHandler(error);
   }
-  setWaitCursor();
-  searchPerson(ced);
 }
 
 const searchPerson = id =>
@@ -412,6 +417,10 @@ function getRequestPayload() {
 function getFile(file) {
   return new Promise(resolve => {
     let reader = new FileReader();
+    reader.onerror = function(event) {
+      reader.abort();
+      errorHandler(event);
+    };
     reader.onloadend = () => resolve(reader.result);
     reader.readAsDataURL(file);
   });
@@ -465,7 +474,7 @@ function fillInTestData() {
     "EPS SURAMERICANA S.A.",
     "CHINCA",
     "PRIVADO",
-    3,
+    7,
     "JULI",
     1111,
     "NO",
