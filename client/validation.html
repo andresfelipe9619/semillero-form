@@ -6,7 +6,7 @@
     lastname: {
       required: true
     },
-    tipo: {
+    tipo_doc: {
       required: true,
       EqualToGroup: ["T.I", "C.C"]
     },
@@ -101,7 +101,7 @@
     nombre_acudiente: {
       required: true
     },
-    telacudiente: {
+    tel_acudiente: {
       required: true,
       number: true
     },
@@ -201,8 +201,8 @@
   };
 
   const validationMessages = {
-    tipo: {
-      EqualToGroup: "Por favor selecciona un tipo válido"
+    tipo_doc: {
+      EqualToGroup: "Por favor selecciona un tipo_doc válido"
     },
     email: {
       email: "Correo inválido"

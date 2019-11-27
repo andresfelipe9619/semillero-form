@@ -51,7 +51,7 @@ function addToModule(module, data) {
       moduleSheet.appendRow([
         data.name.toUpperCase(),
         data.lastname.toUpperCase(),
-        data.tipo,
+        data.tipo_doc,
         data.num_doc,
         data.tel_fijo,
         data.email.toLowerCase(),

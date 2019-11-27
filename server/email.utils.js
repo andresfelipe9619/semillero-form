@@ -86,7 +86,7 @@ function getPDFFile(data) {
     "</p>";
   contenthtml +=
     "<p> <strong>Documento de identidad:	</strong>" +
-    data.tipo +
+    data.tipo_doc +
     " " +
     data.num_doc +
     "</p>";
@@ -117,7 +117,7 @@ function getPDFFile(data) {
   contenthtml +=
     "<p> <strong>Acudiente:  </strong>" + data.nombre_acudiente.toUpperCase() + "</p>";
   contenthtml +=
-    "<p> <strong>Telefono nombre_acudiente: </strong>" + data.telacudiente + "</p>";
+    "<p> <strong>Telefono nombre_acudiente: </strong>" + data.tel_acudiente + "</p>";
 
   if (
     data.inscrito_anterior === null ||

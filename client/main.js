@@ -296,7 +296,7 @@ function fillInStudentData(person) {
   $("#myForm #edit").css("display", "block");
   $("#name").val(String(person.data[0]));
   $("#lastname").val(String(person.data[1]));
-  $("#tipo").val(String(person.data[2]));
+  $("#tipo_doc").val(String(person.data[2]));
   $("#num_doc").val(String(person.data[3]));
   $("#ciudad_doc").val(String(person.data[4]));
   $("#email").val(String(person.data[5]));
@@ -312,7 +312,7 @@ function fillInStudentData(person) {
   $("#grado").val(String(person.data[13]));
   $("#grado").trigger("change");
   $("#nombre_acudiente").val(String(person.data[14]));
-  $("#telacudiente").val(String(person.data[15]));
+  $("#tel_acudiente").val(String(person.data[15]));
   console.log("eps", $("#eps").val());
   if (!$("#eps").val()) {
     $("#eps").val("OTRA");
@@ -409,7 +409,6 @@ const getFileName = (fileKey, num_doc) => {
 function getRequestPayload() {
   google.script.url.getLocation(function(location) {
     let payload = location.parameter.test || null;
-    console.log("payload", payload);
     if (payload) return fillInTestData();
   });
 }
@@ -488,7 +487,7 @@ function fillInTestData() {
   $("#myForm #edit").css("display", "none");
   $("#name").val(String(testPerson[0]));
   $("#lastname").val(String(testPerson[1]));
-  $("#tipo").val(String(testPerson[2]));
+  $("#tipo_doc").val(String(testPerson[2]));
   $("#num_doc").val(String(testPerson[3]));
   $("#ciudad_doc").val(String(testPerson[4]));
   $("#email").val(String(testPerson[5]));
@@ -504,7 +503,7 @@ function fillInTestData() {
   $("#grado").val(String(testPerson[13]));
   $("#grado").trigger("change");
   $("#nombre_acudiente").val(String(testPerson[14]));
-  $("#telacudiente").val(String(testPerson[15]));
+  $("#tel_acudiente").val(String(testPerson[15]));
   console.log("eps", $("#eps").val());
   if (!$("#eps").val()) {
     $("#eps").val("OTRA");
