@@ -26,7 +26,7 @@
       email: true,
       equalTo: "#email"
     },
-    genero:{
+    genero: {
       required: {
         depends: function(element) {
           if (!$("[name='genero']").is(":checked")) return true;
@@ -223,10 +223,10 @@
     grado: {
       EqualToGroup: "selecciona un grado"
     },
-    nacimiento:{
+    nacimiento: {
       required: "selecciona tu fecha de nacimiento"
     },
-    genero:{
+    genero: {
       required: "seleccionat tu genero"
     },
     seleccion: {
@@ -287,17 +287,21 @@
       "File size must be less than {0}"
     );
 
-    let isvalid = $("#myForm").validate({
-      debug: false,
-      rules: validationRules,
-      messages: validationMessages,
-      highlight: highlight,
-      unhighlight: unhighlight,
-      errorElement: "span",
-      errorClass: "help-block",
-      errorPlacement: errorPlacement,
-      submitHandler: submitHandler
-    });
+    let isvalid = $("#myForm")
+      .submit(function(e) {
+        e.preventDefault();
+      })
+      .validate({
+        debug: false,
+        rules: validationRules,
+        messages: validationMessages,
+        highlight: highlight,
+        unhighlight: unhighlight,
+        errorElement: "span",
+        errorClass: "help-block",
+        errorPlacement: errorPlacement,
+        submitHandler: submitHandler
+      });
 
     return isvalid;
   }

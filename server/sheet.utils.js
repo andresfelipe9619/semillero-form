@@ -58,15 +58,11 @@ function jsonToSheetValues(json, headers) {
   });
   for (var key in json) {
     lowerHeaders.forEach(function(header, index) {
-      Logger.log("key");
-      Logger.log({ key: key, header: header });
       if (String(key) == String(header)) {
-        Logger.log("IS EQUAL");
         arrayValues[index] = json[key];
       } 
     });
   }
-  // logFunctionOutput(jsonToSheetValues.name, arrayValues)
   return arrayValues;
 }
 
@@ -87,6 +83,5 @@ function sheetValuesToObject(sheetValues, headers) {
       return personAsObj;
     });
   }
-  // logFunctionOutput(sheetValuesToObject.name, peopleWithHeadings)
   return peopleWithHeadings;
 }

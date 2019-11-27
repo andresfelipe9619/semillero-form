@@ -35,16 +35,17 @@ function sendConfirmationEmail(data, files) {
   //CORREO AL ADMIN
   MailApp.sendEmail({
     to:
-      /*"suarez.andres@correounivalle.edu.co" "moreno.juan@correounivalle.edu.co"*/ "semillero@correounivalle.edu.co",
+       "andresfelipe9619@gmail.co",
+      // "semillero@correounivalle.edu.co",
     subject:
       "Inscripción " +
       periodo[0] +
       " " +
       subModule +
       " " +
-      data.name.toUpperCase() +
+      data.nombre.toUpperCase() +
       " " +
-      data.lastname.toUpperCase(),
+      data.apellido.toUpperCase(),
     htmlBody: filetoSend + links,
     name: "SEMILLEROS UNIVALLE",
     attachments: lastFiles
@@ -57,12 +58,10 @@ function getPDFFile(data) {
   var contenthtml = "";
 
   var moduleName = "";
-  var moduleUrl = "";
   var modulo = data.seleccion;
   for (var y in modulos) {
     if (modulos[y][1] == modulo) {
       moduleName = modulos[y][0];
-      moduleUrl = modulos[y][4];
     }
   }
   contenthtml += '<div style="text-align:center">';

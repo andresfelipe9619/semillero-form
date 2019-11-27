@@ -143,10 +143,10 @@ function registerStudentGeneral(data, person) {
       1,
       inscritossheet.getLastColumn()
     );
-    inscritoRange.setValues([newData]);
+    inscritoRange.setValues([finalValues]);
     response = "exito";
   } else {
-    inscritossheet.appendRow(newData);
+    inscritossheet.appendRow(finalValues);
     var lastRowRes = inscritossheet.getLastRow();
 
     if (lastRowRes > lastRow) {
@@ -157,9 +157,9 @@ function registerStudentGeneral(data, person) {
   return response;
 }
 
-function registerStudentInSheets(data) {
+function registerStudentInSheets(data, currentSheetData) {
   registerStudentActualPeriod(data);
-  // return registerStudentGeneral(data);
+  return registerStudentGeneral(data, currentSheetData);
 }
 
 function editStudent(student) {
@@ -378,44 +378,29 @@ function registerStudent(formString) {
       ciudad_res: form.ciudad_res.toUpperCase(),
       modulo: selectedModule
     });
+    delete data.name;
+    delete data.lastname;
     data[currentPeriod] = selectedModule;
 
-    var response, folderUrl;
+    var response;
     var person = validatePerson(data.num_doc);
     Logger.log("person");
     Logger.log(person);
-
-    if (person.state === "no esta") {
-      var filesResult = uploadEstudentFiles(data.num_doc, data, data.files);
-      Logger.log("filesResult");
-      Logger.log(filesResult);
-      folderUrl = (filesResult || {}).folder;
-      data.url_documentos = folderUrl;
-      response = registerStudentInSheets(data);
-
-      sendConfirmationEmail(data, filesResult.files);
-    } else if (person.state === "antiguo") {
-      var filesResult = uploadEstudentFiles(data.num_doc, data, data.files);
-      folderUrl = filesResult.folder;
-      Logger.log(
-        "Data before registerStudentActualPeriod when student exists "
-      );
-      Logger.log(data);
-
-      response = registerStudentActualPeriod(data);
-
-      Logger.log("Data after registerStudentActualPeriod when student exists ");
-      Logger.log(data);
-
-      registerStudentGeneral(data, person);
-
-      Logger.log("Data after registerStudentGeneral when student exists ");
-      Logger.log(data);
-
-      // sendConfirmationEmail(form, lastFiles);
-    } else if (person.state === "actual") {
+    var isOldStudent = person.state === "antiguo";
+    var isCurrentStudent = person.state === "actual";
+    if (isCurrentStudent) {
       throw "Ya esta inscrito en este periodo";
     }
+
+    var filesResult = uploadStudentFiles(data.num_doc, data.files);
+    Logger.log("filesResult");
+    Logger.log(filesResult);
+    var folderUrl = (filesResult || {}).folder;
+    data.url_documentos = folderUrl;
+    var currentSheetData = isOldStudent ? person : null;
+    response = registerStudentInSheets(data, currentSheetData);
+
+    sendConfirmationEmail(data, filesResult.files);
 
     return response;
   } catch (error) {
