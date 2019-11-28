@@ -53,9 +53,7 @@ function onSuccessGrades(modules) {
 }
 
 function enrollStudent(e) {
-  let terminos = $("input[name=terms]:checked", "#myForm").val();
-  console.log(terminos);
-  if (terminos === "Acepto") return validateAndSave();
+  if (isAgreeWithTerms()) return validateAndSave();
   e.preventDefault();
   swal({
     title: "Advertencia",
@@ -64,6 +62,11 @@ function enrollStudent(e) {
     confirmButtonText: "Ok",
     closeOnConfirm: true
   });
+}
+
+function isAgreeWithTerms() {
+  const terminos = $("input[name=terminos]:checked", "#myForm").val();
+  return terminos === "Acepto";
 }
 
 function handleFileChange(e) {
@@ -376,7 +379,6 @@ async function getFormData($form) {
   });
 
   const files = await Promise.all(filesPromises);
-  console.log("files", files);
   formData = Object.assign({}, formData, { files });
   console.log("formData", formData);
   return formData;

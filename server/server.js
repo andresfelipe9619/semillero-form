@@ -50,9 +50,9 @@ function readRequestParameter(request) {
   }
 }
 
-function registerStudentActualPeriod(data) {
-  Logger.log("=============Registrando Periodo actual===========");
-  Logger.log("Datos en registerStudentActualPeriod: ");
+function registerStudentCurrentPeriod(data) {
+  Logger.log("=============Registering In Current Period===========");
+  Logger.log("Datos en registerStudentCurrentPeriod: ");
   Logger.log(data);
 
   var inscritossheet = getSheetFromSpreadSheet(
@@ -79,11 +79,12 @@ function registerStudentActualPeriod(data) {
     response = "exito";
   }
 
-  Logger.log("=============FIN Registrando Periodo actual===========");
+  Logger.log("=============END Registering In Current Period===========");
   return response;
 }
 
 function registerStudentGeneral(data, person) {
+  Logger.log("=============Registering In GENERAL DB===========");
   var inscritossheet = getSheetFromSpreadSheet(GENERAL_DB, "INSCRITOS");
   var headers = getHeadersFromSheet(inscritossheet);
   var personValues = jsonToSheetValues(data, headers);
@@ -153,12 +154,12 @@ function registerStudentGeneral(data, person) {
       response = "exito";
     }
   }
-
+  Logger.log("=============END Registering In General DB===========");
   return response;
 }
 
 function registerStudentInSheets(data, currentSheetData) {
-  registerStudentActualPeriod(data);
+  registerStudentCurrentPeriod(data);
   return registerStudentGeneral(data, currentSheetData);
 }
 
@@ -352,8 +353,6 @@ function avoidCollisionsInConcurrentAccessess() {
 
 function registerStudent(formString) {
   var form = JSON.parse(formString);
-  Logger.log("FORM");
-  Logger.log(form);
   if (!form || !Object.keys(form).length) throw "No data sent";
   avoidCollisionsInConcurrentAccessess();
   try {
@@ -381,6 +380,10 @@ function registerStudent(formString) {
     delete data.name;
     delete data.lastname;
     data[currentPeriod] = selectedModule;
+    Logger.log("data[currentPeriod]");
+    Logger.log(currentPeriod);
+    Logger.log(selectedModule);
+    Logger.log(data[currentPeriod]);
 
     var response;
     var person = validatePerson(data.num_doc);
@@ -399,7 +402,8 @@ function registerStudent(formString) {
     data.url_documentos = folderUrl;
     var currentSheetData = isOldStudent ? person : null;
     response = registerStudentInSheets(data, currentSheetData);
-
+    Logger.log("response");
+    Logger.log(response);
     sendConfirmationEmail(data, filesResult.files);
 
     return response;
@@ -408,6 +412,18 @@ function registerStudent(formString) {
     Logger.log(error);
     return error.toString();
   }
+}
+
+function objectValuesToUpperCase(object, keys) {
+  if (!object) return null;
+  if (!keys.length) return object;
+  var upperCaseValues = keys.reduce(function(acc, key) {
+    if (key in object) {
+      acc[key] = object[key].toUpperCase();
+    }
+    return acc;
+  }, {});
+  return mergeObjects(object, upperCaseValues);
 }
 
 function mergeObjects() {

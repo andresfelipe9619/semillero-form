@@ -1,8 +1,9 @@
 function sendConfirmationEmail(data, files) {
+  Logger.log("=============Sending Email===========");
+
   var filetoSend = getPDFFile(data);
   var subModule = "";
   var modules = getModules();
-  var mainFolder = getMainFolder();
 
   for (var module in modules) {
     if (modules[module][1] == data.seleccion) {
@@ -20,36 +21,30 @@ function sendConfirmationEmail(data, files) {
     attachments: files
   });
 
-  var links = "";
-  var stFolder = getCurrentFolder(data.num_doc, mainFolder);
-  var stFiles = stFolder.getFiles();
-  Logger.log("last files: " + stFiles);
-
-  var urlFolder = stFolder.getUrl();
-
-  links +=
+  var urlFolder = data.url_documentos;
+  var links =
     '<p> <strong> Enlace Documentos: </strong> <a href="' +
     urlFolder +
     '"> Carpeta con Documentos del Estudiante</a></p>';
 
   //CORREO AL ADMIN
   MailApp.sendEmail({
-    to:
-       "andresfelipe9619@gmail.co",
-      // "semillero@correounivalle.edu.co",
+    to: "andresfelipe9619@gmail.co",
+    // "semillero@correounivalle.edu.co",
     subject:
       "Inscripción " +
       periodo[0] +
       " " +
       subModule +
       " " +
-      data.nombre.toUpperCase() +
+      data.nombre +
       " " +
-      data.apellido.toUpperCase(),
+      data.apellido,
     htmlBody: filetoSend + links,
     name: "SEMILLEROS UNIVALLE",
-    attachments: lastFiles
+    attachments: files
   });
+  Logger.log("=============END Sending Email===========");
 }
 
 function getPDFFile(data) {
@@ -79,9 +74,9 @@ function getPDFFile(data) {
     "<p> <strong>Fecha de inscripcion:</strong>	" + new Date() + "</p>";
   contenthtml +=
     "<p> <strong>Nombre completo: </strong>" +
-    data.name.toUpperCase() +
+    data.nombre +
     " " +
-    data.lastname.toUpperCase() +
+    data.apellido +
     "</p>";
   contenthtml +=
     "<p> <strong>Documento de identidad:	</strong>" +
@@ -91,14 +86,14 @@ function getPDFFile(data) {
     "</p>";
   contenthtml +=
     "<p> <strong>Ciudad expedición: </strong>" +
-    data.ciudad_doc.toUpperCase() +
+    data.ciudad_doc +
     "</p>";
   contenthtml += "<p> <strong>Email:	</strong>" + data.email + "</p>";
   contenthtml += "<p> <strong>Telefono: </strong>" + data.tel_fijo + "</p>";
   contenthtml += "<p> <strong>Celular: 	</strong>" + data.tel_celular + "</p>";
   contenthtml +=
     "<p> <strong>Ciudad residencia:	 </strong>" +
-    data.ciudad_res.toUpperCase() +
+    data.ciudad_res +
     "</p>";
 
   if (data.otraeps === null || data.otraeps === " " || data.otraeps === "") {
@@ -114,9 +109,13 @@ function getPDFFile(data) {
   contenthtml += "<p> <strong>Modalidad:  </strong>" + data.estamento + "</p>";
   contenthtml += "<p> <strong>Grado:	</strong>" + data.grado + "</p>";
   contenthtml +=
-    "<p> <strong>Acudiente:  </strong>" + data.nombre_acudiente.toUpperCase() + "</p>";
+    "<p> <strong>Acudiente:  </strong>" +
+    data.nombre_acudiente +
+    "</p>";
   contenthtml +=
-    "<p> <strong>Telefono nombre_acudiente: </strong>" + data.tel_acudiente + "</p>";
+    "<p> <strong>Telefono nombre_acudiente: </strong>" +
+    data.tel_acudiente +
+    "</p>";
 
   if (
     data.inscrito_anterior === null ||
@@ -129,7 +128,9 @@ function getPDFFile(data) {
       "</p>";
   } else {
     contenthtml +=
-      "<p> <strong>Inscrito anteriormente: </strong>" + data.inscrito_anterior + "</p>";
+      "<p> <strong>Inscrito anteriormente: </strong>" +
+      data.inscrito_anterior +
+      "</p>";
   }
 
   contenthtml += "<p> <strong>Convenio: </strong>" + data.convenio + "</p>";
