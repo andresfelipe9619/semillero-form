@@ -358,9 +358,9 @@ function registerStudent(formString) {
   try {
     if (form.otraeps) form.eps = form.otraeps;
 
-    Logger.log("anterior: " + form.inscritoanterior);
-    if (form.inscritoanterior === "SI") {
-      form.inscritoanterior = form.inscrito_anterior;
+    Logger.log("anterior: " + form.inscrito_anterior);
+    if (form.inscrito_anterior === "SI") {
+      form.inscrito_anterior = form.curso_anterior;
     }
     var selectedModule = validateModule(form.seleccion);
     var currentPeriod = getCurrentPeriod()[0];
@@ -383,7 +383,7 @@ function registerStudent(formString) {
     Logger.log("data[currentPeriod]");
     Logger.log(currentPeriod);
     Logger.log(selectedModule);
-    Logger.log(data[currentPeriod]);
+    Logger.log(Object.keys(data));
 
     var response;
     var person = validatePerson(data.num_doc);

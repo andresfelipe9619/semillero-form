@@ -40,10 +40,10 @@ function subscribeEventHandlers() {
   $("#email").on("copy cut paste", DoNotCopyPaste);
   $("#myForm #createEmail").on("click", createEmail);
   $("#myForm #grado").on("change", hadleChangeGrade);
-  $("#inscrito_anterior").on("change", handleChangeAnotherGrade);
+  $("#curso_anterior").on("change", handleChangeAnotherGrade);
   $("#confirmEmail").on("copy cut paste", DoNotCopyPaste);
   $("#myForm #estamento").on("change", handleChangeEstate);
-  $("#inscritoanterior").on("change", handleChangePreviousRegister);
+  $("#inscrito_anterior").on("change", handleChangePreviousRegister);
   $("#myForm").on("click", 'input[name="convenio"]', handleClickAgreement);
 }
 
@@ -152,7 +152,7 @@ function handleChangeEps() {
 }
 
 function hadleChangeGrade() {
-  let anterior = $("#inscrito_anterior").val();
+  let anterior = $("#curso_anterior").val();
   console.log("MI ANTERIOR: ", anterior);
   let grade = String(this.value).toLocaleLowerCase();
   console.log("grade", grade);
@@ -166,8 +166,8 @@ function hadleChangeGrade() {
 function handleChangePreviousRegister() {
   let myres = this.value;
   if (myres.includes("SI"))
-    return $("#inscrito_anterior").css("display", "block");
-  $("#inscrito_anterior").css("display", "none");
+    return $("#curso_anterior").css("display", "block");
+  $("#curso_anterior").css("display", "none");
 }
 function handleChangeAnotherGrade() {
   let grado = $("#myForm #grado").val();
@@ -324,10 +324,10 @@ function fillInStudentData(person) {
   }
   if (String(person.data[16]) != "NO") {
     console.log("atleast");
-    $("#inscritoanterior").val("SI");
-    $("#inscritoanterior").trigger("change");
-    $("#inscrito_anterior").val(String(person.data[16]));
+    $("#inscrito_anterior").val("SI");
     $("#inscrito_anterior").trigger("change");
+    $("#curso_anterior").val(String(person.data[16]));
+    $("#curso_anterior").trigger("change");
   }
 
   if (String(person.data[17])) {
@@ -514,10 +514,10 @@ function fillInTestData() {
   }
   if (String(testPerson[16]) != "NO") {
     console.log("atleast");
-    $("#inscritoanterior").val("SI");
-    $("#inscritoanterior").trigger("change");
-    $("#inscrito_anterior").val(String(testPerson[16]));
+    $("#inscrito_anterior").val("SI");
     $("#inscrito_anterior").trigger("change");
+    $("#curso_anterior").val(String(testPerson[16]));
+    $("#curso_anterior").trigger("change");
   }
 
   if (String(testPerson[17])) {

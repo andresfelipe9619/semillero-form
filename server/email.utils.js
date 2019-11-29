@@ -118,18 +118,18 @@ function getPDFFile(data) {
     "</p>";
 
   if (
-    data.inscrito_anterior === null ||
-    data.inscrito_anterior === " " ||
-    data.inscrito_anterior === ""
+    data.curso_anterior === null ||
+    data.curso_anterior === " " ||
+    data.curso_anterior === ""
   ) {
     contenthtml +=
       "<p> <strong>Inscrito anteriormente: </strong>" +
-      data.inscritoanterior +
+      data.inscrito_anterior +
       "</p>";
   } else {
     contenthtml +=
       "<p> <strong>Inscrito anteriormente: </strong>" +
-      data.inscrito_anterior +
+      data.curso_anterior +
       "</p>";
   }
 

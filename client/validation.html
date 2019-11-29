@@ -105,14 +105,14 @@
       required: true,
       number: true
     },
-    inscritoanterior: {
+    inscrito_anterior: {
       required: true,
       EqualToGroup: ["SI", "NO"]
     },
-    inscrito_anterior: {
+    curso_anterior: {
       required: {
         depends: function(element) {
-          let valcur = $("#inscritoanterior").val();
+          let valcur = $("#inscrito_anterior").val();
           if (valcur.includes("SI")) return true;
           return false;
         }

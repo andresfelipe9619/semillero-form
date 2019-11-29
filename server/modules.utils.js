@@ -124,7 +124,7 @@ function validateModule(moduleSelected) {
   if (!moduleSelected) throw "No se reconoce el modulo seleccionado"
   for (var i in modulesTitles) {
     if (moduleSelected.localeCompare(modulesTitles[i]) == 0) {
-      validModule = modules[i][0];
+      validModule = modules[++i][0];
     }
   }
 
