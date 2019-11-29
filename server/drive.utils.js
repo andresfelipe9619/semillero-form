@@ -70,8 +70,8 @@ function createPersonFile(fileName, num_doc, fileData) {
 function uploadStudentFiles(num_doc, files) {
   Logger.log("=======UPLOADING STUDENT " + num_doc + " FILES======");
   if (!files.length) return;
-  Logger.log("FILES:");
-  Logger.log(files);
+  // Logger.log("FILES:");
+  // Logger.log(files);
   var savedFiles = files.map(function(file) {
     var name = file.name || "";
     var base64 = file.base64 || "";

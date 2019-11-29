@@ -36,21 +36,17 @@ function getModulesByGrades() {
   return modulesByGrades;
 }
 
-function addToModule(module, data) {
-  Logger.log("addtomodule");
-  Logger.log(module);
-  Logger.log(data);
-  // data.push(module)
+function addStudentToModuleSheet(module, data) {
   createModulesSheets();
   var actualPeriod = getCurrentPeriod()[2];
   var modulos = getModules();
   for (var x in modulos) {
-    if (module == modulos[x][1]) {
+    if (module === modulos[x][1]) {
       var moduleSheet = getSheetFromSpreadSheet(actualPeriod, modulos[x][0]);
       var lastRow = moduleSheet.getLastRow();
       moduleSheet.appendRow([
-        data.name.toUpperCase(),
-        data.lastname.toUpperCase(),
+        data.nombre,
+        data.apellido,
         data.tipo_doc,
         data.num_doc,
         data.tel_fijo,

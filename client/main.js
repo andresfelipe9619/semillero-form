@@ -384,27 +384,27 @@ async function getFormData($form) {
   return formData;
 }
 
-const getFileName = (fileKey, num_doc) => {
+const getFileName = (fileKey, doc) => {
   if (fileKey === "docFile") {
-    return num_doc + "_DOCUMENTO";
+    return `${doc}_DOCUMENTO`;
   }
   if (fileKey === "constanciaEstudFile") {
-    return num_doc + "_COSNTANCIA_ESTUDIO";
+    return `${doc}_COSNTANCIA_ESTUDIO`;
   }
   if (fileKey === "reciboFile") {
-    return num_doc + "_RECIBO_PAGO";
+    return `${doc}_RECIBO_PAGO`;
   }
   if (fileKey === "constanciaFuncFile") {
-    return num_doc + "_CONSTANCIA_FUNCIONARIO";
+    return `${doc}_CONSTANCIA_FUNCIONARIO`;
   }
   if (fileKey === "recibosPublicos") {
-    return num_doc + "_RECIBO_PUBLICOS";
+    return `${doc}_RECIBO_PUBLICOS`;
   }
   if (fileKey === "cartaSolicitud") {
-    return num_doc + "_CARTA_SOLICITUD";
+    return `${doc}_CARTA_SOLICITUD`;
   }
   if (fileKey === "actaGrado") {
-    return num_doc + "_ACTA_GRADO";
+    return `${doc}_ACTA_GRADO`;
   }
 };
 

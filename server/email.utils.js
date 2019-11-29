@@ -1,7 +1,7 @@
 function sendConfirmationEmail(data, files) {
   Logger.log("=============Sending Email===========");
 
-  var filetoSend = getPDFFile(data);
+  var body = getPDFFile(data);
   var subModule = "";
   var modules = getModules();
 
@@ -11,12 +11,13 @@ function sendConfirmationEmail(data, files) {
     }
   }
   var periodo = getCurrentPeriod();
+  var subject = "Inscripción " + periodo[0] + " " + subModule;
   Logger.log("Submodulo");
   Logger.log(subModule);
   MailApp.sendEmail({
     to: data.email,
-    subject: "Inscripción " + periodo[0] + " " + subModule,
-    htmlBody: filetoSend,
+    subject: subject,
+    htmlBody: body,
     name: "SEMILLEROS UNIVALLE",
     attachments: files
   });
@@ -26,25 +27,22 @@ function sendConfirmationEmail(data, files) {
     '<p> <strong> Enlace Documentos: </strong> <a href="' +
     urlFolder +
     '"> Carpeta con Documentos del Estudiante</a></p>';
+  var adminSubject = subject + " " + data.nombre + " " + data.apellido;
+  var adminBody = body + links;
 
-  //CORREO AL ADMIN
+  sendEmailToAdmin(adminSubject, adminBody, files);
+  Logger.log("=============END Sending Email===========");
+}
+
+function sendEmailToAdmin(subject, body, files) {
   MailApp.sendEmail({
     to: "andresfelipe9619@gmail.co",
     // "semillero@correounivalle.edu.co",
-    subject:
-      "Inscripción " +
-      periodo[0] +
-      " " +
-      subModule +
-      " " +
-      data.nombre +
-      " " +
-      data.apellido,
-    htmlBody: filetoSend + links,
+    subject: subject,
+    htmlBody: body,
     name: "SEMILLEROS UNIVALLE",
     attachments: files
   });
-  Logger.log("=============END Sending Email===========");
 }
 
 function getPDFFile(data) {
@@ -85,43 +83,25 @@ function getPDFFile(data) {
     data.num_doc +
     "</p>";
   contenthtml +=
-    "<p> <strong>Ciudad expedición: </strong>" +
-    data.ciudad_doc +
-    "</p>";
+    "<p> <strong>Ciudad expedición: </strong>" + data.ciudad_doc + "</p>";
   contenthtml += "<p> <strong>Email:	</strong>" + data.email + "</p>";
   contenthtml += "<p> <strong>Telefono: </strong>" + data.tel_fijo + "</p>";
   contenthtml += "<p> <strong>Celular: 	</strong>" + data.tel_celular + "</p>";
   contenthtml +=
-    "<p> <strong>Ciudad residencia:	 </strong>" +
-    data.ciudad_res +
-    "</p>";
-
-  if (data.otraeps === null || data.otraeps === " " || data.otraeps === "") {
-    Logger.log("yes it is");
-    contenthtml += "<p> <strong>Eps: </strong>" + data.eps + "</p>";
-  } else {
-    contenthtml += "<p> <strong>Eps: </strong>" + data.otraeps + "</p>";
-
-    Logger.log("no it isnt");
-  }
+    "<p> <strong>Ciudad residencia:	 </strong>" + data.ciudad_res + "</p>";
+  contenthtml += "<p> <strong>Eps: </strong>" + data.eps + "</p>";
   contenthtml +=
     "<p> <strong>Institucion educativa: </strong>" + data.colegio + "</p>";
   contenthtml += "<p> <strong>Modalidad:  </strong>" + data.estamento + "</p>";
   contenthtml += "<p> <strong>Grado:	</strong>" + data.grado + "</p>";
   contenthtml +=
-    "<p> <strong>Acudiente:  </strong>" +
-    data.nombre_acudiente +
-    "</p>";
+    "<p> <strong>Acudiente:  </strong>" + data.nombre_acudiente + "</p>";
   contenthtml +=
     "<p> <strong>Telefono nombre_acudiente: </strong>" +
     data.tel_acudiente +
     "</p>";
 
-  if (
-    data.curso_anterior === null ||
-    data.curso_anterior === " " ||
-    data.curso_anterior === ""
-  ) {
+  if (!!(data.curso_anterior || "").trim()) {
     contenthtml +=
       "<p> <strong>Inscrito anteriormente: </strong>" +
       data.inscrito_anterior +

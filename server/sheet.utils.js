@@ -53,21 +53,24 @@ function getCurrentPeriod() {
 
 function jsonToSheetValues(json, headers) {
   var arrayValues = new Array(headers.length);
-  var lowerHeaders = headers.map(function(item) {
-    return String(item).toLowerCase();
-  });
+  var lowerHeaders = headers.map(normalizeString);
   for (var key in json) {
+    var keyValue = normalizeString(key);
     lowerHeaders.forEach(function(header, index) {
-      if (String(key) == String(header)) {
-        arrayValues[index] = json[key];
-      } 
+      if (keyValue === header) {
+        arrayValues[index] = String(json[key]);
+      }
     });
   }
   return arrayValues;
 }
 
+function normalizeString(value) {
+  return String(value || "").toLowerCase();
+}
+
 function sheetValuesToObject(sheetValues, headers) {
-  var headings = headers || sheetValues[0].map(String.toLowerCase);
+  var headings = headers || sheetValues[0].map(normalizeString);
   var people = null;
   if (sheetValues) people = sheetValues.slice(1);
   var peopleWithHeadings = addHeadings(people, headings);
