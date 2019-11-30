@@ -6,7 +6,8 @@ function getModules() {
 
 function getPeriods() {
   var rawPeriods = getRawDataFromSheet(GENERAL_DB, "PERIODOS");
-  return rawPeriods;
+  var periods = sheetValuesToObject(rawPeriods);
+  return periods;
 }
 
 function getStudents() {
@@ -15,7 +16,10 @@ function getStudents() {
 }
 
 function getCurrentPeriodStudents() {
-  var rawStudents = getRawDataFromSheet(getCurrentPeriod()[2], "INSCRITOS");
+  var rawStudents = getRawDataFromSheet(
+    getCurrentPeriod()["link"],
+    "INSCRITOS"
+  );
   return rawStudents;
 }
 
@@ -43,11 +47,12 @@ function getHeadersFromSheet(sheet) {
 }
 
 function getCurrentPeriod() {
-  var periodos = getPeriods();
-  for (var x in periodos) {
-    if (periodos[x][1] == "x") {
-      return periodos[x];
-    }
+  var periods = getPeriods();
+  for (var i in periods) {
+    var period = periods[i];
+    var active = normalizeString(period["activo"]);
+    var isCurrentPeriod = active === "x";
+    if (isCurrentPeriod) return period;
   }
 }
 
@@ -66,7 +71,9 @@ function jsonToSheetValues(json, headers) {
 }
 
 function normalizeString(value) {
-  return String(value || "").toLowerCase();
+  return String(value || "")
+    .trim()
+    .toLowerCase();
 }
 
 function sheetValuesToObject(sheetValues, headers) {

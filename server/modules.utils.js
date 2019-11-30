@@ -38,7 +38,7 @@ function getModulesByGrades() {
 
 function addStudentToModuleSheet(module, data) {
   createModulesSheets();
-  var actualPeriod = getCurrentPeriod()[2];
+  var actualPeriod = getCurrentPeriod()["link"];
   var modulos = getModules();
   for (var x in modulos) {
     if (module === modulos[x][1]) {
@@ -68,7 +68,7 @@ function addStudentToModuleSheet(module, data) {
 }
 
 function createModulesSheets() {
-  var actualPeriod = getCurrentPeriod()[2];
+  var actualPeriod = getCurrentPeriod()["link"];
   var periodSpreadSheet = SpreadsheetApp.openByUrl(actualPeriod);
 
   var modules = getModules();
