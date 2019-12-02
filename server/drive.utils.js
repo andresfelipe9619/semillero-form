@@ -60,7 +60,7 @@ function createPersonFile(fileName, num_doc, fileData) {
 
   var file = currentFolder.createFile(blob);
   file.setDescription("Subido Por " + num_doc);
-  file.setName(num_doc + "_" + fileName);
+  file.setName(fileName);
   result.url = file.getUrl();
   result.name = file.getName();
   result.file = file;

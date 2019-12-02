@@ -79,7 +79,7 @@ function normalizeString(value) {
 function sheetValuesToObject(sheetValues, headers) {
   var headings = headers || sheetValues[0].map(normalizeString);
   var people = null;
-  if (sheetValues) people = sheetValues.slice(1);
+  if (sheetValues) people = headers ? sheetValues : sheetValues.slice(1);
   var peopleWithHeadings = addHeadings(people, headings);
 
   function addHeadings(people, headings) {

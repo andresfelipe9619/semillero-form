@@ -10,8 +10,8 @@ function sendConfirmationEmail(data, files) {
       subModule = modules[module][0];
     }
   }
-  var periodo = getCurrentPeriod();
-  var subject = "Inscripción " + periodo[0] + " " + subModule;
+  var periodo = getCurrentPeriod()["periodo"];
+  var subject = "Inscripción " + periodo + " " + subModule;
   Logger.log("Submodulo");
   Logger.log(subModule);
   MailApp.sendEmail({

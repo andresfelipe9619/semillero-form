@@ -371,9 +371,10 @@ async function getFormData($form) {
   });
 
   const filesPromises = Object.keys(filesByname).map(fileKey => {
+    const doc = formData.num_doc
     return new Promise(async resolve => {
       const fileString = await getFile(filesByname[fileKey]);
-      const file = { base64: fileString, name: getFileName(fileKey) };
+      const file = { base64: fileString, name: getFileName(fileKey, doc) };
       resolve(file);
     });
   });
