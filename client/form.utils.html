@@ -176,7 +176,7 @@
     stateElement.options[0] = new Option("Seleccione Ciudad", "");
     stateElement.selectedIndex = 0;
 
-    let state_arr = s_a[selectedCountryIndex].split("|");
+    let state_arr = (s_a[selectedCountryIndex] || []).split("|");
 
     for (let i = 0; i < state_arr.length; i++) {
       stateElement.options[stateElement.length] = new Option(

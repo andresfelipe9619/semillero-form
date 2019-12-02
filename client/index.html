@@ -28,7 +28,7 @@
       .oculto {
         display: none;
       }
-      
+
       form {
         margin: 30px 20px;
       }
@@ -97,33 +97,10 @@
             Registrar Estudiante
           </button>
         </div>
-        <!-- <div class="col-md-2">
-                <button id="btn-gestion-form" onclick="mostrarGestionForm()" class="btn btn-default" type="button">Gestionar
-                    Periodos
-                </button>
-            </div> -->
-        <!-- <div class="col-md-2">
-                <button id="btn-gestion-form" onclick="mostrarGestionForm()" class="btn btn-default" type="button">Gestionar
-                    Modulos
-                </button>
-            </div> -->
       </div>
       <br />
       <hr />
-      <!-- <div class="row">
-            <div id="modGestion" class="row">
 
-                <div class="col-md-3">
-                    <label for="periodo-select">Periodo Actual</label>
-                    <select name="periodo-select" id="periodo-select">
-                        <option value="2018A">Nuevo</option>
-                        <option value="2018A">2018A</option>
-                    </select>
-
-                </div>
-
-            </div>
-        </div> -->
       <form class="form oculto" role="form" id="myForm" name="myForm">
         <div class="row">
           <br />
@@ -134,8 +111,8 @@
             <input
               type="text"
               class="form-control text-uppercase"
-              name="name"
-              id="name"
+              name="nombre"
+              id="nombre"
               placeholder="Su Nombre..."
               value=""
             />
@@ -144,8 +121,8 @@
             <input
               type="text"
               class="form-control text-uppercase"
-              name="lastname"
-              id="lastname"
+              name="apellido"
+              id="apellido"
               placeholder="Sus Apellidos..."
             />
           </div>
@@ -200,7 +177,10 @@
           </div>
           <div class="col-xs-3">
             ¿No tienes correo gmail?
-            <span class="btn btn-info" id="createEmail" style="display:inline;"
+            <span
+              class="btn btn-info"
+              id="createEmail"
+              style="margin-top:5px;"
               >¡Crea Uno!</span
             >
           </div>
@@ -222,7 +202,9 @@
         </div>
 
         <div class="row">
-          <label class="control-label col-xs-2" for="tel_fijo">Teléfonos*</label>
+          <label class="control-label col-xs-2" for="tel_fijo"
+            >Teléfonos*</label
+          >
           <div class="col-xs-3 input-div">
             <input
               type="tel"
@@ -494,7 +476,11 @@
             </select>
           </div>
           <div class="col-xs-4 input-div">
-            <select id="curso_anterior" class="form-control oculto" name="curso_anterior">
+            <select
+              id="curso_anterior"
+              class="form-control oculto"
+              name="curso_anterior"
+            >
               <option value=""> </option>
               <option value="De los Enteros A los racionales NUEVO!!"
                 >De los Enteros A los racionales NUEVO!!

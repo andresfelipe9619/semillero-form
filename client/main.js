@@ -1,11 +1,13 @@
 //<script>
 let modulesByGrades = null;
+let currentPeriod = null;
 let filesByname = {};
 $(document).ready(runApp);
 
 function runApp() {
   subscribeEventHandlers();
   fetchModulesByGrades();
+  fetchCurrentModule();
   setTimeout(() => {
     AuthenticateCurrentUser();
     populateCountries("depto_res", "ciudad_res");
@@ -19,6 +21,16 @@ const fetchModulesByGrades = () =>
     .withSuccessHandler(onSuccessGrades)
     .withFailureHandler(errorHandler)
     .getModulesByGrades();
+
+const fetchCurrentModule = () =>
+  google.script.run
+    .withSuccessHandler(onSuccessCurrentModule)
+    .withFailureHandler(errorHandler)
+    .getCurrentPeriod();
+
+function onSuccessCurrentModule(result) {
+  currentPeriod = result;
+}
 
 const AuthenticateCurrentUser = () =>
   google.script.run
@@ -165,8 +177,7 @@ function hadleChangeGrade() {
 }
 function handleChangePreviousRegister() {
   let myres = this.value;
-  if (myres.includes("SI"))
-    return $("#curso_anterior").css("display", "block");
+  if (myres.includes("SI")) return $("#curso_anterior").css("display", "block");
   $("#curso_anterior").css("display", "none");
 }
 function handleChangeAnotherGrade() {
@@ -297,64 +308,45 @@ function fillInStudentData(person) {
   showStudentRecord();
   $("#myForm #save").css("display", "none");
   $("#myForm #edit").css("display", "block");
-  $("#name").val(String(person.data[0]));
-  $("#lastname").val(String(person.data[1]));
-  $("#tipo_doc").val(String(person.data[2]));
-  $("#num_doc").val(String(person.data[3]));
-  $("#ciudad_doc").val(String(person.data[4]));
-  $("#email").val(String(person.data[5]));
-  $("#confirmEmail").val(String(person.data[5]));
-  $("#tel_fijo").val(String(person.data[6]));
-  $("#tel_celular").val(String(person.data[7]));
-  $("#depto_res").val(String(person.data[8]));
-  $("#depto_res").trigger("change");
-  $("#ciudad_res").val(String(person.data[9]));
-  $("#eps").val(String(person.data[10]));
-  $("#colegio").val(String(person.data[11]));
-  $("#estamento").val(String(person.data[12]));
-  $("#grado").val(String(person.data[13]));
-  $("#grado").trigger("change");
-  $("#nombre_acudiente").val(String(person.data[14]));
-  $("#tel_acudiente").val(String(person.data[15]));
-  console.log("eps", $("#eps").val());
-  if (!$("#eps").val()) {
+  const { data } = person;
+  const selects = ["depto_res", "grado"];
+  for (prop in data) {
+    $(`#${prop}`).val(String(data[prop]));
+    if (selects.includes(prop)) {
+      $(`#${prop}`).trigger("change");
+    }
+  }
+  $("#confirmEmail").val(data.email);
+  if (data.otraeps) {
     $("#eps").val("OTRA");
     $("#eps").trigger("change");
-    $("#otraeps").val(String(person.data[10]));
+    $("#otraeps").val(data.eps);
   }
-  if (String(person.data[16]) != "NO") {
+  if (data.inscrito_anterior !== "NO") {
     console.log("atleast");
     $("#inscrito_anterior").val("SI");
     $("#inscrito_anterior").trigger("change");
-    $("#curso_anterior").val(String(person.data[16]));
+    $("#curso_anterior").val(data.inscrito_anterior);
     $("#curso_anterior").trigger("change");
   }
 
-  if (String(person.data[17])) {
-    //convenio
-    let convenio = person.data[17].toLowerCase();
+  if (data.convenio) {
+    let convenio = data.convenio.toLowerCase();
     $("#" + convenio).prop("checked", true);
     $("#" + convenio).trigger("change");
   }
-
-  if (String(person.data[18])) {
-    $("#val_consignado").val(String(person.data[18]));
-  }
-  if (String(person.data[person.data.length - 4])) {
-    //modulos.
-    //IMPORTANTE:
-    //CADA VEZ QUE SE AÑADA UN NUEVO CAMPO AL FORMULARIO, SE DEBE REVISAR ESTE CONDICIONAL.
-    //AÑADIR SIEMPRE EL NUEVO CAMPO ANTES DE LA CARGA DE LA URL DE LOS ARCHIVOS EN LA HOJA DE
-    //CALCULO.
+  var periodName = currentPeriod.periodo;
+  if (data[periodName]) {
     google.script.run
       .withSuccessHandler(onSuccess)
       .withFailureHandler(errorHandler)
       .getModules();
     function onSuccess(modules) {
       for (let x in modules) {
-        if (modules[x][0] == person.data[person.data.length - 4]) {
-          $("#" + modules[x][1]).prop("checked", true);
-          $("#" + modules[x][1]).trigger("change");
+        if (modules[x][0] === data[periodName]) {
+          const moduleCode = modules[x][1];
+          $("#" + moduleCode).prop("checked", true);
+          $("#" + moduleCode).trigger("change");
         }
       }
     }
@@ -371,7 +363,7 @@ async function getFormData($form) {
   });
 
   const filesPromises = Object.keys(filesByname).map(fileKey => {
-    const doc = formData.num_doc
+    const doc = formData.num_doc;
     return new Promise(async resolve => {
       const fileString = await getFile(filesByname[fileKey]);
       const file = { base64: fileString, name: getFileName(fileKey, doc) };
@@ -462,74 +454,43 @@ function fileUploaded(status) {
 
 function fillInTestData() {
   showStudentRecord();
-  const testPerson = [
-    "ANDRES",
-    "SUAREZ",
-    "C.C",
-    1144093949,
-    "CALI",
-    "andresfelipe9619@gmail.com",
-    2222,
-    11111,
-    "VALLE DEL CAUCA",
-    "CALI",
-    "EPS SURAMERICANA S.A.",
-    "CHINCA",
-    "PRIVADO",
-    7,
-    "JULI",
-    1111,
-    "NO",
-    "PARTICULAR",
-    500000,
-    "Acepto",
-    "2019B",
-    "Taller infantil de Teatro"
-  ];
-  $("#myForm #save").css("display", "block");
-  $("#myForm #edit").css("display", "none");
-  $("#name").val(String(testPerson[0]));
-  $("#lastname").val(String(testPerson[1]));
-  $("#tipo_doc").val(String(testPerson[2]));
-  $("#num_doc").val(String(testPerson[3]));
-  $("#ciudad_doc").val(String(testPerson[4]));
-  $("#email").val(String(testPerson[5]));
-  $("#confirmEmail").val(String(testPerson[5]));
-  $("#tel_fijo").val(String(testPerson[6]));
-  $("#tel_celular").val(String(testPerson[7]));
-  $("#depto_res").val(String(testPerson[8]));
-  $("#depto_res").trigger("change");
-  $("#ciudad_res").val(String(testPerson[9]));
-  $("#eps").val(String(testPerson[10]));
-  $("#colegio").val(String(testPerson[11]));
-  $("#estamento").val(String(testPerson[12]));
-  $("#grado").val(String(testPerson[13]));
-  $("#grado").trigger("change");
-  $("#nombre_acudiente").val(String(testPerson[14]));
-  $("#tel_acudiente").val(String(testPerson[15]));
-  console.log("eps", $("#eps").val());
-  if (!$("#eps").val()) {
-    $("#eps").val("OTRA");
-    $("#eps").trigger("change");
-    $("#otraeps").val(String(testPerson[10]));
-  }
-  if (String(testPerson[16]) != "NO") {
-    console.log("atleast");
-    $("#inscrito_anterior").val("SI");
-    $("#inscrito_anterior").trigger("change");
-    $("#curso_anterior").val(String(testPerson[16]));
-    $("#curso_anterior").trigger("change");
-  }
-
-  if (String(testPerson[17])) {
-    //convenio
-    let convenio = testPerson[17].toLowerCase();
-    $("#" + convenio).prop("checked", true);
-    $("#" + convenio).trigger("change");
-  }
-
-  if (String(testPerson[18])) {
-    $("#val_consignado").val(String(testPerson[18]));
-  }
+  const testPerson = {
+    "2018A": "-",
+    "2018B": "-",
+    "2019A": "Música, Percusión y Flauta Dulce - Apreciación Musical",
+    "2019B": "Funciones, Sucesiones y Límite",
+    "2020A": "De los Enteros A los racionales",
+    "2020B": "-",
+    "2021A": "-",
+    "2021B": "-",
+    "2022A": "-",
+    "2022B": "-",
+    "2023A": "-",
+    "2023B": "-",
+    apellido: "SUAREZ",
+    ciudad_doc: "CALI",
+    ciudad_res: "CALI",
+    colegio: "CHINCA",
+    convenio: "PARTICULAR",
+    depto_res: "VALLE DEL CAUCA",
+    email: "andresfelipe9619@gmail.com",
+    eps: "EPS SURAMERICANA S.A.",
+    estamento: "PRIVADO",
+    genero: "M",
+    grado: "7",
+    inscrito_anterior: "NO",
+    nacimiento: "2019-12-19",
+    nombre: "ANDRES",
+    nombre_acudiente: "JULI",
+    num_doc: "1144093949",
+    tel_acudiente: "1111",
+    tel_celular: "11111",
+    tel_fijo: "2222",
+    terminos: "Acepto",
+    tipo_doc: "C.C",
+    url_documentos: "folderUrl",
+    val_consignado: "500000"
+  };
+  fillInStudentData({ data: testPerson });
 }
 //</script>

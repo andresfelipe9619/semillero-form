@@ -341,9 +341,10 @@ function getDataForRegistering(form, currentStudentData) {
   var data = mergeObjects(
     form,
     {
-      nombre: form.name.toUpperCase(),
-      apellido: form.lastname.toUpperCase(),
+      nombre: form.nombre.toUpperCase(),
+      apellido: form.apellido.toUpperCase(),
       ciudad_doc: form.ciudad_doc.toUpperCase(),
+      eps: form.eps.toUpperCase(),
       email: form.email.toLowerCase(),
       colegio: form.colegio.toUpperCase(),
       estamento: form.estamento.toUpperCase(),
@@ -354,10 +355,7 @@ function getDataForRegistering(form, currentStudentData) {
     },
     periods
   );
-  delete data.name;
-  delete data.lastname;
 
-  Logger.log(Object.keys(data));
   return data;
 }
 
@@ -369,11 +367,14 @@ function getPersonPeriods(selectedModule, currentStudentData) {
     var value = "-";
     var sheetDataPeriod =
       ((currentStudentData || {}).data || {})[p.periodo] || value;
-    Logger.log(currentStudentData[p.periodo]);
-    if (sheetDataPeriod && sheetDataPeriod !== "-") {
+
+    var hasModuleOnOldPeriod = sheetDataPeriod && sheetDataPeriod !== "-";
+    var isCurrentPeriod = p.periodo === currentPeriod;
+
+    if (hasModuleOnOldPeriod) {
       value = sheetDataPeriod;
     }
-    if (p.periodo === currentPeriod) {
+    if (isCurrentPeriod) {
       value = selectedModule;
     }
     acc[p.periodo] = value;
