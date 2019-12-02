@@ -1,3 +1,11 @@
+/* PLEASE NOTE that google script doesn't support a VCS like git
+  so we use a repository on github and we can keep track
+  of changes and come back some code if needed.
+  Feel free to clone the project and make some nice PRs.
+  HAPPY CODING!!
+  https://github.com/andresfelipe9619/semillero-form
+*/
+
 var GENERAL_DB =
   "https://docs.google.com/spreadsheets/d/1TsbNe2yNzhhmJ4vwyS3X0qztIP8kdKeSgoFY95C5-5U/edit#gid=0";
 
