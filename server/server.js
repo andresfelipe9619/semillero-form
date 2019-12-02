@@ -316,7 +316,7 @@ function registerStudent(formString) {
     Logger.log("filesResult");
     Logger.log(filesResult);
     var folderUrl = (filesResult || {}).folder;
-    data.url_documentos = "folderUrl";
+    data.url_documentos = folderUrl;
     response = registerStudentInSheets(data, currentStudentData);
     Logger.log("response");
     Logger.log(response);
