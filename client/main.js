@@ -221,10 +221,11 @@ function handleChangeAnotherGrade() {
   }
 }
 
-function editStudentData() {
+async function editStudentData() {
   let valid = validateAndSave();
 
   let onSuccess = function(person) {
+    $("#save").attr("disabled", false);
     swal({
       title: "Exito!",
       text: "Se edito el estudiante satisfactoriamente!",
@@ -234,28 +235,14 @@ function editStudentData() {
     });
   };
   if (!valid) return;
-  let serialized = $("#myForm").serializeArray();
-  let dataToEdit = [];
-
-  for (let x in serialized) {
-    if (x == 7) {
-      dataToEdit.push(serialized[Number(x) + 1].value);
-      dataToEdit.push(serialized[x].value);
-    } else if (
-      x != 6 &&
-      x != 8 &&
-      serialized[x].value != "" &&
-      serialized[x].value != "OTRA" &&
-      serialized[x].value != "SI"
-    ) {
-      dataToEdit.push(serialized[x].value);
-    }
-  }
+  const form = $("#myForm");
+  const dataToEdit = await getFormData(form);
+  $("#save").attr("disabled", true);
 
   google.script.run
     .withSuccessHandler(onSuccess)
     .withFailureHandler(errorHandler)
-    .editStudent(dataToEdit);
+    .editStudent(JSON.stringify(dataToEdit));
 }
 
 function cargarInfo() {
@@ -282,10 +269,11 @@ const searchPerson = id =>
     .withFailureHandler(errorHandler)
     .buscarPersona(id);
 
-function loadStudent(person) {
-  console.log("Person", person);
+function loadStudent(personData) {
+  console.log("Person", personData);
+  const person = JSON.parse(personData);
+  setDefaultCursor();
   if (!person) {
-    setDefaultCursor();
     return swal({
       title: "Advertencia ...",
       text: "La cedula ingresada no corresponde a ningún estudiante",
@@ -315,6 +303,10 @@ function fillInStudentData(person) {
     if (selects.includes(prop)) {
       $(`#${prop}`).trigger("change");
     }
+  }
+  $("#confirmEmail").val(data.email);
+  if (data.terminos === "Acepto") {
+    $("#terminos").prop("checked", true);
   }
   $("#confirmEmail").val(data.email);
   if (data.otraeps) {
@@ -423,6 +415,7 @@ function getFile(file) {
 function errorHandler(error) {
   console.log("Error Handler ==>", error);
   setDefaultCursor();
+  $("#save").attr("disabled", false);
   swal({
     title: "Error",
     text: String(error),
@@ -479,7 +472,7 @@ function fillInTestData() {
     genero: "M",
     grado: "7",
     inscrito_anterior: "NO",
-    nacimiento: "2019-12-19",
+    nacimiento: "1996-11-25",
     nombre: "ANDRES",
     nombre_acudiente: "JULI",
     num_doc: "1144093949",

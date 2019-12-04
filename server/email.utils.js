@@ -36,7 +36,7 @@ function sendConfirmationEmail(data, files) {
 
 function sendEmailToAdmin(subject, body, files) {
   MailApp.sendEmail({
-    to: "andresfelipe9619@gmail.co",
+    to: "andresfelipe9619@gmail.com",
     // "semillero@correounivalle.edu.co",
     subject: subject,
     htmlBody: body,

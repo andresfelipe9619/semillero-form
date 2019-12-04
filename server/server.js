@@ -118,46 +118,17 @@ function registerStudentGeneral(data, person) {
 }
 
 function registerStudentInSheets(data, currentStudentData) {
-  // registerStudentCurrentPeriod(data);
+  registerStudentCurrentPeriod(data);
   return registerStudentGeneral(data, currentStudentData);
 }
 
-function editStudent(student) {
-  var person = validatePerson(student[3]);
-  var url = person.data.pop();
+function editStudent(serializedData) {
+  var form = JSON.parse(serializedData);
+  var person = validatePerson(form.num_doc);
+  var newData = getDataForRegistering(form, person);
 
-  var newData = student.slice();
-  newData.pop();
-  var general = newData.slice();
-  newData.push(getCurrentPeriod()["periodo"]);
-
-  var selectedModule = validateModule(student[student.length - 1]);
-
-  var last = person.lastModules.length;
-  while (last-- && person.lastModules[last] == "");
-  Logger.log("last");
-
-  last = parseInt(last);
-  Logger.log(last);
-  var mModule = null;
-  if (selectedModule) {
-    var modulos = getModules();
-    for (var y in modulos) {
-      if (String(selectedModule[x]) === String(modulos[y][1])) {
-        Logger.log("lastModules");
-        Logger.log(person.lastModules[last]);
-        mModule = person.lastModules[last];
-        person.lastModules[last] = modulos[y][0];
-        for (var z in person.lastModules) {
-          general.push(person.lastModules[z]);
-        }
-      }
-    }
-  }
-  general.push(url);
-  newData.push(url);
-  editEstudentGeneral({ data: general, index: person.index });
-  editStudentActualPeriod({ data: newData, module: mModule });
+  editEstudentGeneral(newData, person.index);
+  // editStudentActualPeriod( newData );
 }
 
 function editStudentActualPeriod(student) {
@@ -229,18 +200,25 @@ function editStudentActualPeriod(student) {
   }
 }
 
-function editEstudentGeneral(student) {
-  var inscritossheet = getSheetFromSpreadSheet(GENERAL_DB, "INSCRITOS");
-  Logger.log("GENEAL PERIOD");
-  Logger.log(student);
-  var inscritoRange = inscritossheet.getRange(
-    Number(student.index) + 1,
-    1,
-    1,
-    inscritossheet.getLastColumn()
-  );
-  inscritoRange.setValues([student.data]);
-  res = "exito";
+function editEstudentGeneral(student, studentIndex) {
+  try {
+    var inscritossheet = getSheetFromSpreadSheet(GENERAL_DB, "INSCRITOS");
+    var headers = getHeadersFromSheet(inscritossheet);
+    Logger.log("GENEAL PERIOD");
+    Logger.log(student);
+    var studentRange = inscritossheet.getRange(
+      Number(studentIndex),
+      1,
+      1,
+      inscritossheet.getLastColumn()
+    );
+    var studentData = jsonToSheetValues(student, headers);
+    studentRange.setValues([studentData]);
+    return "exito";
+  } catch (error) {
+    Logger.log(error);
+    throw "Error editing student on General DB";
+  }
 }
 
 function validatePerson(cedula) {
@@ -279,9 +257,7 @@ function validatePerson(cedula) {
 
 function buscarPersona(cedula) {
   var folder;
-  var person = validatePerson(cedula || "1144093949");
-  Logger.log("THIS IS WHAT U ARE LOOKING FOR");
-  Logger.log(person);
+  var person = validatePerson(cedula);
   if (person.state !== "no esta") {
     person.files = [];
     folder = getPersonFolder(cedula);
@@ -289,14 +265,14 @@ function buscarPersona(cedula) {
     Logger.log("files: " + files);
     while (files.hasNext()) {
       var file = files.next();
-      person.files.push(file.getName());
-      person.files.push(file.getUrl());
+      person.files.push({ name: file.getName(), url: file.getUrl() });
     }
   } else {
     person = null;
   }
-
-  return person;
+  Logger.log("THIS IS WHAT U ARE LOOKING FOR");
+  Logger.log(person);
+  return JSON.stringify(person);
 }
 
 function avoidCollisionsInConcurrentAccessess() {

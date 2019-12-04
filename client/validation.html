@@ -308,6 +308,7 @@
 
   async function submitHandler() {
     $("#mySpan").fadeIn();
+    $("#btnSubmit").attr("disabled", true);
     setWaitCursor();
     let form = $("#myForm");
     const formData = await getFormData(form);
