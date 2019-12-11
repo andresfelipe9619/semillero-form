@@ -7,11 +7,11 @@ $(document).ready(runApp);
 function runApp() {
   subscribeEventHandlers();
   fetchModulesByGrades();
-  fetchCurrentModule();
+  fetchCurrentPeriodData();
   setTimeout(() => {
     AuthenticateCurrentUser();
-    populateCountries("depto_res", "ciudad_res");
-    setTimeout(getRequestPayload, 1000);
+    populateDepartments();
+    setTimeout(getRequestPayload, 1500);
   }, 1000);
   // hideInitialData();
 }
@@ -22,14 +22,18 @@ const fetchModulesByGrades = () =>
     .withFailureHandler(errorHandler)
     .getModulesByGrades();
 
-const fetchCurrentModule = () =>
+const fetchCurrentPeriodData = () =>
   google.script.run
-    .withSuccessHandler(onSuccessCurrentModule)
+    .withSuccessHandler(loadCurrentPeriodData)
     .withFailureHandler(errorHandler)
-    .getCurrentPeriod();
+    .getCurrentPeriodData();
 
-function onSuccessCurrentModule(result) {
-  currentPeriod = result;
+function loadCurrentPeriodData(data) {
+  if (!data) return;
+  currentPeriod = data.currentPeriod;
+  console.log("data", data);
+  // let currentModules = data.modules;
+  // $(`#myForm ${selector}`).fadeIn();
 }
 
 const AuthenticateCurrentUser = () =>
@@ -60,6 +64,7 @@ function subscribeEventHandlers() {
 }
 
 function onSuccessGrades(modules) {
+  console.log("modules", modules);
   if (!modules) return;
   modulesByGrades = modules;
 }
@@ -327,7 +332,7 @@ function fillInStudentData(person) {
     $("#" + convenio).prop("checked", true);
     $("#" + convenio).trigger("change");
   }
-  var periodName = currentPeriod.periodo;
+  var periodName = currentPeriod;
   if (data[periodName]) {
     google.script.run
       .withSuccessHandler(onSuccess)
@@ -462,10 +467,10 @@ function fillInTestData() {
     "2023B": "-",
     apellido: "SUAREZ",
     ciudad_doc: "CALI",
+    depto_res: "VALLE DEL CAUCA",
     ciudad_res: "CALI",
     colegio: "CHINCA",
     convenio: "PARTICULAR",
-    depto_res: "VALLE DEL CAUCA",
     email: "andresfelipe9619@gmail.com",
     eps: "EPS SURAMERICANA S.A.",
     estamento: "PRIVADO",

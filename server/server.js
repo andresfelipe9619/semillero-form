@@ -125,6 +125,7 @@ function registerStudentInSheets(data, currentStudentData) {
 function editStudent(serializedData) {
   var form = JSON.parse(serializedData);
   var person = validatePerson(form.num_doc);
+  console.log('form', form)
   var newData = getDataForRegistering(form, person);
 
   editEstudentGeneral(newData, person.index);
@@ -253,6 +254,16 @@ function validatePerson(cedula) {
   Logger.log(result);
   Logger.log("=============END Validating Person===========");
   return result;
+}
+
+function getCurrentPeriodData() {
+  var rawModules = getModules();
+  var modules = sheetValuesToObject(rawModules);
+  var currentPeriod = getCurrentPeriod()["periodo"];
+  modules = modules.filter(function(module) {
+    return module.disabled !== "x";
+  });
+  return { currentPeriod: currentPeriod, modules: modules };
 }
 
 function buscarPersona(cedula) {
