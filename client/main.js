@@ -296,11 +296,20 @@ function loadStudent(personData) {
   if (person.state === "actual") return fillInStudentData(person);
 }
 
+function showEditButton() {
+  $("#myForm #save").css("display", "none");
+  $("#myForm #edit").css("display", "block");
+}
+
 function fillInStudentData(person) {
   setWaitCursor();
   showStudentRecord();
-  $("#myForm #save").css("display", "none");
-  $("#myForm #edit").css("display", "block");
+  showEditButton();
+  fillInDataInForm(person);
+  setDefaultCursor();
+}
+
+function fillInDataInForm(person) {
   const { data } = person;
   const selects = ["depto_res", "grado"];
   for (prop in data) {
@@ -348,7 +357,6 @@ function fillInStudentData(person) {
       }
     }
   }
-  setDefaultCursor();
 }
 
 async function getFormData($form) {
@@ -489,6 +497,6 @@ function fillInTestData() {
     url_documentos: "folderUrl",
     val_consignado: "500000"
   };
-  fillInStudentData({ data: testPerson });
+  fillInDataInForm({ data: testPerson });
 }
 //</script>

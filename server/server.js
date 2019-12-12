@@ -205,7 +205,7 @@ function editEstudentGeneral(student, studentIndex) {
   try {
     var inscritossheet = getSheetFromSpreadSheet(GENERAL_DB, "INSCRITOS");
     var headers = getHeadersFromSheet(inscritossheet);
-    Logger.log("GENEAL PERIOD");
+    Logger.log("GENERAL PERIOD");
     Logger.log(student);
     var studentRange = inscritossheet.getRange(
       Number(studentIndex),
