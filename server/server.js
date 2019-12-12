@@ -125,7 +125,7 @@ function registerStudentInSheets(data, currentStudentData) {
 function editStudent(serializedData) {
   var form = JSON.parse(serializedData);
   var person = validatePerson(form.num_doc);
-  console.log('form', form)
+  console.log("form", form);
   var newData = getDataForRegistering(form, person);
 
   editEstudentGeneral(newData, person.index);
@@ -327,6 +327,7 @@ function registerStudent(formString) {
 
 function getDataForRegistering(form, currentStudentData) {
   if (form.otraeps) form.eps = form.otraeps;
+  if (!form.comuna_res) form.comuna_res = "-";
   if (form.inscrito_anterior === "SI") {
     form.inscrito_anterior = form.curso_anterior;
   }
