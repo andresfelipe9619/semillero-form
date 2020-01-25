@@ -10,7 +10,7 @@ var GENERAL_DB =
   "https://docs.google.com/spreadsheets/d/1TsbNe2yNzhhmJ4vwyS3X0qztIP8kdKeSgoFY95C5-5U/edit#gid=0";
 
 function doGet(e) {
-  return HtmlService.createTemplateFromFile("admin.html").evaluate();
+  return HtmlService.createTemplateFromFile("index.html").evaluate();
 }
 
 function include(filename) {
@@ -328,6 +328,9 @@ function registerStudent(formString) {
 function getDataForRegistering(form, currentStudentData) {
   if (form.otraeps) form.eps = form.otraeps;
   if (!form.comuna_res) form.comuna_res = "-";
+  if(form.val_consignado && form.val_consignar){
+    form.dif_consignado = +form.val_consignado - +form.val_consignar
+  }
   if (form.inscrito_anterior === "SI") {
     form.inscrito_anterior = form.curso_anterior;
   }

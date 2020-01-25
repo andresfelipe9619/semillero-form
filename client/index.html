@@ -65,7 +65,7 @@
           Formulario de Inscripción Semilleros de Ciencias
         </h1>
       </div>
-      <div class="row" id="modBusqueda">
+      <div class="row oculto" id="modBusqueda">
         <br />
         <div class="col-md-6">
           <div class="input-group">
@@ -242,8 +242,7 @@
             />Femenino</label
           >
           <label class="radio-inline lg">
-            <input type="radio" id="no_definido" name="genero" value="N.D" />No
-            definido</label
+            <input type="radio" id="otro_genero" name="genero" value="Otro" />Otro</label
           >
         </div>
 
@@ -573,7 +572,6 @@
             />BECADOS</label
           >
         </div>
-        <!-- Campo valor consignado -->
         <div class="row">
           <br />
           <label class="control-label col-xs-2" for="val_consignado"
@@ -588,9 +586,47 @@
               placeholder="Valor consignado"
             />
           </div>
-        </div>
-        <!-- Fin campo valor consignado -->
 
+          <label class="control-label col-xs-2" for="val_consignar"
+            >Valor a Consignar*</label
+          >
+          <div class="col-xs-4 input-div">
+            <input
+              type="text"
+              class="form-control numeric"
+              id="val_consignar"
+              name="val_consignar"
+              placeholder="Valor a Consignar"
+            />
+          </div>
+        </div>
+        <div class="row">
+          <br />
+          <label class="control-label col-xs-2" for="val_consignado"
+            >Número de recibo*</label
+          >
+          <div class="col-xs-4 input-div">
+            <input
+              type="text"
+              class="form-control numeric"
+              id="recibo_consignacion"
+              name="recibo_consignacion"
+              placeholder="Numero de Recibo"
+            />
+          </div>
+          <label class="control-label col-xs-2" for="val_consignado"
+            >Fecha de Consignación*</label
+          >
+          <div class="col-xs-4 input-div">
+            <input
+              type="date"
+              class="form-control"
+              id="fecha_consignacion"
+              name="fecha_consignacion"
+              placeholder="Fecha de Consignación"
+            />
+          </div>
+        </div>
         <div class="row">
           <h3>Módulo a Matricular*:</h3>
         </div>

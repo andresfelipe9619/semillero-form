@@ -1,13 +1,24 @@
 <script>
+  const adminAgreements = ["#becado", "#convenio_colegio"];
+
   function hideAdminData() {
     $("#modBusqueda").hide();
     showForm();
+    hideAdminAgreements();
     hideInitialData();
   }
 
   function showSearchModule() {
     $("#modBusqueda").fadeIn();
     hideInitialData();
+  }
+
+  function hideAdminAgreements() {
+    const agreements = adminAgreements.join(",");
+    $(".radio-inline")
+      .has(agreements)
+      .hide();
+    $(agreements).hide();
   }
 
   function hideInitialData() {
@@ -35,7 +46,7 @@
 
   const DoNotCopyPaste = e => e.preventDefault();
 
-  function showFiles({ grade, state }) {
+  function showFiles({ grade, estate }) {
     if (grade == 11 || grade === "EGRESADO") {
       $("#myForm #modNas").fadeIn();
       $("#myForm #pdfActaGrado").fadeOut();
@@ -53,7 +64,7 @@
       $("#myForm #pdfConstanciaEstu").fadeIn();
       $("#myForm #constanciaEstudFile").prop("disabled", false);
     }
-    if (state === "PRIVADO") {
+    if (estate === "PRIVADO") {
       $("#myForm #pdfConstanciaEstu").fadeOut();
       $("#myForm #constanciaEstudFile").prop("disabled", true);
     }
@@ -120,6 +131,28 @@
     $("#myForm #pdfRecibos").hide();
     $("#myForm #pdfCartaSolicitud").hide();
     $("#myForm #pdfActaGrado").hide();
+  }
+
+  function showStudyCertificate() {
+    $("#myForm #pdfConstanciaEstu").fadeIn();
+    $("#myForm #constanciaEstudFile").prop("disabled", false);
+  }
+
+  function hideStudyCertificate() {
+    $("#myForm #pdfConstanciaEstu").fadeOut();
+    $("#myForm #constanciaEstudFile").prop("disabled", true);
+  }
+
+  function hideGraduateFiles() {
+    $("#myForm #pdfActaGrado").fadeOut();
+    $("#myForm #actaGrado").prop("disabled", true);
+  }
+
+  function showGraduateFiles() {
+    $("#myForm #pdfActaGrado").fadeIn();
+    $("#myForm #actaGrado").prop("disabled", false);
+    $("#myForm #pdfConstanciaEstu").fadeOut();
+    $("#myForm #constanciaEstudFile").prop("disabled", true);
   }
 
   function hideStudentRecord() {

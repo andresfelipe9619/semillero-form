@@ -1,7 +1,7 @@
 function sendConfirmationEmail(data, files) {
   Logger.log("=============Sending Email===========");
 
-  var body = getPDFFile(data);
+  var body = getEmailTemplate(data);
   var subModule = "";
   var modules = getModules();
 
@@ -45,7 +45,7 @@ function sendEmailToAdmin(subject, body, files) {
   });
 }
 
-function getPDFFile(data) {
+function getEmailTemplate(data) {
   var modulos = getModules();
 
   var contenthtml = "";

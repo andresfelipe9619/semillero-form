@@ -1,7 +1,9 @@
 //<script>
 let modulesByGrades = null;
 let currentPeriod = null;
+let fullModules = null;
 let filesByname = {};
+let priceData = { estate: null, moduleCode: null };
 $(document).ready(runApp);
 
 function runApp() {
@@ -9,11 +11,10 @@ function runApp() {
   fetchModulesByGrades();
   fetchCurrentPeriodData();
   setTimeout(() => {
-    AuthenticateCurrentUser();
+    authenticateCurrentUser();
     populateDepartments();
     setTimeout(getRequestPayload, 1500);
   }, 1000);
-  // hideInitialData();
 }
 
 const fetchModulesByGrades = () =>
@@ -31,12 +32,13 @@ const fetchCurrentPeriodData = () =>
 function loadCurrentPeriodData(data) {
   if (!data) return;
   currentPeriod = data.currentPeriod;
+  fullModules = data.modules;
   console.log("data", data);
   // let currentModules = data.modules;
   // $(`#myForm ${selector}`).fadeIn();
 }
 
-const AuthenticateCurrentUser = () =>
+const authenticateCurrentUser = () =>
   google.script.run
     .withSuccessHandler(onSuccessAuth)
     .withFailureHandler(errorHandler)
@@ -49,6 +51,7 @@ function onSuccessAuth(isAdmin) {
 
 function subscribeEventHandlers() {
   $("#eps").on("change", handleChangeEps);
+  $("input[name='seleccion']").on("change", handleChangeModule);
   $("#myForm #save").on("click", enrollStudent);
   $(".numeric").on("keypress", allowOnlyNumbers);
   $("input[type='file']").on("change", handleFileChange);
@@ -70,7 +73,8 @@ function onSuccessGrades(modules) {
 }
 
 function enrollStudent(e) {
-  if (isAgreeWithTerms()) return validateAndSave();
+  let isAgree = isAgreeWithTerms();
+  if (isAgree) return validateAndSave();
   e.preventDefault();
   swal({
     title: "Advertencia",
@@ -125,38 +129,46 @@ function handleClickAgreement() {
   }
 }
 
-function handleChangeEstate() {
-  let val = $(this).val();
-  let grado = $("#grado").val();
-  if (val === "PUBLICO" || val === "COBERTURA") {
-    if (grado === "EGRESADO") {
-      $("#myForm #pdfActaGrado").fadeIn();
-      $("#myForm #actaGrado").prop("disabled", false);
-      $("#myForm #pdfConstanciaEstu").fadeOut();
-      $("#myForm #constanciaEstudFile").prop("disabled", true);
-    } else {
-      $("#myForm #pdfConstanciaEstu").fadeIn();
-      $("#myForm #constanciaEstudFile").prop("disabled", false);
-      $("#myForm #pdfActaGrado").fadeOut();
-      $("#myForm #actaGrado").prop("disabled", true);
-    }
-  } else if (val === "PRIVADO") {
-    if (grado === "EGRESADO") {
-      $("#myForm #pdfActaGrado").fadeIn();
-      $("#myForm #actaGrado").prop("disabled", false);
-      $("#myForm #pdfConstanciaEstu").fadeOut();
-      $("#myForm #constanciaEstudFile").prop("disabled", true);
-    } else {
-      $("#myForm #pdfConstanciaEstu").fadeOut();
-      $("#myForm #constanciaEstudFile").prop("disabled", true);
-      $("#myForm #pdfActaGrado").fadeOut();
-      $("#myForm #actaGrado").prop("disabled", true);
-    }
-  } else {
-    $("#myForm #pdfConstanciaEstu").fadeOut();
-    $("#myForm #constanciaEstudFile").prop("disabled", true);
-  }
+function handleChangeModule() {
+  let moduleCode = $(this).val();
+  priceData.moduleCode = moduleCode;
+  handleChangePriceData();
 }
+
+function handleChangePriceData() {
+  const { moduleCode, estate } = priceData;
+  const module = fullModules.find(m => m.codigo === moduleCode);
+  console.log("{module, estate}", { module, estate });
+  if (!module || !estate) return;
+  let price = 0;
+  if (estate === "PRIVADO") price = module.precio_privado;
+  if (estate === "PUBLICO") price = module.precio_publico;
+  if (estate === "COBERTURA") price = module.precio_cobertura;
+
+  $("#val_consignar").val(price);
+}
+
+function handleChangeEstate() {
+  let estate = $(this).val();
+  priceData.estate = estate;
+  handleChangePriceData();
+  let grado = $("#grado").val();
+  handleChangePriceData({ estate });
+  if (estate === "PUBLICO" || estate === "COBERTURA") {
+    if (grado === "EGRESADO") return showGraduateFiles();
+    showStudyCertificate();
+    hideGraduateFiles();
+    return;
+  }
+  if (estate === "PRIVADO") {
+    if (grado === "EGRESADO") return showGraduateFiles();
+    hideStudyCertificate();
+    hideGraduateFiles();
+    return;
+  }
+  return hideStudyCertificate();
+}
+
 const createEmail = () =>
   window.open(
     "https://accounts.google.com/SignUp?service=mail&hl=es&continue=http%3A%2F%2Fmail.google.com%2Fmail%2F%3Fpc%3Des-ha-latam-co-bk-xplatform1&utm_campaign=es&utm_source=es-ha-latam-co-bk-xplatform1&utm_medium=ha"
@@ -173,11 +185,11 @@ function hadleChangeGrade() {
   console.log("MI ANTERIOR: ", anterior);
   let grade = String(this.value).toLocaleLowerCase();
   console.log("grade", grade);
-  let state = $("#estamento").val();
+  let estate = $("#estamento").val();
   hideModules();
   if (grade in modulesByGrades) {
     showModules(grade);
-    showFiles({ grade, state });
+    showFiles({ grade, estate });
   }
 }
 function handleChangePreviousRegister() {
@@ -495,7 +507,10 @@ function fillInTestData() {
     terminos: "Acepto",
     tipo_doc: "C.C",
     url_documentos: "folderUrl",
-    val_consignado: "500000"
+    val_consignado: "500000",
+    val_consignar: "300000",
+    recibo_consignacion: "999999",
+    fecha_consignacion: "2020-01-20"
   };
   fillInDataInForm({ data: testPerson });
 }

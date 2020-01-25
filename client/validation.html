@@ -142,13 +142,24 @@
       required: true,
       number: true
     },
+    val_consignar: {
+      required: true,
+      number: true
+    },
+    recibo_consignacion: {
+      required: true,
+      number: true
+    },
+    fecha_consignacion: {
+      required: true,
+      date: true
+    },
     terminos: {
       required: true
     },
     docFile: {
       required: {
         depends: function(element) {
-          if ($("#myForm #save").is(":visible")) return false;
           return true;
         }
       }
@@ -156,15 +167,13 @@
     constanciaEstudFile: {
       required: {
         depends: function(element) {
-          if ($("#myForm #save").is(":visible")) return false;
-          return $("#estamento").val() == "público";
+          return $("#estamento").val() == "PUBLICO";
         }
       }
     },
     constanciaFuncFile: {
       required: {
         depends: function(element) {
-          if ($("#myForm #save").is(":visible")) return false;
           return $("#relacion_univalle").is(":checked");
         }
       }
@@ -172,7 +181,6 @@
     reciboFile: {
       required: {
         depends: function(element) {
-          if ($("#myForm #save").is(":visible")) return false;
           return true;
         }
       }
@@ -180,7 +188,6 @@
     recibosPublicos: {
       required: {
         depends: function(element) {
-          if ($("#myForm #save").is(":visible")) return false;
           return $("#becado").is(":checked");
         }
       }
@@ -188,7 +195,6 @@
     cartaSolicitud: {
       required: {
         depends: function(element) {
-          if ($("#myForm #save").is(":visible")) return false;
           return $("#becado").is(":checked");
         }
       }
@@ -196,7 +202,6 @@
     actaGrado: {
       required: {
         depends: function(element) {
-          if ($("#myForm #save").is(":visible")) return false;
           return $("#grado").val() == "EGRESADO";
         }
       }
@@ -230,13 +235,22 @@
       required: "selecciona tu fecha de nacimiento"
     },
     genero: {
-      required: "seleccionat tu genero"
+      required: "selecciona tu genero"
     },
     seleccion: {
       required: "selecciona por lo menos un modulo"
     },
     val_consignado: {
       required: "Por favor digita el valor total consignado"
+    },
+    val_consignar: {
+      required: "Por favor digita el valor total a consignar"
+    },
+    recibo_consignacion: {
+      required: "Por favor digita el numero del recibo de consignacion"
+    },
+    fecha_consignacion: {
+      required: "Por favor digita la fecha de consignacion"
     },
     docFile: {
       required:
