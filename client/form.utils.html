@@ -59,6 +59,7 @@
   function setModulesSelectionHTML(areas) {
     const modulesSelection = buildModulesSelection(areas);
     $(".modules_matricular").html(modulesSelection);
+    $("input[name='seleccion']").on("change", handleChangeModule);
   }
 
   function buildModulesSelection(areas) {
@@ -83,7 +84,7 @@
       const isInitial = count === 1;
       const isLimit = count === columnsXrow;
       module = `${isInitial ? '<div class="row">' : ""}${module}${
-        isLimit ? '</div>' : ""
+        isLimit ? "</div>" : ""
       }`;
       count = isLimit ? 1 : ++count;
       return module;
@@ -289,13 +290,14 @@
   }
 
   function setWaitCursor() {
-    $("#btn-buscar").css("cursor", "wait");
-    $("body").css("cursor", "wait");
+    $("#btn-buscar, #save, #edit, body").css("cursor", "wait");
+    $("#save, #edit").prop("disabled", true);
   }
 
   function setDefaultCursor() {
-    $("#btn-buscar").css("cursor", "");
-    $("body").css("cursor", "");
+    $("#btn-buscar, #save, #edit, body").css("cursor", "");
+    $("#save, #edit").prop("disabled", false);
+
   }
 
   function cleanArray(actual) {

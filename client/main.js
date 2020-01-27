@@ -73,7 +73,6 @@ function subscribeEventHandlers() {
   $("#confirmEmail").on("copy cut paste", DoNotCopyPaste);
   $("#myForm #estamento").on("change", handleChangeEstate);
   $("#curso_anterior").on("change", handleChangeAnotherGrade);
-  $("input[name='seleccion']").on("change", handleChangeModule);
   $("#inscrito_anterior").on("change", handleChangePreviousRegister);
   $("#myForm").on("click", 'input[name="convenio"]', handleClickAgreement);
 }
