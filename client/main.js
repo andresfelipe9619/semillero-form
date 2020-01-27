@@ -1,20 +1,19 @@
 //<script>
-let modulesByGrades = null;
 let currentPeriod = null;
-let fullModules = null;
 let filesByname = {};
 let priceData = { estate: null, moduleCode: null };
+const MODULES = { byGrades: null, all: null, byArea: null };
 $(document).ready(runApp);
 
 function runApp() {
-  subscribeEventHandlers();
-  fetchModulesByGrades();
   fetchCurrentPeriodData();
+  fetchModulesByGrades();
   setTimeout(() => {
     authenticateCurrentUser();
     populateDepartments();
+    subscribeEventHandlers();
     setTimeout(getRequestPayload, 1500);
-  }, 1000);
+  }, 1500);
 }
 
 const fetchModulesByGrades = () =>
@@ -31,11 +30,24 @@ const fetchCurrentPeriodData = () =>
 
 function loadCurrentPeriodData(data) {
   if (!data) return;
+  console.log("Current Period Data", data);
   currentPeriod = data.currentPeriod;
-  fullModules = data.modules;
-  console.log("data", data);
-  // let currentModules = data.modules;
-  // $(`#myForm ${selector}`).fadeIn();
+  MODULES.all = data.modules;
+  loadModules();
+}
+
+function loadModules() {
+  const modulesByArea = MODULES.all.reduce((acc, module) => {
+    let { area } = module;
+    if (acc[area]) {
+      acc[area].push(module);
+    } else {
+      acc[area] = [module];
+    }
+    return acc;
+  }, {});
+  MODULES.byArea = modulesByArea;
+  setModulesSelectionHTML(modulesByArea);
 }
 
 const authenticateCurrentUser = () =>
@@ -51,17 +63,17 @@ function onSuccessAuth(isAdmin) {
 
 function subscribeEventHandlers() {
   $("#eps").on("change", handleChangeEps);
-  $("input[name='seleccion']").on("change", handleChangeModule);
   $("#myForm #save").on("click", enrollStudent);
   $(".numeric").on("keypress", allowOnlyNumbers);
-  $("input[type='file']").on("change", handleFileChange);
   $("#myForm #edit").on("click", editStudentData);
   $("#email").on("copy cut paste", DoNotCopyPaste);
   $("#myForm #createEmail").on("click", createEmail);
   $("#myForm #grado").on("change", hadleChangeGrade);
-  $("#curso_anterior").on("change", handleChangeAnotherGrade);
+  $("input[type='file']").on("change", handleFileChange);
   $("#confirmEmail").on("copy cut paste", DoNotCopyPaste);
   $("#myForm #estamento").on("change", handleChangeEstate);
+  $("#curso_anterior").on("change", handleChangeAnotherGrade);
+  $("input[name='seleccion']").on("change", handleChangeModule);
   $("#inscrito_anterior").on("change", handleChangePreviousRegister);
   $("#myForm").on("click", 'input[name="convenio"]', handleClickAgreement);
 }
@@ -69,7 +81,7 @@ function subscribeEventHandlers() {
 function onSuccessGrades(modules) {
   console.log("modules", modules);
   if (!modules) return;
-  modulesByGrades = modules;
+  MODULES.byGrades = modules;
 }
 
 function enrollStudent(e) {
@@ -99,34 +111,13 @@ function handleFileChange(e) {
 
 function handleClickAgreement() {
   let val = $(this).val();
-  if (val === "RELACION_UNIVALLE") {
-    $("#myForm #pdfContanciaFun").fadeIn();
-    $("#myForm #constanciaFuncFile").prop("disabled", false);
-    $("#myForm #pdfRecibo").fadeIn();
-    $("#myForm #reciboFile").prop("disabled", false);
-    $("#myForm #pdfRecibos").fadeOut();
-    $("#myForm #pdfCartaSolicitud").fadeOut();
-    $("#myForm #recibosPublicos").prop("disabled", true);
-    $("#myForm #cartaSolicitud").prop("disabled", true);
-  } else if (val === "BECADOS") {
-    $("#myForm #pdfRecibos").fadeIn();
-    $("#myForm #pdfCartaSolicitud").fadeIn();
-    $("#myForm #recibosPublicos").prop("disabled", false);
-    $("#myForm #cartaSolicitud").prop("disabled", false);
-    $("#myForm #pdfRecibo").fadeOut();
-    $("#myForm #reciboFile").prop("disabled", true);
-    $("#myForm #pdfContanciaFun").fadeOut();
-    $("#myForm #constanciaFuncFile").prop("disabled", true);
-  } else {
-    $("#myForm #pdfContanciaFun").fadeOut();
-    $("#myForm #constanciaFuncFile").prop("disabled", true);
-    $("#myForm #pdfRecibos").fadeOut();
-    $("#myForm #pdfCartaSolicitud").fadeOut();
-    $("#myForm #recibosPublicos").prop("disabled", true);
-    $("#myForm #cartaSolicitud").prop("disabled", true);
-    $("#myForm #pdfRecibo").fadeIn();
-    $("#myForm #reciboFile").prop("disabled", false);
-  }
+  if (val === "RELACION_UNIVALLE") return showUnivalleRelationFiles();
+  if (val === "BECADOS") return showScholarshipFiles();
+
+  hideStudyCertificate();
+  hideScholarshipFiles();
+  $("#myForm #pdfRecibo").fadeIn();
+  $("#myForm #reciboFile").prop("disabled", false);
 }
 
 function handleChangeModule() {
@@ -137,7 +128,7 @@ function handleChangeModule() {
 
 function handleChangePriceData() {
   const { moduleCode, estate } = priceData;
-  const module = fullModules.find(m => m.codigo === moduleCode);
+  const module = MODULES.all.find(m => m.codigo === moduleCode);
   console.log("{module, estate}", { module, estate });
   if (!module || !estate) return;
   let price = 0;
@@ -153,7 +144,6 @@ function handleChangeEstate() {
   priceData.estate = estate;
   handleChangePriceData();
   let grado = $("#grado").val();
-  handleChangePriceData({ estate });
   if (estate === "PUBLICO" || estate === "COBERTURA") {
     if (grado === "EGRESADO") return showGraduateFiles();
     showStudyCertificate();
@@ -187,16 +177,18 @@ function hadleChangeGrade() {
   console.log("grade", grade);
   let estate = $("#estamento").val();
   hideModules();
-  if (grade in modulesByGrades) {
+  if (grade in MODULES.byGrades) {
     showModules(grade);
     showFiles({ grade, estate });
   }
 }
+
 function handleChangePreviousRegister() {
   let myres = this.value;
   if (myres.includes("SI")) return $("#curso_anterior").css("display", "block");
   $("#curso_anterior").css("display", "none");
 }
+
 function handleChangeAnotherGrade() {
   let grado = $("#myForm #grado").val();
   let val = this.value;

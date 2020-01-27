@@ -22,22 +22,10 @@
   }
 
   function hideInitialData() {
-    $("#myForm #pdfConstanciaEstu").hide();
-    $("#myForm #pdfContanciaFun").hide();
-    $("#myForm #pdfRecibos").hide();
-    $("#myForm #pdfCartaSolicitud").hide();
-    $("#myForm #pdfActaGrado").hide();
-    $("#myForm #modMatematicas").hide();
-    $("#myForm #modMatematicas #checkboxMate")
-      .children()
-      .hide();
-    $("#myForm #modFisica").hide();
-    $("#myForm #modQuimica").hide();
-    $("#myForm #modBiologia").hide();
-    $("#myForm #modHumanidades").hide();
-    $("#myForm #modArtes").hide();
-    $("#myForm #modNas").hide();
+    hideFiles();
+    hideModules();
   }
+
   const allowOnlyNumbers = e =>
     e.metaKey || // cmd/ctrl
     e.which <= 0 || // arrow keys
@@ -47,47 +35,73 @@
   const DoNotCopyPaste = e => e.preventDefault();
 
   function showFiles({ grade, estate }) {
-    if (grade == 11 || grade === "EGRESADO") {
-      $("#myForm #modNas").fadeIn();
+    const isGraduated = grade === "EGRESADO";
+    if (grade == 11 || isGraduated) {
+      $("#myForm #modSemilleros").fadeIn();
       $("#myForm #pdfActaGrado").fadeOut();
     }
-
-    if (grade === "EGRESADO") {
-      $("#myForm #pdfActaGrado").fadeIn();
-      $("#myForm #actaGrado").prop("disabled", false);
-      $("#myForm #pdfConstanciaEstu").fadeOut();
-      $("#myForm #constanciaEstudFile").prop("disabled", true);
+    if (isGraduated) showGraduateFiles();
+    if (!isGraduated) {
+      hideGraduateFiles();
+      showStudyCertificate();
     }
-    if (grade !== "EGRESADO") {
-      $("#myForm #pdfActaGrado").fadeOut();
-      $("#myForm #actaGrado").prop("disabled", true);
-      $("#myForm #pdfConstanciaEstu").fadeIn();
-      $("#myForm #constanciaEstudFile").prop("disabled", false);
-    }
-    if (estate === "PRIVADO") {
-      $("#myForm #pdfConstanciaEstu").fadeOut();
-      $("#myForm #constanciaEstudFile").prop("disabled", true);
-    }
+    if (estate === "PRIVADO") hideStudyCertificate();
   }
 
   function showModules(grade) {
-    if (!(grade in modulesByGrades) || !modulesByGrades) return;
-    Object.keys(modulesByGrades[grade]).map(module => {
-      const courses = modulesByGrades[grade][module];
+    if (!(grade in MODULES.byGrades) || !MODULES.byGrades) return;
+    Object.keys(MODULES.byGrades[grade]).map(module => {
+      const courses = MODULES.byGrades[grade][module];
       return showModuleCourses({ courses, module });
     });
   }
 
-  function buildModulesSelection(modules) {
-    ` <div id="temaese" class="checkbox">
+  function setModulesSelectionHTML(areas) {
+    const modulesSelection = buildModulesSelection(areas);
+    $(".modules_matricular").html(modulesSelection);
+  }
+
+  function buildModulesSelection(areas) {
+    const columnsXrow = 3;
+    let count = 1;
+    let modulesSelection = Object.keys(areas).map(name => {
+      const courses = areas[name];
+      const coursesSelection = courses.map(({ nombre, codigo, area }, index) =>
+        buildCourseSelection({ code: codigo, area, name: nombre })
+      );
+      const areaName = name.charAt(0).toUpperCase() + name.slice(1);
+      let module = `
+        <div id="mod${areaName}" class="col-xs-4 input-div">
+          <div class="row">
+            <h4>${areaName}</h4>
+          </div>
+          <div class="row input-div">
+            ${coursesSelection.join("")}
+          </div>
+        </div>
+      `;
+      const isInitial = count === 1;
+      const isLimit = count === columnsXrow;
+      module = `${isInitial ? '<div class="row">' : ""}${module}${
+        isLimit ? '</div>' : ""
+      }`;
+      count = isLimit ? 1 : ++count;
+      return module;
+    });
+    modulesSelection = modulesSelection.join("");
+    return modulesSelection;
+  }
+
+  function buildCourseSelection({ code, area, name }) {
+    return ` <div id="tema${code}" class="checkbox">
        <input
          type="radio"
-         class="quimica"
+         class="${area}"
          name="seleccion"
-         id="ese"
-         value="ese"
+         id="${code}"
+         value="${code}"
        />
-       <label>ESE: Estequiometría II, Soluciones y Equilibrio</label>
+       <label>${name}</label>
      </div>`;
   }
 
@@ -109,7 +123,6 @@
 
   function showCourse({ course, selector }) {
     const courseSelector = `#myForm ${selector} #${course.codigo}`;
-    console.log("courseSelector", courseSelector);
     $(courseSelector).fadeIn();
   }
 
@@ -119,10 +132,9 @@
   }
 
   function hideModules() {
-    if (!modulesByGrades || !modulesByGrades["11"]) return;
-    Object.keys(modulesByGrades["11"]).map(module => {
-      $(`#myForm ${moduleSelector(module)}`).fadeOut();
-    });
+    const hideArea = area => $(`#myForm ${moduleSelector(area)}`).hide();
+    console.log("MODULES.byArea", MODULES.byArea);
+    Object.keys(MODULES.byArea).map(hideArea);
   }
 
   function hideFiles() {
@@ -131,6 +143,30 @@
     $("#myForm #pdfRecibos").hide();
     $("#myForm #pdfCartaSolicitud").hide();
     $("#myForm #pdfActaGrado").hide();
+  }
+
+  function showScholarshipFiles() {
+    $("#myForm #pdfRecibos").fadeIn();
+    $("#myForm #pdfCartaSolicitud").fadeIn();
+    $("#myForm #recibosPublicos").prop("disabled", false);
+    $("#myForm #cartaSolicitud").prop("disabled", false);
+    $("#myForm #pdfRecibo").fadeOut();
+    $("#myForm #reciboFile").prop("disabled", true);
+    hideStudyCertificate();
+  }
+
+  function hideScholarshipFiles() {
+    $("#myForm #pdfRecibos").fadeOut();
+    $("#myForm #pdfCartaSolicitud").fadeOut();
+    $("#myForm #recibosPublicos").prop("disabled", true);
+    $("#myForm #cartaSolicitud").prop("disabled", true);
+  }
+
+  function showUnivalleRelationFiles() {
+    showStudyCertificate();
+    $("#myForm #pdfRecibo").fadeIn();
+    $("#myForm #reciboFile").prop("disabled", false);
+    hideScholarshipFiles();
   }
 
   function showStudyCertificate() {
@@ -151,8 +187,7 @@
   function showGraduateFiles() {
     $("#myForm #pdfActaGrado").fadeIn();
     $("#myForm #actaGrado").prop("disabled", false);
-    $("#myForm #pdfConstanciaEstu").fadeOut();
-    $("#myForm #constanciaEstudFile").prop("disabled", true);
+    hideStudyCertificate();
   }
 
   function hideStudentRecord() {
@@ -179,7 +214,7 @@
     $(".file").val("");
     $("input:checkbox").removeAttr("checked");
     // $('#curso_anterior').empty('');
-    if (reload) window.location.reload(true);
+    reload && window.location.reload(true);
   }
 
   let departments = ["CAUCA", "VALLE DEL CAUCA"];
@@ -237,7 +272,6 @@
 
   function populateCommunes() {
     let selectedCitie = document.getElementById(cityElementId).selectedIndex;
-    console.log("selectedCitie", selectedCitie);
     if (selectedCitie !== 2) return $(`#div-comuna`).addClass("oculto");
     $(`#div-comuna`).removeClass("oculto");
     let communeElement = document.getElementById(communeElementId);
@@ -246,7 +280,6 @@
     communeElement.options[0] = new Option("Seleccione Comuna", "");
     communeElement.selectedIndex = 0;
     const communes = Array.from({ length: 21 }, (v, i) => ++i);
-    console.log("communes", communes);
     for (let commune of communes) {
       communeElement.options[communeElement.length] = new Option(
         String(commune),
