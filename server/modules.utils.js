@@ -1,3 +1,15 @@
+var CURRENT_PERIOD_COLUMNS = [
+  "nombre",
+  "apellido",
+  "tipo_doc",
+  "ciudad_doc",
+  "tel_fijo",
+  "email",
+  "grado",
+  "colegio",
+  "convenio_colegio"
+];
+
 function getModulesByGrades() {
   var rawModules = getModules();
   var modules = sheetValuesToObject(rawModules);
@@ -44,17 +56,10 @@ function addStudentToModuleSheet(module, data) {
     if (module === modulos[x][1]) {
       var moduleSheet = getSheetFromSpreadSheet(actualPeriod, modulos[x][0]);
       var lastRow = moduleSheet.getLastRow();
-      moduleSheet.appendRow([
-        data.nombre,
-        data.apellido,
-        data.tipo_doc,
-        data.num_doc,
-        data.tel_fijo,
-        data.email.toLowerCase(),
-        data.grado,
-        data.colegio,
-        data.convenio
-      ]);
+      var data2Write = CURRENT_PERIOD_COLUMNS.map(function(column) {
+        return data[column];
+      });
+      moduleSheet.appendRow([data2Write]);
       var lastRowRes = moduleSheet.getLastRow();
       var res = false;
 
@@ -77,17 +82,7 @@ function createModulesSheets() {
   Logger.log(actualPeriod);
   Logger.log(modules[1][0]);
   Logger.log("--------------------------");
-  var headers = [
-    "nombre",
-    "apellido",
-    "tipo_doc",
-    "ciudad_doc",
-    "tel_fijo",
-    "email",
-    "grado",
-    "colegio",
-    "convenio_colegio"
-  ];
+  var headers = CURRENT_PERIOD_COLUMNS;
   for (var x in modules) {
     var moduleSheet;
     if (x > 0) {
@@ -117,7 +112,7 @@ function validateModule(moduleSelected) {
   Logger.log("Titulos modules");
   Logger.log(modulesTitles);
 
-  if (!moduleSelected) throw "No se reconoce el modulo seleccionado"
+  if (!moduleSelected) throw "No se reconoce el modulo seleccionado";
   for (var i in modulesTitles) {
     if (moduleSelected.localeCompare(modulesTitles[i]) === 0) {
       validModule = modules[++i][0];

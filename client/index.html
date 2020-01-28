@@ -29,6 +29,19 @@
         display: none;
       }
 
+      .row_val_consignar {
+        font-size: 1.4em;
+        font-weight: bold;
+      }
+
+      .positive {
+        color: green;
+      }
+
+      .negative {
+        color: red;
+      }
+
       form {
         margin: 30px 20px;
       }
@@ -199,8 +212,8 @@
         </div>
 
         <div class="row">
-          <label class="control-label col-xs-2" for="tel_fijo"
-            >Teléfonos*</label
+          <label class="control-label col-xs-2" for="tel_celular"
+            >Celular*</label
           >
           <div class="col-xs-3 input-div">
             <input
@@ -211,6 +224,9 @@
               placeholder="Teléfono Celular..."
             />
           </div>
+          <label class="control-label col-xs-2" for="tel_fijo"
+            >Teléfono Fijo*</label
+          >
           <div class="col-xs-3 input-div">
             <input
               type="text"
@@ -291,6 +307,20 @@
               placeholder="Ciudad"
             >
             </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <label class="control-label col-xs-2" for="direccion"
+            >Dirección residencia*</label
+          >
+          <div class="col-xs-5 input-div">
+            <input
+              type="text"
+              class="form-control"
+              id="direccion"
+              name="direccion"
+            />
           </div>
         </div>
 
@@ -541,6 +571,21 @@
             </select>
           </div>
         </div>
+        <div class="row row_val_consignar">
+          <label class="control-label col-xs-2" for="val_consignar"
+            >Valor a Consignar*</label
+          >
+          <div class="col-xs-4 input-div">
+            <input
+              readonly
+              type="text"
+              class="form-control numeric"
+              id="val_consignar"
+              name="val_consignar"
+              placeholder="Valor a Consignar"
+            />
+          </div>
+        </div>
         <br />
         <div class="row input-div">
           <hr />
@@ -591,17 +636,17 @@
               placeholder="Valor consignado"
             />
           </div>
-
-          <label class="control-label col-xs-2" for="val_consignar"
-            >Valor a Consignar*</label
+          <label class="control-label col-xs-2" for="dif_consignado"
+            >Diferencia con lo consignado*</label
           >
           <div class="col-xs-4 input-div">
             <input
+              readonly
               type="text"
               class="form-control numeric"
-              id="val_consignar"
-              name="val_consignar"
-              placeholder="Valor a Consignar"
+              id="dif_consignado"
+              name="dif_consignado"
+              placeholder="0"
             />
           </div>
         </div>

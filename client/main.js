@@ -1,7 +1,7 @@
 //<script>
 let currentPeriod = null;
 let filesByname = {};
-let priceData = { estate: null, moduleCode: null };
+const PRICE_DATA = { estate: null, moduleCode: null, agreement: null };
 const MODULES = { byGrades: null, all: null, byArea: null };
 $(document).ready(runApp);
 
@@ -37,15 +37,17 @@ function loadCurrentPeriodData(data) {
 }
 
 function loadModules() {
-  const modulesByArea = MODULES.all.reduce((acc, module) => {
-    let { area } = module;
-    if (acc[area]) {
-      acc[area].push(module);
-    } else {
-      acc[area] = [module];
-    }
-    return acc;
-  }, {});
+  const modulesByArea = MODULES.all
+    .filter(module => module.disabled !== "x")
+    .reduce((acc, module) => {
+      let { area } = module;
+      if (acc[area]) {
+        acc[area].push(module);
+      } else {
+        acc[area] = [module];
+      }
+      return acc;
+    }, {});
   MODULES.byArea = modulesByArea;
   setModulesSelectionHTML(modulesByArea);
 }
@@ -73,6 +75,7 @@ function subscribeEventHandlers() {
   $("#confirmEmail").on("copy cut paste", DoNotCopyPaste);
   $("#myForm #estamento").on("change", handleChangeEstate);
   $("#curso_anterior").on("change", handleChangeAnotherGrade);
+  $("#val_consignado").on("change", handleChangePriceData);
   $("#inscrito_anterior").on("change", handleChangePreviousRegister);
   $("#myForm").on("click", 'input[name="convenio"]', handleClickAgreement);
 }
@@ -110,6 +113,8 @@ function handleFileChange(e) {
 
 function handleClickAgreement() {
   let val = $(this).val();
+  PRICE_DATA.agreement = val;
+  handleChangePriceData();
   if (val === "RELACION_UNIVALLE") return showUnivalleRelationFiles();
   if (val === "BECADOS") return showScholarshipFiles();
 
@@ -121,12 +126,12 @@ function handleClickAgreement() {
 
 function handleChangeModule() {
   let moduleCode = $(this).val();
-  priceData.moduleCode = moduleCode;
+  PRICE_DATA.moduleCode = moduleCode;
   handleChangePriceData();
 }
 
 function handleChangePriceData() {
-  const { moduleCode, estate } = priceData;
+  const { moduleCode, estate, agreement } = PRICE_DATA;
   const module = MODULES.all.find(m => m.codigo === moduleCode);
   console.log("{module, estate}", { module, estate });
   if (!module || !estate) return;
@@ -134,13 +139,27 @@ function handleChangePriceData() {
   if (estate === "PRIVADO") price = module.precio_privado;
   if (estate === "PUBLICO") price = module.precio_publico;
   if (estate === "COBERTURA") price = module.precio_cobertura;
-
+  //Univalle overrides whatever estate is selected
+  if (agreement === "RELACION_UNIVALLE") price = module.precio_univalle;
+  const payed = $("#val_consignado").val();
+  const diff = +payed - +price;
+  if (diff > 0) {
+    $("#dif_consignado").removeClass("negative");
+    $("#dif_consignado").addClass("positive");
+  } else if (diff < 0) {
+    $("#dif_consignado").removeClass("positive");
+    $("#dif_consignado").addClass("negative");
+  } else {
+    $("#dif_consignado").removeClass("positive");
+    $("#dif_consignado").removeClass("negative");
+  }
+  $("#dif_consignado").val(diff);
   $("#val_consignar").val(price);
 }
 
 function handleChangeEstate() {
   let estate = $(this).val();
-  priceData.estate = estate;
+  PRICE_DATA.estate = estate;
   handleChangePriceData();
   let grado = $("#grado").val();
   if (estate === "PUBLICO" || estate === "COBERTURA") {

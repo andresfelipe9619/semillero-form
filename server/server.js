@@ -260,9 +260,6 @@ function getCurrentPeriodData() {
   var rawModules = getModules();
   var modules = sheetValuesToObject(rawModules);
   var currentPeriod = getCurrentPeriod()["periodo"];
-  modules = modules.filter(function(module) {
-    return module.disabled !== "x";
-  });
   return { currentPeriod: currentPeriod, modules: modules };
 }
 
@@ -328,9 +325,6 @@ function registerStudent(formString) {
 function getDataForRegistering(form, currentStudentData) {
   if (form.otraeps) form.eps = form.otraeps;
   if (!form.comuna_res) form.comuna_res = "-";
-  if(form.val_consignado && form.val_consignar){
-    form.dif_consignado = +form.val_consignado - +form.val_consignar
-  }
   if (form.inscrito_anterior === "SI") {
     form.inscrito_anterior = form.curso_anterior;
   }

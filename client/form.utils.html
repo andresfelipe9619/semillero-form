@@ -70,9 +70,10 @@
       const coursesSelection = courses.map(({ nombre, codigo, area }, index) =>
         buildCourseSelection({ code: codigo, area, name: nombre })
       );
-      const areaName = name.charAt(0).toUpperCase() + name.slice(1);
+      const areaName = capitalize(name);
+      console.log("removeSpaces(areaName)", removeSpaces(areaName));
       let module = `
-        <div id="mod${areaName}" class="col-xs-4 input-div">
+        <div id="mod${removeSpaces(areaName)}" class="col-xs-4 input-div">
           <div class="row">
             <h4>${areaName}</h4>
           </div>
@@ -93,11 +94,20 @@
     return modulesSelection;
   }
 
+  function removeSpaces(string) {
+    const normalized = string.replace(/\s+/g, "");
+    return normalized;
+  }
+
+  function capitalize(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
   function buildCourseSelection({ code, area, name }) {
     return ` <div id="tema${code}" class="checkbox">
        <input
          type="radio"
-         class="${area}"
+         class="${removeSpaces(area)}"
          name="seleccion"
          id="${code}"
          value="${code}"
@@ -128,7 +138,8 @@
   }
 
   function moduleSelector(module) {
-    const selector = `#mod${module.charAt(0).toUpperCase()}${module.slice(1)}`;
+    const normalized = removeSpaces(module);
+    const selector = `#mod${capitalize(normalized)}`;
     return selector;
   }
 
@@ -297,7 +308,6 @@
   function setDefaultCursor() {
     $("#btn-buscar, #save, #edit, body").css("cursor", "");
     $("#save, #edit").prop("disabled", false);
-
   }
 
   function cleanArray(actual) {
