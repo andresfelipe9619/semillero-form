@@ -229,6 +229,19 @@
     reload && window.location.reload(true);
   }
 
+  function populateModulesSelect(modules) {
+    let selectElement = document.getElementById("curso_anterior");
+    selectElement.length = 0;
+    selectElement.options[0] = new Option("Seleccione Curso", "-1");
+    selectElement.selectedIndex = 0;
+    for (let module of modules) {
+      selectElement.options[selectElement.length] = new Option(
+        module.nombre,
+        module.nombre
+      );
+    }
+  }
+
   let departments = ["CAUCA", "VALLE DEL CAUCA"];
   let citiesData = [];
   citiesData[0] = "";

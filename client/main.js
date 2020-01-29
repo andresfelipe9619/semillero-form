@@ -50,6 +50,7 @@ function loadModules() {
     }, {});
   MODULES.byArea = modulesByArea;
   setModulesSelectionHTML(modulesByArea);
+  populateModulesSelect(MODULES.all);
 }
 
 const authenticateCurrentUser = () =>
