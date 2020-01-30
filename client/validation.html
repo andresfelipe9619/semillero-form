@@ -43,13 +43,7 @@
       number: true
     },
     tel_fijo: {
-      required: {
-        depends: function(element) {
-          let valuecelular = $("#tel_celular").val();
-          if (valuecelular == "") return true;
-          return false;
-        }
-      },
+      required: false,
       number: true
     },
     tel_celular: {
@@ -221,9 +215,6 @@
     confirmEmail: {
       equalTo: "Los correos no son iguales",
       email: "Correo inválido"
-    },
-    tel_fijo: {
-      required: "Por favor escribe por lo menos un número de contacto"
     },
     tel_celular: {
       required: "Por favor escribe por lo menos un número de contacto"
