@@ -137,16 +137,20 @@ function handleChangePriceData() {
   console.log("{module, estate}", { module, estate });
   if (!module || !estate) return;
   let price = 0;
+  let payed = $("#val_consignado").val();
   if (estate === "PRIVADO") price = module.precio_privado;
   if (estate === "PUBLICO") price = module.precio_publico;
   if (estate === "COBERTURA") price = module.precio_cobertura;
-  //Univalle overrides whatever estate is selected
+  //Univalle and scolarship overrides whatever estate is selected
   if (agreement === "RELACION_UNIVALLE") price = module.precio_univalle;
-  const payed = $("#val_consignado").val();
-  const diff = +payed - +price;
+  if (agreement === "BECADOS") {
+    price = 0;
+    $("#val_consignado").val(0);
+  }
+  let diff = +payed - +price;
   if (diff > 0) {
     $("#dif_consignado").removeClass("negative");
-    $("#dif_consignado").addClass("positive");
+    diff = 0;
   } else if (diff < 0) {
     $("#dif_consignado").removeClass("positive");
     $("#dif_consignado").addClass("negative");

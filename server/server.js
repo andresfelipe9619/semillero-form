@@ -344,7 +344,8 @@ function getDataForRegistering(form, currentStudentData) {
       depto_res: form.depto_res.toUpperCase(),
       nombre_acudiente: form.nombre_acudiente.toUpperCase(),
       ciudad_res: form.ciudad_res.toUpperCase(),
-      modulo: selectedModule
+      modulo: selectedModule,
+      observaciones: ""
     },
     periods
   );

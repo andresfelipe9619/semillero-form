@@ -7,7 +7,7 @@ var CURRENT_PERIOD_COLUMNS = [
   "email",
   "grado",
   "colegio",
-  "convenio_colegio"
+  "convenio"
 ];
 
 function getModulesByGrades() {
@@ -59,7 +59,9 @@ function addStudentToModuleSheet(module, data) {
       var data2Write = CURRENT_PERIOD_COLUMNS.map(function(column) {
         return data[column];
       });
-      moduleSheet.appendRow([data2Write]);
+      Logger.log("data2Write");
+      Logger.log(data2Write);
+      moduleSheet.appendRow(data2Write);
       var lastRowRes = moduleSheet.getLastRow();
       var res = false;
 

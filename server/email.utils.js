@@ -61,7 +61,7 @@ function getEmailTemplate(data) {
   contenthtml += "<h3>UNIVERSIDAD DEL VALLE</h3>";
   contenthtml += "<h3>CONFIRMACION INSCRIPCION SEMILLERO DE CIENCIAS</h3>";
   contenthtml +=
-    "<h3>Actualmente se encuentra inscrito en el semillero de ciencias, periodo académico Febrero - Junio de 2019.</h3></div>";
+    "<h3>Actualmente se encuentra inscrito en el semillero de ciencias, periodo académico Febrero - Junio de 2020</h3></div>";
   contenthtml +=
     '<p><strong>NOTA: No olvide consultar su salón de clase en nuestra pagina <a href="http://semillerociencias.univalle.edu.co/">Semillero</a> o revisar el correo electrónico donde también serán enviados los listados.</p></strong>';
   contenthtml +=
@@ -112,8 +112,21 @@ function getEmailTemplate(data) {
       data.curso_anterior +
       "</p>";
   }
-
   contenthtml += "<p> <strong>Convenio: </strong>" + data.convenio + "</p>";
-
+  contenthtml +=
+    "<p> <strong>Costo del curso:  </strong>" + data.val_consignar + "</p>";
+  contenthtml +=
+  contenthtml +=
+    "<p> <strong>Valor Consignado:  </strong>" + data.val_consignado + "</p>";
+  contenthtml +=
+    "<p> <strong>Saldo pendiente:  </strong>" + data.dif_consignado + "</p>";
+  contenthtml +=
+    "<p> <strong>Número de recibo:  </strong>" +
+    data.recibo_consignacion +
+    "</p>";
+  contenthtml +=
+    "<p> <strong>Fecha de Consignación:  </strong>" +
+    data.fecha_consignacion +
+    "</p>";
   return contenthtml;
 }
