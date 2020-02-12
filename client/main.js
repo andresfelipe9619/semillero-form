@@ -3,6 +3,7 @@ let currentPeriod = null;
 let filesByname = {};
 const PRICE_DATA = { estate: null, moduleCode: null, agreement: null };
 const MODULES = { byGrades: null, all: null, byArea: null };
+let isUserAdmin = false;
 $(document).ready(runApp);
 
 function runApp() {
@@ -61,6 +62,7 @@ const authenticateCurrentUser = () =>
 
 function onSuccessAuth(isAdmin) {
   if (!isAdmin) return hideAdminData();
+  isUserAdmin = isAdmin;
   return showSearchModule();
 }
 
@@ -121,7 +123,7 @@ function handleClickAgreement() {
 
   hideStudyCertificate();
   hideScholarshipFiles();
-  $("#myForm #pdfRecibo").fadeIn();
+  $("#myForm #pdfReciboPago").fadeIn();
   $("#myForm #reciboFile").prop("disabled", false);
 }
 

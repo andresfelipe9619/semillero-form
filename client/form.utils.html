@@ -4,12 +4,15 @@
   function hideAdminData() {
     $("#modBusqueda").hide();
     showForm();
+    hidePaymentReceipt();
     hideAdminAgreements();
     hideInitialData();
   }
 
   function showSearchModule() {
     $("#modBusqueda").fadeIn();
+    $(".row_val_consignado").removeClass("oculto");
+    $(".row_recibo_consignacion").removeClass("oculto");
     hideInitialData();
   }
 
@@ -159,11 +162,10 @@
 
   function showScholarshipFiles() {
     $("#myForm #pdfRecibos").fadeIn();
-    $("#myForm #pdfCartaSolicitud").fadeIn();
     $("#myForm #recibosPublicos").prop("disabled", false);
+    $("#myForm #pdfCartaSolicitud").fadeIn();
     $("#myForm #cartaSolicitud").prop("disabled", false);
-    $("#myForm #pdfRecibo").fadeOut();
-    $("#myForm #reciboFile").prop("disabled", true);
+    hidePaymentReceipt();
     hideStudyCertificate();
   }
 
@@ -176,9 +178,20 @@
 
   function showUnivalleRelationFiles() {
     showStudyCertificate();
-    $("#myForm #pdfRecibo").fadeIn();
-    $("#myForm #reciboFile").prop("disabled", false);
+    showPaymentReceipt();
     hideScholarshipFiles();
+  }
+
+  function showPaymentReceipt() {
+    if (isUserAdmin) {
+      $("#myForm #pdfReciboPago").fadeIn();
+      $("#myForm #reciboFile").prop("disabled", false);
+    }
+  }
+
+  function hidePaymentReceipt() {
+    $("#myForm #pdfReciboPago").fadeOut();
+    $("#myForm #reciboFile").prop("disabled", true);
   }
 
   function showStudyCertificate() {

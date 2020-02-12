@@ -136,19 +136,19 @@
       required: true
     },
     val_consignado: {
-      required: true,
+      required: false,
       number: true
     },
     val_consignar: {
-      required: true,
+      required: false,
       number: true
     },
     recibo_consignacion: {
-      required: true,
+      required: false,
       number: true
     },
     fecha_consignacion: {
-      required: true,
+      required: false,
       date: true
     },
     terminos: {
@@ -176,11 +176,7 @@
       }
     },
     reciboFile: {
-      required: {
-        depends: function(element) {
-          return true;
-        }
-      }
+      required: false
     },
     recibosPublicos: {
       required: {
@@ -326,11 +322,34 @@
     setWaitCursor();
     let form = $("#myForm");
     const formData = await getFormData(form);
+    formData.link = getPaymentLink();
     console.log("FORM-->", { form, formData });
+    openPaymentLink();
     google.script.run
       .withSuccessHandler(fileUploaded)
       .withFailureHandler(errorHandler)
       .registerStudent(JSON.stringify(formData));
+  }
+
+  function getPaymentLink() {
+    const { moduleCode, estate, agreement } = PRICE_DATA;
+    const module = MODULES.all.find(m => m.codigo === moduleCode);
+    console.log("LINK {module, estate}", { module, estate });
+    if (!module || !estate) return;
+    let link = "";
+    let payed = $("#val_consignado").val();
+    if (estate === "PRIVADO") link = module.link_privado;
+    if (estate === "PUBLICO") link = module.link_publico;
+    if (estate === "COBERTURA") link = module.link_publico;
+    //Univalle overrides whatever estate is selected
+    if (agreement === "RELACION_UNIVALLE") link = module.link_univalle;
+    console.log("link", link);
+    return link;
+  }
+
+  function openPaymentLink() {
+    const link = getPaymentLink();
+    if (link) window.open(link, "_blank");
   }
 
   function highlight(element) {
