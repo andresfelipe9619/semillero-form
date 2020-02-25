@@ -324,7 +324,7 @@
     const formData = await getFormData(form);
     formData.link = getPaymentLink();
     console.log("FORM-->", { form, formData });
-    openPaymentLink();
+    // openPaymentLink();
     google.script.run
       .withSuccessHandler(fileUploaded)
       .withFailureHandler(errorHandler)
