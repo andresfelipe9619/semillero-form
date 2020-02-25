@@ -11,7 +11,7 @@ function sendConfirmationEmail(data, files) {
     }
   }
   var periodo = getCurrentPeriod()["periodo"];
-  var subject = "Preinscripción " + periodo + " " + subModule;
+  var subject = "Inscripción " + periodo + " " + subModule;
   Logger.log("Submodulo");
   Logger.log(subModule);
   MailApp.sendEmail({
@@ -59,13 +59,13 @@ function getEmailTemplate(data) {
   }
   contenthtml += '<div style="text-align:center">';
   contenthtml += "<h3>UNIVERSIDAD DEL VALLE</h3>";
-  contenthtml += "<h3>PREINSCRIPCIÓN SEMILLERO DE CIENCIAS</h3>";
+  contenthtml += "<h3>INSCRIPCIÓN SEMILLERO DE CIENCIAS</h3>";
   contenthtml +=
-    "<h3>Actualmente se encuentra preinscrito en el semillero de ciencias, periodo académico Febrero - Junio de 2020</h3></div>";
+    "<h3>Actualmente se encuentra inscrito en el semillero de ciencias, periodo académico Febrero - Junio de 2020</h3></div>";
   contenthtml +=
     '<p><strong>NOTA: No olvide consultar su salón de clase en nuestra pagina <a href="http://semillerociencias.univalle.edu.co/">Semillero</a> o revisar el correo electrónico donde también serán enviados los listados.</p></strong>';
   contenthtml +=
-    "<p><strong>Importante:</strong>Conserve el original del recibo de pago, la cual debe de ser entregado el primer dia de clases a los monitores. ESTA PREINSCRIPCIÓN NO SERÁ VÁLIDA SIN LA RESPECTIVA VERIFICACIÓN DE SU PAGO</p><hr>";
+    "<p><strong>Importante:</strong>Conserve el original del recibo de pago, la cual debe de ser entregado el primer dia de clases a los monitores. ESTA INSCRIPCIÓN NO SERÁ VÁLIDA SIN LA RESPECTIVA VERIFICACIÓN DE SU PAGO</p><hr>";
   contenthtml += "<h3> Modulo: " + moduleName + "</h3>";
   contenthtml +=
     "<p> <strong>Fecha de inscripcion:</strong>	" + new Date() + "</p>";
@@ -115,7 +115,7 @@ function getEmailTemplate(data) {
   contenthtml +=
     "<p> <strong>Costo del curso:  </strong>" + data.val_consignar + "</p>";
   contenthtml +=
-    '<strong style="font-size: 2em;">RECUERDA QUE ESTA PREINSCRIPCIÓN NO SERÁ VÁLIDA SIN LA RESPECTIVA VERIFICACIÓN DE SU PAGO</strong>';
+    '<strong style="font-size: 2em;">RECUERDA QUE ESTA INSCRIPCIÓN NO SERÁ VÁLIDA SIN LA RESPECTIVA VERIFICACIÓN DE SU PAGO</strong>';
   contenthtml +=
     '<p> <strong><a href="' + data.link + '">Enlace de pago</a></strong></p>';
 
