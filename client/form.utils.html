@@ -154,7 +154,7 @@
 
   function hideFiles() {
     $("#myForm #pdfConstanciaEstu").hide();
-    $("#myForm #pdfContanciaFun").hide();
+    $("#myForm #pdfConstanciaFun").hide();
     $("#myForm #pdfRecibos").hide();
     $("#myForm #pdfCartaSolicitud").hide();
     $("#myForm #pdfActaGrado").hide();
@@ -165,6 +165,7 @@
     $("#myForm #recibosPublicos").prop("disabled", false);
     $("#myForm #pdfCartaSolicitud").fadeIn();
     $("#myForm #cartaSolicitud").prop("disabled", false);
+    hideUnivalleCertificate();
     hidePaymentReceipt();
     hideStudyCertificate();
   }
@@ -180,6 +181,17 @@
     showStudyCertificate();
     showPaymentReceipt();
     hideScholarshipFiles();
+    showUnivalleCertificate();
+  }
+
+  function showUnivalleCertificate(){
+    $("#myForm #pdfConstanciaFun").fadeIn();
+    $("#myForm #constanciaFuncFile").prop("disabled", false);
+  }
+
+  function hideUnivalleCertificate(){
+    $("#myForm #pdfConstanciaFun").fadeOut();
+    $("#myForm #constanciaFuncFile").prop("disabled", true);
   }
 
   function showPaymentReceipt() {
@@ -261,7 +273,7 @@
   citiesData[1] =
     "Almaguer|Argelia|Balboa|Bolílet|Buenos aires|Cajibío|Caldono|Caloto|Corintio|El tambo|Florencia|Guachené|Guapí|Inzá|Jambaló|La Sierra|La vega|López de micay|Mercaderes|Miranda|Morales|Padilla|Patía|Piamonte|Piendamó|Popayán|Puerto Tejada|Puracé|Páez|Rosas|San Sebastián|Santa Rosa|Santander de Quilichao|Silvia|Soatá|Sucre|Suárez|Timbiquí|Timbío|Toribío|Torotó|Villa rica";
   citiesData[2] =
-    "Cali||Andalucía|Buenaventura|Buga|Bugalagrande|Caicedonia|Calima-El Darién|Candelaria|Cartago|Dagua|El Cairo|El Cerrito|El Dovio|El águila|Florida|Ginebra|Guacarí|Jamundí|La Cumbre|La Unión|La Victoria|Obando|Palmira|Pradera|Restrepo|Restrepo|Riofrío|Rodalnillo|San Pedro|Sevilla|Toro|Trujillo|Tuluá|Ulloa|Versalles|Vijes|Yotoco|Yumbo|Zarzal";
+    "Cali|Andalucía|Buenaventura|Buga|Bugalagrande|Caicedonia|Calima-El Darién|Candelaria|Cartago|Dagua|El Cairo|El Cerrito|El Dovio|El águila|Florida|Ginebra|Guacarí|Jamundí|La Cumbre|La Unión|La Victoria|Obando|Palmira|Pradera|Restrepo|Restrepo|Riofrío|Rodalnillo|San Pedro|Sevilla|Toro|Trujillo|Tuluá|Ulloa|Versalles|Vijes|Yotoco|Yumbo|Zarzal";
   const departmentElementId = "depto_res";
   const cityElementId = "ciudad_res";
   const communeElementId = "comuna_res";

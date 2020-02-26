@@ -120,8 +120,12 @@ function handleClickAgreement() {
   handleChangePriceData();
   if (val === "RELACION_UNIVALLE") return showUnivalleRelationFiles();
   if (val === "BECADOS") return showScholarshipFiles();
-
-  hideStudyCertificate();
+  if (val === "CONVENIO_COLEGIO") {
+    hideStudyCertificate();
+  } else {
+    showStudyCertificate();
+  }
+  hideUnivalleCertificate();
   hideScholarshipFiles();
   $("#myForm #pdfReciboPago").fadeIn();
   $("#myForm #reciboFile").prop("disabled", false);
