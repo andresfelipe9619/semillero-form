@@ -42,6 +42,23 @@
         color: red;
       }
 
+      #photo-div img {
+        top: 0;
+        left: 0;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        display: inline-block;
+        background-color: rgba(100, 100, 100, 0.6);
+      }
+
+      #photo-div input {
+        display: inline-block;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+      }
+
       form {
         margin: 30px 20px;
       }
@@ -63,18 +80,18 @@
         <div class="col-md-6">
           <img
             src="http://semillero.univalle.edu.co/images/Logo-PNG-Grande-UV.png"
-            style="width: 250px; margin:auto; height: auto;"
+            style="width: 250px; margin: auto; height: auto;"
           />
         </div>
         <div class="col-md-6">
           <img
             src="http://www.univalle.edu.co/images/logo.jpg"
-            style="margin-top:80px; display:block;  "
+            style="margin-top: 80px; display: block;"
           />
         </div>
       </div>
       <div class="row">
-        <h1 align="center" style="text-align:center;">
+        <h1 align="center" style="text-align: center;">
           Formulario de Inscripción Semilleros de Ciencias
         </h1>
       </div>
@@ -116,8 +133,26 @@
 
       <form class="form oculto" role="form" id="myForm" name="myForm">
         <div class="row">
+          <div class="col-xs-4"  id="photo-div">
+            <img
+              id="prev"
+              src="https://cdn2.iconfinder.com/data/icons/ios-7-icons/50/user_male2-512.png"
+              alt="Photo"
+            />
+            <input
+              type="file"
+              accept="image/*"
+              capture="camera"
+              name="photo"
+              id="photo"
+              required
+            />
+            Subir Foto*
+          </div>
+        </div>
+        <div class="row">
           <br />
-          <label class="control-label col-xs-2 " for="name"
+          <label class="control-label col-xs-2" for="name"
             >Nombres y Apellidos*</label
           >
           <div class="col-xs-4 input-div">
@@ -192,7 +227,7 @@
           </div>
           <div class="col-xs-3">
             ¿No tienes correo gmail?
-            <span class="btn btn-info" id="createEmail" style="margin-top:5px;"
+            <span class="btn btn-info" id="createEmail" style="margin-top: 5px;"
               >¡Crea Uno!</span
             >
           </div>
@@ -808,7 +843,7 @@
             value="Iniciar proceso de Pago"
             id="save"
           />
-          <span id="mySpan" style="display:none; color: #d51b23;"
+          <span id="mySpan" style="display: none; color: #d51b23;"
             >Procesando Información...</span
           >
         </div>

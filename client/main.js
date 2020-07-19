@@ -39,7 +39,7 @@ function loadCurrentPeriodData(data) {
 
 function loadModules() {
   const modulesByArea = MODULES.all
-    .filter(module => module.disabled !== "x")
+    .filter((module) => module.disabled !== "x")
     .reduce((acc, module) => {
       let { area } = module;
       if (acc[area]) {
@@ -79,6 +79,8 @@ function subscribeEventHandlers() {
   $("#myForm #estamento").on("change", handleChangeEstate);
   $("#curso_anterior").on("change", handleChangeAnotherGrade);
   $("#val_consignado").on("change", handleChangePriceData);
+  $("#photo").on("change", handleChangePhoto);
+  $("#val_consignado").on("change", handleChangePriceData);
   $("#inscrito_anterior").on("change", handleChangePreviousRegister);
   $("#myForm").on("click", 'input[name="convenio"]', handleClickAgreement);
 }
@@ -98,7 +100,7 @@ function enrollStudent(e) {
     text: "Debe aceptar los términos y condiciones para enviar el formulario.",
     type: "warning",
     confirmButtonText: "Ok",
-    closeOnConfirm: true
+    closeOnConfirm: true,
   });
 }
 
@@ -112,6 +114,27 @@ function handleFileChange(e) {
   const file = this.files[0];
   filesByname[name] = file;
   console.log("filesByname", filesByname);
+}
+
+function handleChangePhoto(e) {
+  const { name } = e.target;
+  readURL(this, name);
+}
+
+function readURL(input, name) {
+  try {
+    const file = input.files[0];
+    if (input.files && file) {
+      filesByname[name] = file;
+      var reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = function (e) {
+        $("#prev").attr("src", e.target.result);
+      };
+    }
+  } catch (error) {
+    errorHandler(error);
+  }
 }
 
 function handleClickAgreement() {
@@ -139,7 +162,7 @@ function handleChangeModule() {
 
 function handleChangePriceData() {
   const { moduleCode, estate, agreement } = PRICE_DATA;
-  const module = MODULES.all.find(m => m.codigo === moduleCode);
+  const module = MODULES.all.find((m) => m.codigo === moduleCode);
   console.log("{module, estate}", { module, estate });
   if (!module || !estate) return;
   let price = 0;
@@ -226,9 +249,7 @@ function handleChangeAnotherGrade() {
     (grado == 6 || grado == 7)
   ) {
     $("#myForm #modMatematicas").fadeIn();
-    $("#myForm #modMatematicas .input-div")
-      .children()
-      .fadeIn();
+    $("#myForm #modMatematicas .input-div").children().fadeIn();
     $("#myForm #modFisica").fadeOut();
     $("#myForm #modQuimica").fadeOut();
     $("#myForm #modArtes").fadeOut();
@@ -236,21 +257,11 @@ function handleChangeAnotherGrade() {
     $("#myForm #modHumanidades").fadeOut();
   } else if ((grado == 6 || grado == 7) && (val == "" || val == " ")) {
     $("#myForm #modMatematicas").fadeIn();
-    $("#myForm #modMatematicas .input-div")
-      .children()
-      .fadeOut();
-    $("#myForm #modMatematicas .input-div")
-      .children("#temaentrac")
-      .fadeIn();
-    $("#myForm #modMatematicas .input-div")
-      .children("#temalogcon")
-      .fadeIn();
-    $("#myForm #modMatematicas .input-div")
-      .children("#temaalgfun")
-      .fadeOut();
-    $("#myForm #modMatematicas .input-div")
-      .children("#temageopl")
-      .fadeOut();
+    $("#myForm #modMatematicas .input-div").children().fadeOut();
+    $("#myForm #modMatematicas .input-div").children("#temaentrac").fadeIn();
+    $("#myForm #modMatematicas .input-div").children("#temalogcon").fadeIn();
+    $("#myForm #modMatematicas .input-div").children("#temaalgfun").fadeOut();
+    $("#myForm #modMatematicas .input-div").children("#temageopl").fadeOut();
     $("#myForm #modFisica").fadeOut();
     $("#myForm #modQuimica").fadeOut();
     $("#myForm #modArtes").fadeIn();
@@ -262,14 +273,14 @@ function handleChangeAnotherGrade() {
 async function editStudentData() {
   let valid = validateAndSave();
 
-  let onSuccess = function(person) {
+  let onSuccess = function (person) {
     $("#save").attr("disabled", false);
     swal({
       title: "Exito!",
       text: "Se edito el estudiante satisfactoriamente!",
       type: "success",
       confirmButtonText: "Ok",
-      closeOnConfirm: true
+      closeOnConfirm: true,
     });
   };
   if (!valid) return;
@@ -291,7 +302,7 @@ function cargarInfo() {
       return swal({
         title: "Advertencia ...",
         text: "Ingrese una cedula para consultar",
-        type: "warning"
+        type: "warning",
       });
     }
     setWaitCursor();
@@ -301,7 +312,7 @@ function cargarInfo() {
   }
 }
 
-const searchPerson = id =>
+const searchPerson = (id) =>
   google.script.run
     .withSuccessHandler(loadStudent)
     .withFailureHandler(errorHandler)
@@ -315,7 +326,7 @@ function loadStudent(personData) {
     return swal({
       title: "Advertencia ...",
       text: "La cedula ingresada no corresponde a ningún estudiante",
-      type: "warning"
+      type: "warning",
     });
   }
   if (person.state === "antiguo") {
@@ -323,7 +334,7 @@ function loadStudent(personData) {
       title: "Advertencia ...",
       text:
         "El estudiante esta inscrito anteriormente, pero no el periodo actual ",
-      type: "warning"
+      type: "warning",
     });
   }
   if (person.state === "actual") return fillInStudentData(person);
@@ -396,13 +407,13 @@ async function getFormData($form) {
   var serializedForm = $form.serializeArray();
   var formData = {};
 
-  $.map(serializedForm, function(input, i) {
+  $.map(serializedForm, function (input, i) {
     formData[input["name"]] = input["value"];
   });
 
-  const filesPromises = Object.keys(filesByname).map(fileKey => {
+  const filesPromises = Object.keys(filesByname).map((fileKey) => {
     const doc = formData.num_doc;
-    return new Promise(async resolve => {
+    return new Promise(async (resolve) => {
       const fileString = await getFile(filesByname[fileKey]);
       const file = { base64: fileString, name: getFileName(fileKey, doc) };
       resolve(file);
@@ -437,19 +448,22 @@ const getFileName = (fileKey, doc) => {
   if (fileKey === "actaGrado") {
     return `${doc}_ACTA_GRADO`;
   }
+  if (fileKey === "photo") {
+    return `${doc}_FOTO_PERFIL`;
+  }
 };
 
 function getRequestPayload() {
-  google.script.url.getLocation(function(location) {
+  google.script.url.getLocation(function (location) {
     let payload = location.parameter.test || null;
     if (payload) return fillInTestData();
   });
 }
 
 function getFile(file) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     let reader = new FileReader();
-    reader.onerror = function(event) {
+    reader.onerror = function (event) {
       reader.abort();
       errorHandler(event);
     };
@@ -467,7 +481,7 @@ function errorHandler(error) {
     text: String(error),
     type: "error",
     confirmButtonText: "Ok",
-    closeOnConfirm: true
+    closeOnConfirm: true,
   });
 }
 
@@ -480,7 +494,7 @@ function fileUploaded(status) {
         "La inscripción se realizó satisfactoriamente!\nRecibiras un correo para confirmar los datos de tu inscripcion.\nFavor entregar el recibo original el primer dia de clases a los monitores",
       type: "success",
       confirmButtonText: "Ok",
-      closeOnConfirm: true
+      closeOnConfirm: true,
     });
     $("#mySpan").fadeOut();
     setDefaultCursor();
@@ -531,7 +545,7 @@ function fillInTestData() {
     val_consignado: "500000",
     val_consignar: "300000",
     recibo_consignacion: "999999",
-    fecha_consignacion: "2020-01-20"
+    fecha_consignacion: "2020-01-20",
   };
   fillInDataInForm({ data: testPerson });
 }
