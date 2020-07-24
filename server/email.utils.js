@@ -61,7 +61,7 @@ function getEmailTemplate(data) {
   contenthtml += "<h3>UNIVERSIDAD DEL VALLE</h3>";
   contenthtml += "<h3>INSCRIPCIÓN SEMILLERO DE CIENCIAS</h3>";
   contenthtml +=
-    "<h3>Actualmente se encuentra inscrito en el semillero de ciencias, periodo académico Febrero - Junio de 2020</h3></div>";
+    "<h3>Actualmente se encuentra inscrito en el semillero de ciencias, periodo académico Septiembre - Diciembre de 2020</h3></div>";
   contenthtml +=
     '<p><strong>NOTA: No olvide consultar su salón de clase en nuestra pagina <a href="http://semillerociencias.univalle.edu.co/">Semillero</a> o revisar el correo electrónico donde también serán enviados los listados.</p></strong>';
   contenthtml +=
