@@ -63,9 +63,9 @@ function getEmailTemplate(data) {
   contenthtml +=
     "<h3>Actualmente se encuentra inscrito en el semillero de ciencias, periodo académico Septiembre - Diciembre de 2020</h3></div>";
   contenthtml +=
-    '<p><strong>NOTA: No olvide consultar su salón de clase en nuestra pagina <a href="http://semillerociencias.univalle.edu.co/">Semillero</a> o revisar el correo electrónico donde también serán enviados los listados.</p></strong>';
-  contenthtml +=
-    "<p><strong>Importante:</strong>Conserve el original del recibo de pago, la cual debe de ser entregado el primer dia de clases a los monitores. ESTA INSCRIPCIÓN NO SERÁ VÁLIDA SIN LA RESPECTIVA VERIFICACIÓN DE SU PAGO</p><hr>";
+    '<p><strong>NOTA: No olvide revisar el correo electrónico donde será enviado información respecto a la primera sesión.</p></strong>';
+   contenthtml +=
+    "<p><strong>Importante:</strong>Conserve el original del recibo de pago. ESTA INSCRIPCIÓN NO SERÁ VÁLIDA SIN LA RESPECTIVA VERIFICACIÓN DE SU PAGO</p><hr>";
   contenthtml += "<h3> Modulo: " + moduleName + "</h3>";
   contenthtml +=
     "<p> <strong>Fecha de inscripcion:</strong>	" + new Date() + "</p>";
