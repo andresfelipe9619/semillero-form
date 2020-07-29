@@ -61,59 +61,53 @@ function getEmailTemplate(data) {
   contenthtml += "<h3>UNIVERSIDAD DEL VALLE</h3>";
   contenthtml += "<h3>INSCRIPCIÓN SEMILLERO DE CIENCIAS</h3>";
   contenthtml +=
-    "<h3>Actualmente se encuentra inscrito en el semillero de ciencias, periodo académico Septiembre - Diciembre de 2020</h3></div>";
+    "<h3>Actualmente se encuentra inscrito(a) en el Semillero Universidad del Valle, periodo académico Septiembre – Diciembre de 2020</h3></div>";
   contenthtml +=
-    '<p><strong>NOTA: No olvide revisar el correo electrónico donde será enviado información respecto a la primera sesión.</p></strong>';
+    '<p><strong>NOTA:  No olvide revisar el correo electrónico que registro en esta inscripción, se le enviara toda la información con respecto a la confirmación de su matrícula, el inicio de las clases y la programación de las actividades academicas durante el periodo académico Septiembre – Diciembre de 2020.</p></strong>';
    contenthtml +=
-    "<p><strong>Importante:</strong>Conserve el original del recibo de pago. ESTA INSCRIPCIÓN NO SERÁ VÁLIDA SIN LA RESPECTIVA VERIFICACIÓN DE SU PAGO</p><hr>";
-  contenthtml += "<h3> Modulo: " + moduleName + "</h3>";
+    "<p><strong>Importante: </strong>Esta inscripción no será válida sin la respectiva verificación de su pago. Una vez realizada la verificación recibirá una confirmación de su matrícula por parte de la Coordinación General del Semillero Universidad del Valle Por favor conserve su recibo de pago.</p><hr>";
+  contenthtml += "<h3> Módulo: " + moduleName + "</h3>";
   contenthtml +=
-    "<p> <strong>Fecha de inscripcion:</strong>	" + new Date() + "</p>";
+    "<p> <strong>Fecha de Inscripcion:</strong>	" + new Date() + "</p>";
   contenthtml +=
-    "<p> <strong>Nombre completo: </strong>" +
+    "<p> <strong>Nombre Completo: </strong>" +
     data.nombre +
     " " +
     data.apellido +
     "</p>";
   contenthtml +=
-    "<p> <strong>Documento de identidad:	</strong>" +
+    "<p> <strong>Documento de Identidad:	</strong>" +
     data.tipo_doc +
     " " +
     data.num_doc +
     "</p>";
   contenthtml +=
-    "<p> <strong>Ciudad expedición: </strong>" + data.ciudad_doc + "</p>";
+    "<p> <strong>Ciudad de Expedición: </strong>" + data.ciudad_doc + "</p>";
   contenthtml += "<p> <strong>Email:	</strong>" + data.email + "</p>";
-  contenthtml += "<p> <strong>Telefono: </strong>" + data.tel_fijo + "</p>";
+  contenthtml += "<p> <strong>Teléfono: </strong>" + data.tel_fijo + "</p>";
   contenthtml += "<p> <strong>Celular: 	</strong>" + data.tel_celular + "</p>";
   contenthtml +=
-    "<p> <strong>Ciudad residencia:	 </strong>" + data.ciudad_res + "</p>";
-  contenthtml += "<p> <strong>Eps: </strong>" + data.eps + "</p>";
+    "<p> <strong>Ciudad Residencia:	 </strong>" + data.ciudad_res + "</p>";
+  contenthtml += "<p> <strong>EPS: </strong>" + data.eps + "</p>";
   contenthtml +=
-    "<p> <strong>Institucion educativa: </strong>" + data.colegio + "</p>";
+    "<p> <strong>InstituciÓn Educativa: </strong>" + data.colegio + "</p>";
   contenthtml += "<p> <strong>Modalidad:  </strong>" + data.estamento + "</p>";
   contenthtml += "<p> <strong>Grado:	</strong>" + data.grado + "</p>";
   contenthtml +=
     "<p> <strong>Acudiente:  </strong>" + data.nombre_acudiente + "</p>";
   contenthtml +=
-    "<p> <strong>Telefono nombre_acudiente: </strong>" +
+    "<p> <strong>Teléfono del Acudiente: </strong>" +
     data.tel_acudiente +
     "</p>";
-
   if (!!(data.curso_anterior || "").trim()) {
     contenthtml +=
-      "<p> <strong>Inscrito anteriormente: </strong>" +
+      "<p> <strong>Inscrito Anteriormente: </strong>" +
       data.inscrito_anterior +
       "</p>";
-  } else {
-    contenthtml +=
-      "<p> <strong>Inscrito anteriormente: </strong>" +
-      data.curso_anterior +
-      "</p>";
-  }
+  } 
   contenthtml += "<p> <strong>Convenio: </strong>" + data.convenio + "</p>";
   contenthtml +=
-    "<p> <strong>Costo del curso:  </strong>" + data.val_consignar + "</p>";
+    "<p> <strong>Costo del Curso:  </strong>" + data.val_consignar + "</p>";
   contenthtml +=
     '<strong style="font-size: 2em;">RECUERDA QUE ESTA INSCRIPCIÓN NO SERÁ VÁLIDA SIN LA RESPECTIVA VERIFICACIÓN DE SU PAGO</strong>';
   contenthtml +=
