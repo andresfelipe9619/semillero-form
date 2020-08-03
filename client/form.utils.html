@@ -18,9 +18,7 @@
 
   function hideAdminAgreements() {
     const agreements = adminAgreements.join(",");
-    $(".radio-inline")
-      .has(agreements)
-      .hide();
+    $(".radio-inline").has(agreements).hide();
     $(agreements).hide();
   }
 
@@ -29,13 +27,13 @@
     hideModules();
   }
 
-  const allowOnlyNumbers = e =>
+  const allowOnlyNumbers = (e) =>
     e.metaKey || // cmd/ctrl
     e.which <= 0 || // arrow keys
     e.which == 8 || // delete key
     /[0-9]/.test(String.fromCharCode(e.which)); // numbers
 
-  const DoNotCopyPaste = e => e.preventDefault();
+  const DoNotCopyPaste = (e) => e.preventDefault();
 
   function showFiles({ grade, estate }) {
     const isGraduated = grade === "EGRESADO";
@@ -51,11 +49,14 @@
     if (estate === "PRIVADO") hideStudyCertificate();
   }
 
-  function showModules(grade) {
+  function showModules(grade, allowedCourses = []) {
     if (!(grade in MODULES.byGrades) || !MODULES.byGrades) return;
-    Object.keys(MODULES.byGrades[grade]).map(module => {
+    Object.keys(MODULES.byGrades[grade]).map((module) => {
       const courses = MODULES.byGrades[grade][module];
-      return showModuleCourses({ courses, module });
+      return showModuleCourses({
+        module,
+        courses: [...courses, ...allowedCourses],
+      });
     });
   }
 
@@ -68,7 +69,7 @@
   function buildModulesSelection(areas) {
     const columnsXrow = 3;
     let count = 1;
-    let modulesSelection = Object.keys(areas).map(name => {
+    let modulesSelection = Object.keys(areas).map((name) => {
       const courses = areas[name];
       const coursesSelection = courses.map(({ nombre, codigo, area }, index) =>
         buildCourseSelection({ code: codigo, area, name: nombre })
@@ -122,17 +123,12 @@
   function showModuleCourses({ module, courses }) {
     const selector = `${moduleSelector(module)}`;
     $(`#myForm ${selector}`).fadeIn();
-    $(`#myForm ${selector} .input-div`)
-      .children()
-      .fadeIn();
+    $(`#myForm ${selector} .input-div`).children().fadeIn();
     if (!courses.length) return;
     const coursesSelector = courses
-      .map(course => `#tema${course.codigo}`)
+      .map((course) => `#tema${course.codigo}`)
       .join(", ");
-    $(`#myForm ${selector} .input-div`)
-      .children()
-      .not(coursesSelector)
-      .hide();
+    $(`#myForm ${selector} .input-div`).children().not(coursesSelector).hide();
   }
 
   function showCourse({ course, selector }) {
@@ -147,7 +143,7 @@
   }
 
   function hideModules() {
-    const hideArea = area => $(`#myForm ${moduleSelector(area)}`).hide();
+    const hideArea = (area) => $(`#myForm ${moduleSelector(area)}`).hide();
     console.log("MODULES.byArea", MODULES.byArea);
     Object.keys(MODULES.byArea).map(hideArea);
   }
@@ -183,12 +179,12 @@
     showUnivalleCertificate();
   }
 
-  function showUnivalleCertificate(){
+  function showUnivalleCertificate() {
     $("#myForm #pdfConstanciaFun").fadeIn();
     $("#myForm #constanciaFuncFile").prop("disabled", false);
   }
 
-  function hideUnivalleCertificate(){
+  function hideUnivalleCertificate() {
     $("#myForm #pdfConstanciaFun").fadeOut();
     $("#myForm #constanciaFuncFile").prop("disabled", true);
   }
@@ -288,7 +284,7 @@
       );
     }
     if (cityElementId) {
-      countryElement.onchange = function() {
+      countryElement.onchange = function () {
         populateCities();
       };
     }
@@ -313,7 +309,7 @@
       );
     }
     if (communeElementId) {
-      citieElement.onchange = function() {
+      citieElement.onchange = function () {
         populateCommunes();
       };
     }

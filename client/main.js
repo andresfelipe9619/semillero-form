@@ -241,33 +241,21 @@ function handleChangePreviousRegister() {
   $("#curso_anterior").css("display", "none");
 }
 
+function getAllowedModulesByPrerequisiteModule(module) {
+  return MODULES.all.filter((m) =>
+    m.prerrequisitos.split(",").some((p) => p === module)
+  );
+}
+
 function handleChangeAnotherGrade() {
-  let grado = $("#myForm #grado").val();
-  let val = this.value;
-  if (
-    (val.indexOf("racional") || val.indexOf("Conjuntos")) &&
-    (grado == 6 || grado == 7)
-  ) {
-    $("#myForm #modMatematicas").fadeIn();
-    $("#myForm #modMatematicas .input-div").children().fadeIn();
-    $("#myForm #modFisica").fadeOut();
-    $("#myForm #modQuimica").fadeOut();
-    $("#myForm #modArtes").fadeOut();
-    $("#myForm #modArtes #temamuper").fadeOut();
-    $("#myForm #modHumanidades").fadeOut();
-  } else if ((grado == 6 || grado == 7) && (val == "" || val == " ")) {
-    $("#myForm #modMatematicas").fadeIn();
-    $("#myForm #modMatematicas .input-div").children().fadeOut();
-    $("#myForm #modMatematicas .input-div").children("#temaentrac").fadeIn();
-    $("#myForm #modMatematicas .input-div").children("#temalogcon").fadeIn();
-    $("#myForm #modMatematicas .input-div").children("#temaalgfun").fadeOut();
-    $("#myForm #modMatematicas .input-div").children("#temageopl").fadeOut();
-    $("#myForm #modFisica").fadeOut();
-    $("#myForm #modQuimica").fadeOut();
-    $("#myForm #modArtes").fadeIn();
-    $("#myForm #modArtes #temamuper").fadeOut();
-    $("#myForm #modHumanidades").fadeOut();
-  }
+  let grade = $("#myForm #grado").val();
+  let value = this.value;
+  let oldCourse = MODULES.all.find((m) => m.nombre === value);
+  if (!oldCourse) return;
+  let allowedModules = getAllowedModulesByPrerequisiteModule(oldCourse.codigo);
+  if (!allowedModules.length) return;
+  console.log("allowedModules", allowedModules);
+  showModules(grade, allowedModules);
 }
 
 async function editStudentData() {
