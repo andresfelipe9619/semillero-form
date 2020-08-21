@@ -7,16 +7,21 @@ var CURRENT_PERIOD_COLUMNS = [
   "email",
   "grado",
   "colegio",
-  "convenio"
+  "convenio",
+  "val_consignar",
+  "val_consignado",
+  "dif_consignado",
+  "recibo_consignacion",
+  "fecha_consignacion",
 ];
 
 function getModulesByGrades() {
   var rawModules = getModules();
   var modules = sheetValuesToObject(rawModules);
   var allowedColumns = ["nombre", "codigo", "area", "prueba"];
-  modules = modules.reduce(function(acc, newModule) {
+  modules = modules.reduce(function (acc, newModule) {
     if (newModule.disabled === "x") return acc;
-    newModule.grades = Object.keys(newModule).reduce(function(prevArray, key) {
+    newModule.grades = Object.keys(newModule).reduce(function (prevArray, key) {
       if (allowedColumns.indexOf(key) >= 0) return prevArray;
       var currentValue = newModule[key];
       delete newModule[key];
@@ -28,8 +33,8 @@ function getModulesByGrades() {
     acc.push(newModule);
     return acc;
   }, []);
-  var modulesByGrades = modules.reduce(function(prevModules, module) {
-    module.grades.map(function(grade) {
+  var modulesByGrades = modules.reduce(function (prevModules, module) {
+    module.grades.map(function (grade) {
       if (!(grade in prevModules)) {
         prevModules[grade] = {};
       }
@@ -39,7 +44,7 @@ function getModulesByGrades() {
       prevModules[grade][module.area].push({
         nombre: module.nombre,
         codigo: module.codigo,
-        prueba: module.prueba
+        prueba: module.prueba,
       });
     });
     return prevModules;
@@ -56,7 +61,7 @@ function addStudentToModuleSheet(module, data) {
     if (module === modulos[x][1]) {
       var moduleSheet = getSheetFromSpreadSheet(actualPeriod, modulos[x][0]);
       var lastRow = moduleSheet.getLastRow();
-      var data2Write = CURRENT_PERIOD_COLUMNS.map(function(column) {
+      var data2Write = CURRENT_PERIOD_COLUMNS.map(function (column) {
         return data[column];
       });
       Logger.log("data2Write");
