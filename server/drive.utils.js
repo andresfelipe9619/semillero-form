@@ -50,17 +50,18 @@ function createPersonFile(fileName, num_doc, fileData) {
     name: ""
   };
   var mainFolder = getMainFolder();
+  Logger.log("Main Folder: " + mainFolder);
   var currentFolder = getPersonFolder(num_doc, mainFolder);
-
+  Logger.log("Student Folder: " + currentFolder);
   var contentType = fileData.substring(5, fileData.indexOf(";"));
+  Logger.log("Content Type: " + contentType);
   var bytes = Utilities.base64Decode(
     fileData.substr(fileData.indexOf("base64,") + 7)
   );
-  var blob = Utilities.newBlob(bytes, contentType, file);
+  var blob = Utilities.newBlob(bytes, contentType, fileName);
 
   var file = currentFolder.createFile(blob);
   file.setDescription("Subido Por " + num_doc);
-  file.setName(fileName);
   result.url = file.getUrl();
   result.name = file.getName();
   result.file = file;
@@ -70,11 +71,11 @@ function createPersonFile(fileName, num_doc, fileData) {
 function uploadStudentFiles(num_doc, files) {
   Logger.log("=======UPLOADING STUDENT " + num_doc + " FILES======");
   if (!files.length) return;
-  // Logger.log("FILES:");
-  // Logger.log(files);
+  Logger.log("FILES:");
   var savedFiles = files.map(function(file) {
     var name = file.name || "";
     var base64 = file.base64 || "";
+    Logger.log(name);
     var savedFile = createPersonFile(name, num_doc, base64);
     return savedFile.file;
   });

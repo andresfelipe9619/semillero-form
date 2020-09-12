@@ -304,19 +304,21 @@ function registerStudent(formString) {
     avoidCollisionsInConcurrentAccessess();
     var currentStudentData = isOldStudent ? person : null;
     var data = getDataForRegistering(form, currentStudentData);
+    Logger.log("Data for registering");
+    Logger.log(data);
     var filesResult = uploadStudentFiles(data.num_doc, data.files);
-    Logger.log("filesResult");
+    Logger.log("Files Result");
     Logger.log(filesResult);
     var folderUrl = (filesResult || {}).folder;
     data.url_documentos = folderUrl;
     response = registerStudentInSheets(data, currentStudentData);
-    Logger.log("response");
+    Logger.log("Response");
     Logger.log(response);
     sendConfirmationEmail(data, filesResult.files);
 
     return response;
   } catch (error) {
-    Logger.log("Error registering student");
+    Logger.log("Error Registering Student");
     Logger.log(error);
     return error.toString();
   }
@@ -354,6 +356,7 @@ function getDataForRegistering(form, currentStudentData) {
 }
 
 function getPersonPeriods(selectedModule, currentStudentData) {
+  Logger.log("Current Student Data");
   Logger.log(currentStudentData);
 
   var currentPeriod = getCurrentPeriod()["periodo"];
@@ -374,6 +377,8 @@ function getPersonPeriods(selectedModule, currentStudentData) {
     acc[p.periodo] = value;
     return acc;
   }, {});
+  Logger.log("Student Periods");
+  Logger.log(periods);
   return periods;
 }
 
