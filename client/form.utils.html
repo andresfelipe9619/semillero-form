@@ -262,13 +262,8 @@
     }
   }
 
-  let departments = ["CAUCA", "VALLE DEL CAUCA"];
-  let citiesData = [];
-  citiesData[0] = "";
-  citiesData[1] =
-    "Almaguer|Argelia|Balboa|Bolílet|Buenos aires|Cajibío|Caldono|Caloto|Corintio|El tambo|Florencia|Guachené|Guapí|Inzá|Jambaló|La Sierra|La vega|López de micay|Mercaderes|Miranda|Morales|Padilla|Patía|Piamonte|Piendamó|Popayán|Puerto Tejada|Puracé|Páez|Rosas|San Sebastián|Santa Rosa|Santander de Quilichao|Silvia|Soatá|Sucre|Suárez|Timbiquí|Timbío|Toribío|Torotó|Villa rica";
-  citiesData[2] =
-    "Cali|Andalucía|Buenaventura|Buga|Bugalagrande|Caicedonia|Calima-El Darién|Candelaria|Cartago|Dagua|El Cairo|El Cerrito|El Dovio|El águila|Florida|Ginebra|Guacarí|Jamundí|La Cumbre|La Unión|La Victoria|Obando|Palmira|Pradera|Restrepo|Restrepo|Riofrío|Rodalnillo|San Pedro|Sevilla|Toro|Trujillo|Tuluá|Ulloa|Versalles|Vijes|Yotoco|Yumbo|Zarzal";
+  let departments = DEPARTMENTS;
+  let citiesData = ["", ...CITIES];
   const departmentElementId = "depto_res";
   const cityElementId = "ciudad_res";
   const communeElementId = "comuna_res";
@@ -316,8 +311,10 @@
   }
 
   function populateCommunes() {
-    let selectedCitie = document.getElementById(cityElementId).selectedIndex;
-    if (selectedCitie !== 1) return $(`#div-comuna`).addClass("oculto");
+    let selectedCity = document.getElementById(cityElementId).selectedIndex;
+    let cityOptions = document.getElementById(cityElementId).options;
+    let canShowCommunes = cityOptions[selectedCity].text === "Cali";
+    if (!canShowCommunes) return $(`#div-comuna`).addClass("oculto");
     $(`#div-comuna`).removeClass("oculto");
     let communeElement = document.getElementById(communeElementId);
 
