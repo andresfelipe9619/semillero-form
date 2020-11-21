@@ -150,6 +150,8 @@ function handleClickAgreement() {
   }
   hideUnivalleCertificate();
   hideScholarshipFiles();
+  if (PRICE_DATA.estate === "PRIVADO") hideStudyCertificate();
+
   $("#myForm #pdfReciboPago").fadeIn();
   $("#myForm #reciboFile").prop("disabled", false);
 }

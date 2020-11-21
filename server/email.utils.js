@@ -58,14 +58,14 @@ function getEmailTemplate(data) {
     }
   }
   contenthtml += '<div style="text-align:center">';
-  contenthtml += "<h3>UNIVERSIDAD DEL VALLE</h3>";
-  contenthtml += "<h3>INSCRIPCIÓN SEMILLERO DE CIENCIAS</h3>";
+  contenthtml += "<h3>INSCRIPCIÓN</h3>";
+  contenthtml += "<h3>SEMILLERO UNIVERSIDAD DEL VALLE</h3>";
   contenthtml +=
-    "<h3>Actualmente se encuentra inscrito(a) en el Semillero Universidad del Valle, periodo académico Septiembre – Diciembre de 2020</h3></div>";
+    "<h3>Actualmente se encuentra inscrito(a) en el Semillero Universidad del Valle para el primer periodo académico del 2021</h3></div>";
   contenthtml +=
-    '<p><strong>NOTA:  No olvide revisar el correo electrónico que registro en esta inscripción, se le enviara toda la información con respecto a la confirmación de su matrícula, el inicio de las clases y la programación de las actividades academicas durante el periodo académico Septiembre – Diciembre de 2020.</p></strong>';
+    '<p><strong>NOTA: Toda la información con respecto a la confirmación de su matrícula, el inicio de las clases y la programación de las actividades académicas durante el primer periodo académico del 2021 serán enviadas al correo electrónico que registrado en esta inscripción.</strong></p>';
    contenthtml +=
-    "<p><strong>Importante: </strong>Esta inscripción no será válida sin la respectiva verificación de su pago. Una vez realizada la verificación recibirá una confirmación de su matrícula por parte de la Coordinación General del Semillero Universidad del Valle Por favor conserve su recibo de pago.</p><hr>";
+    "<p><strong>Importante: </strong>Esta inscripción no será válida sin la respectiva verificación de su pago. Una vez realizada la verificación recibirá una confirmación de su matrícula por parte de la Coordinación General del Semillero Universidad del Valle. Por favor conserve su recibo de pago.</p><hr>";
   contenthtml += "<h3> Módulo: " + moduleName + "</h3>";
   contenthtml +=
     "<p> <strong>Fecha de Inscripcion:</strong>	" + new Date() + "</p>";
