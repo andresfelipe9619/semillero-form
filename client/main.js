@@ -141,24 +141,23 @@ function handleClickAgreement() {
   let val = $(this).val();
   PRICE_DATA.agreement = val;
   handleChangePriceData();
+  const isPrivate = PRICE_DATA.estate === "PRIVADO";
+  const code = PRICE_DATA.moduleCode;
+  const isShortCourse = isModuleShortCourse(code);
+
   if (val === "RELACION_UNIVALLE") return showUnivalleRelationFiles();
   if (val === "BECADOS") return showScholarshipFiles();
-  if (val === "CONVENIO_COLEGIO") {
-    hideStudyCertificate();
-  } else {
-    showStudyCertificate();
-  }
+  if (val === "CONVENIO_COLEGIO") hideStudyCertificate();
+  else showStudyCertificate();
+
   hideUnivalleCertificate();
   hideScholarshipFiles();
-  if (PRICE_DATA.estate === "PRIVADO") hideStudyCertificate();
-
-  $("#myForm #pdfReciboPago").fadeIn();
-  $("#myForm #reciboFile").prop("disabled", false);
+  if (isPrivate || isShortCourse) hideStudyCertificate();
 }
 
 function handleChangeModule() {
   let moduleCode = $(this).val();
-  PRICE_DATA.moduleCode = moduleCode;
+  setStudentFilesData({ moduleCode });
   handleChangePriceData();
 }
 
@@ -193,25 +192,53 @@ function handleChangePriceData() {
   $("#val_consignar").val(price);
 }
 
+function setStudentFilesData({ estate, moduleCode, agreement }) {
+  const studentEstate = estate || PRICE_DATA.estate;
+  const studentModuleCode = moduleCode || PRICE_DATA.moduleCode;
+  const studentAgreement = agreement || PRICE_DATA.agreement;
+  const isShortCourse = isModuleShortCourse(studentModuleCode);
+  const isPrivate = studentEstate === "PRIVADO";
+
+  if (estate) PRICE_DATA.estate = estate;
+  if (agreement) PRICE_DATA.agreement = agreement;
+  if (moduleCode) PRICE_DATA.moduleCode = moduleCode;
+
+  handleChangePriceData();
+  execEstate(studentEstate);
+  execAgreement(studentAgreement);
+
+  if (isPrivate || isShortCourse) hideStudyCertificate();
+}
+
+function execEstate(studentEstate) {
+  const studentGrade = $("#grado").val();
+  const isGraduated = studentGrade === "EGRESADO";
+  const isPublic = studentEstate === "PUBLICO";
+  const isCoverage = studentEstate === "COBERTURA";
+  if (isGraduated) return showGraduateFiles();
+  if (isPublic || isCoverage) showStudyCertificate();
+  hideGraduateFiles();
+}
+
+function execAgreement(studentAgreement) {
+  if (studentAgreement === "RELACION_UNIVALLE") {
+    return showUnivalleRelationFiles();
+  }
+  if (studentAgreement === "BECADOS") return showScholarshipFiles();
+  if (studentAgreement === "CONVENIO_COLEGIO") hideStudyCertificate();
+  else showStudyCertificate();
+
+  hideUnivalleCertificate();
+  hideScholarshipFiles();
+}
+
 function handleChangeEstate() {
   let estate = $(this).val();
-  PRICE_DATA.estate = estate;
-  handleChangePriceData();
-  let grado = $("#grado").val();
-  if (estate === "PUBLICO" || estate === "COBERTURA") {
-    if (grado === "EGRESADO") return showGraduateFiles();
-    showStudyCertificate();
-    hideGraduateFiles();
-    return;
-  }
-  if (estate === "PRIVADO") {
-    if (grado === "EGRESADO") return showGraduateFiles();
-    hideStudyCertificate();
-    hideGraduateFiles();
-    return;
-  }
-  return hideStudyCertificate();
+  setStudentFilesData({ estate });
 }
+
+const isModuleShortCourse = (moduleCode) =>
+  MODULES.byArea["cursos cortos"].find((m) => m.codigo === moduleCode);
 
 const createEmail = () =>
   window.open(
@@ -417,30 +444,14 @@ async function getFormData($form) {
 }
 
 const getFileName = (fileKey, doc) => {
-  if (fileKey === "docFile") {
-    return `${doc}_DOCUMENTO`;
-  }
-  if (fileKey === "constanciaEstudFile") {
-    return `${doc}_COSNTANCIA_ESTUDIO`;
-  }
-  if (fileKey === "reciboFile") {
-    return `${doc}_RECIBO_PAGO`;
-  }
-  if (fileKey === "constanciaFuncFile") {
-    return `${doc}_CONSTANCIA_FUNCIONARIO`;
-  }
-  if (fileKey === "recibosPublicos") {
-    return `${doc}_RECIBO_PUBLICOS`;
-  }
-  if (fileKey === "cartaSolicitud") {
-    return `${doc}_CARTA_SOLICITUD`;
-  }
-  if (fileKey === "actaGrado") {
-    return `${doc}_ACTA_GRADO`;
-  }
-  if (fileKey === "photo") {
-    return `${doc}_FOTO_PERFIL`;
-  }
+  if (fileKey === "docFile") return `${doc}_DOCUMENTO`;
+  if (fileKey === "constanciaEstudFile") return `${doc}_COSNTANCIA_ESTUDIO`;
+  if (fileKey === "reciboFile") return `${doc}_RECIBO_PAGO`;
+  if (fileKey === "constanciaFuncFile") return `${doc}_CONSTANCIA_FUNCIONARIO`;
+  if (fileKey === "recibosPublicos") return `${doc}_RECIBO_PUBLICOS`;
+  if (fileKey === "cartaSolicitud") return `${doc}_CARTA_SOLICITUD`;
+  if (fileKey === "actaGrado") return `${doc}_ACTA_GRADO`;
+  if (fileKey === "photo") return `${doc}_FOTO_PERFIL`;
 };
 
 function getRequestPayload() {
