@@ -1,7 +1,7 @@
 function sendConfirmationEmail(data, files) {
   Logger.log("=============Sending Email===========");
-
-  var body = getEmailTemplate(data);
+  var periodo = getCurrentPeriod()["periodo"];
+  var body = getEmailTemplate(data, periodo);
   var subModule = "";
   var modules = getModules();
 
@@ -10,7 +10,6 @@ function sendConfirmationEmail(data, files) {
       subModule = modules[module][0];
     }
   }
-  var periodo = getCurrentPeriod()["periodo"];
   var subject = "Inscripción " + periodo + " " + subModule;
   Logger.log("Submodulo");
   Logger.log(subModule);
@@ -45,7 +44,7 @@ function sendEmailToAdmin(subject, body, files) {
   });
 }
 
-function getEmailTemplate(data) {
+function getEmailTemplate(data, periodo) {
   var modulos = getModules();
 
   var contenthtml = "";
@@ -61,9 +60,9 @@ function getEmailTemplate(data) {
   contenthtml += "<h3>INSCRIPCIÓN</h3>";
   contenthtml += "<h3>SEMILLERO UNIVERSIDAD DEL VALLE</h3>";
   contenthtml +=
-    "<h3>Actualmente se encuentra inscrito(a) en el Semillero Universidad del Valle para el primer periodo académico del 2021</h3></div>";
+    "<h3>Actualmente se encuentra matriculado(a) en el periodo académico -----" + periodo + "------. </h3></div>";
   contenthtml +=
-    '<p><strong>NOTA: Durante el primer periodo académico del 2021, toda la información con respecto a la confirmación de su matrícula, el calendario académico,  el inicio y las citaciones de las clases,  la programación de las actividades curriculares y el material académico, serán enviados al correo electrónico que registró en esta inscripción.</strong></p>';
+    '<p><strong>NOTA: Durante el periodo académico ' + periodo + ', toda la información con respecto a la confirmación de su matrícula, el calendario académico,  el inicio y las citaciones de las clases,  la programación de las actividades curriculares y el material académico, serán enviados al correo electrónico que registró en esta inscripción.</strong></p>';
    contenthtml +=
     "<p><strong>Importante: </strong>Esta inscripción no será válida sin la respectiva verificación de su pago. Una vez realizada la verificación recibirá una confirmación de su matrícula por parte de la Coordinación General del Semillero Universidad del Valle. Por favor conserve su recibo de pago.</p><hr>";
   contenthtml += "<h3> Módulo: " + moduleName + "</h3>";

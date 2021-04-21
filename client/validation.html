@@ -19,7 +19,7 @@
     },
     email: {
       required: true,
-      email: true,
+      regexp: true,
     },
     confirmEmail: {
       required: true,
@@ -286,8 +286,13 @@
         }
         return this.optional(element) || isequal;
       },
-      "selecciona un valor valido"
+      "Selecciona un valor valido"
     );
+
+    $.validator.addMethod('regexp', function (value, element) {
+      return this.optional(element) || value.match(/^[\w.+\-]+@(gmail|correounivalle.edu)\.co(m)?$/);
+    }, 'El correo debe ser gmail o correounivalle');
+
 
     $.validator.addMethod(
       "filesize",
