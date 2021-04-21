@@ -238,7 +238,8 @@ function handleChangeEstate() {
 }
 
 const isModuleShortCourse = (moduleCode) =>
-  MODULES.byArea["cursos cortos"].find((m) => m.codigo === moduleCode);
+  Array.isArray(MODULES.byArea["cursos cortos"]) ?
+    MODULES.byArea["cursos cortos"].find((m) => m.codigo === moduleCode) : false;
 
 const createEmail = () =>
   window.open(
