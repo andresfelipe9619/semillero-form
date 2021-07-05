@@ -8,7 +8,7 @@
     },
     tipo_doc: {
       required: true,
-      EqualToGroup: ["T.I", "C.C"],
+      EqualToGroup: ["T.I", "C.C", "C.E", "R.C"],
     },
     ciudad_doc: {
       required: true,
@@ -290,7 +290,7 @@
     );
 
     $.validator.addMethod('regexp', function (value, element) {
-      return this.optional(element) || value.match(/^[\w.+\-]+@(gmail|correounivalle.edu)\.co(m)?$/);
+      return value.match(/^[\w.+\-]+@(gmail|correounivalle.edu)\.co(m)?$/);
     }, 'El correo debe ser gmail o correounivalle');
 
 
